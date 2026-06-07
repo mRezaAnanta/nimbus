@@ -1,0 +1,42 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+@theme {
+	/* Calm, restrained palette: warm paper plus a single sky-blue accent */
+	--color-paper: #faf9f6;
+	--color-card: #ffffff;
+	--color-ink: #16212b;
+	--color-muted: #5e6b76;
+	--color-faint: #8a949d;
+	--color-line: #e8e2d8;
+
+	--color-brand: #2e6fe0;
+	--color-brand-soft: #eaf1fc;
+	--color-grass: #3a9c64;
+	--color-grass-soft: #e7f3ec;
+	--color-amber: #dd9e36;
+	--color-amber-soft: #fbf1de;
+	--color-danger: #d3584a;
+	--color-danger-soft: #fbe9e6;
+
+	--font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+	--font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+}
+
+@layer base {
+	html,
+	body {
+		height: 100%;
+	}
+	body {
+		background-color: var(--color-paper);
+		color: var(--color-ink);
+		font-family: var(--font-sans);
+		-webkit-font-smoothing: antialiased;
+		text-rendering: optimizeLegibility;
+	}
+	* {
+		-webkit-tap-highlight-color: transparent;
+	}
+}
