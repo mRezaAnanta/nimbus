@@ -17,7 +17,7 @@ More chapters (Availability Zones, scaling, security, and beyond) are on the way
 
 ## Tech stack
 
-SvelteKit · Svelte 5 (runes) · TypeScript · Tailwind CSS v4 · d3-geo · **bun**.
+SvelteKit, Svelte 5 (runes), TypeScript, Tailwind CSS v4, d3-geo, and **bun**.
 
 ## Run it locally
 
@@ -33,7 +33,8 @@ Then open the printed URL. Other scripts: `bun run check` (typecheck), `bun run 
 Content lives as plain data per chapter in `src/lib/chapters/`, with language and content
 separated per lesson (`index.ts` for config, `id.ts` / `en.ts` for text). Adding a lesson,
 chapter, or language doesn't require touching the engine. See **[AGENTS.md](./AGENTS.md)** for
-the architecture and step-by-step recipes.
+the architecture and step-by-step recipes, and **[CURRICULUM.md](./CURRICULUM.md)** for the
+full lesson roadmap and what is left to build.
 
 Currently bilingual: Indonesian and English.
 
