@@ -1,18 +1,33 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import Browser from '../Browser.svelte';
+	import WorldMap from '../WorldMap.svelte';
 	import type { LessonText, FailoverText } from '$lib/chapters/types';
 
 	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
 		$props();
 	const tx = $derived(text as FailoverText);
 
+	const FLAT_W = 960;
+	const FLAT_H = 373.33;
+	const fx = (lon: number) => ((lon + 180) / 360) * FLAT_W;
+	const fy = (lat: number) => ((84 - lat) / 140) * FLAT_H;
+
+	const PRIMARY = { key: 'virginia', lon: -77.5, lat: 39 };
+	const STANDBY = { key: 'singapore', lon: 103.8, lat: 1.35 };
+	const pAt = { x: fx(PRIMARY.lon), y: fy(PRIMARY.lat) };
+	const sAt = { x: fx(STANDBY.lon), y: fy(STANDBY.lat) };
+	const droneTo = { x: (pAt.x / FLAT_W) * 100, y: (pAt.y / FLAT_H) * 100 };
+
 	type Phase = 'normal' | 'down' | 'failing' | 'failed-over';
 	let standby = $state(false);
 	let phase = $state<Phase>('normal');
+	let striking = $state(false);
+	let strikeKey = $state(0);
 	let fired = false;
 	let t1: ReturnType<typeof setTimeout> | undefined;
 	let t2: ReturnType<typeof setTimeout> | undefined;
+	let tR: ReturnType<typeof setTimeout> | undefined;
 
 	const primaryDown = $derived(phase !== 'normal');
 	const browser = $derived<'loaded' | 'loading' | 'offline'>(
@@ -20,101 +35,105 @@
 	);
 
 	function toggleStandby() {
-		if (phase !== 'normal') return;
+		if (phase !== 'normal' || striking) return;
 		standby = !standby;
 	}
-
 	function kill() {
-		if (phase !== 'normal') return;
-		if (standby) {
-			phase = 'failing';
-			t1 = setTimeout(() => {
-				phase = 'failed-over';
-				onstate?.('failover');
-				if (!fired) {
-					fired = true;
-					oncomplete?.();
-				}
-			}, 1300);
-			t2 = setTimeout(() => (phase = 'normal'), 4200);
-		} else {
-			phase = 'down';
-			onstate?.('spof');
-			t2 = setTimeout(() => (phase = 'normal'), 2800);
-		}
+		if (phase !== 'normal' || striking) return;
+		strikeKey += 1;
+		striking = true;
+		t1 = setTimeout(() => {
+			if (standby) {
+				phase = 'failing';
+				t2 = setTimeout(() => {
+					phase = 'failed-over';
+					onstate?.('failover');
+					if (!fired) {
+						fired = true;
+						oncomplete?.();
+					}
+				}, 1200);
+			} else {
+				phase = 'down';
+				onstate?.('spof');
+			}
+		}, 1000);
+		tR = setTimeout(() => {
+			phase = 'normal';
+			striking = false;
+		}, standby ? 4800 : 3200);
 	}
+
+	const standbyStatus = $derived(
+		!standby
+			? `+ ${tx.standbyLabel}`
+			: phase === 'failed-over'
+				? `${tx.standbyLabel}, ${tx.serving}`
+				: phase === 'failing'
+					? tx.failingOver
+					: `${tx.standbyLabel}, ${tx.standbyState}`
+	);
+	const standbyColor = $derived(
+		!standby ? '#a9c8e8' : phase === 'failed-over' ? '#2f9e44' : phase === 'failing' ? '#dd9e36' : '#8a949d'
+	);
 
 	onDestroy(() => {
 		clearTimeout(t1);
 		clearTimeout(t2);
+		clearTimeout(tR);
 	});
 </script>
 
-{#snippet serverIcon()}
-	<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
-		<rect x="3.5" y="5" width="17" height="6" rx="1.6" />
-		<rect x="3.5" y="13" width="17" height="6" rx="1.6" />
-		<circle cx="7" cy="8" r="1" fill="currentColor" stroke="none" />
-		<circle cx="7" cy="16" r="1" fill="currentColor" stroke="none" />
-	</svg>
-{/snippet}
-
-{#snippet stormIcon()}
-	<svg width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-		<path d="M13 2 L4 14 h7 l-2 8 11-13 h-7 z" fill="currentColor" />
-	</svg>
-{/snippet}
-
 <div class="flex h-full w-full flex-col gap-4 md:flex-row">
-	<!-- Primary and standby -->
-	<div class="border-line bg-card flex min-h-0 min-w-0 flex-1 flex-col rounded-2xl border p-4">
-		<div class="grid flex-1 grid-cols-2 gap-3">
-			<!-- primary -->
-			<div
-				class="flex flex-col items-center justify-center gap-2 rounded-xl border border-line p-3 text-center transition-all {primaryDown
-					? 'bg-danger-soft text-danger'
-					: 'bg-grass-soft text-grass'}"
-			>
-				<span class="text-[11px] font-semibold tracking-wide uppercase">{tx.primaryLabel}</span>
-				{#if primaryDown}{@render stormIcon()}{:else}{@render serverIcon()}{/if}
-				<span class="text-[11px] font-semibold">{primaryDown ? tx.statusDown : tx.serving}</span>
-			</div>
+	<div class="border-line relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl border" style="background:#f1f6fc;">
+		<svg viewBox="0 0 {FLAT_W} {FLAT_H}" class="h-full w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label="map">
+			<rect width={FLAT_W} height={FLAT_H} fill="#f1f6fc" />
+			<WorldMap />
 
-			<!-- standby -->
-			<button
-				type="button"
+			<!-- standby region -->
+			<g
+				class="pin"
+				role="button"
+				tabindex="0"
+				aria-label={tx.regions[STANDBY.key]}
 				onclick={toggleStandby}
-				disabled={phase !== 'normal'}
-				class="flex flex-col items-center justify-center gap-2 rounded-xl border border-line p-3 text-center transition-all select-none disabled:cursor-not-allowed {standby
-					? phase === 'failed-over'
-						? 'bg-grass-soft text-grass'
-						: phase === 'failing'
-							? 'bg-amber-soft text-amber'
-							: 'text-muted'
-					: 'text-faint hover:text-ink'}"
+				onkeydown={(e) => e.key === 'Enter' && toggleStandby()}
 			>
-				{#if standby}
-					<span class="text-[11px] font-semibold tracking-wide uppercase">{tx.standbyLabel}</span>
-					{@render serverIcon()}
-					<span class="text-[11px] font-semibold">
-						{phase === 'failed-over' ? tx.serving : phase === 'failing' ? tx.failingOver : tx.standbyState}
-					</span>
-				{:else}
-					<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" class="opacity-60">
-						<path d="M12 6 v12 M6 12 h12" />
-					</svg>
-					<span class="text-[11px]">{tx.standbyLabel}</span>
-				{/if}
-			</button>
-		</div>
+				<circle cx={sAt.x} cy={sAt.y} r="6.5" fill={standbyColor} stroke="#fff" stroke-width="2" opacity={standby ? 1 : 0.7} />
+				<text x={sAt.x} y={sAt.y - 12} text-anchor="middle" fill="#16212b" font-size="12.5" font-weight="700">{tx.regions[STANDBY.key]}</text>
+				<text x={sAt.x} y={sAt.y + 18} text-anchor="middle" fill="#5e6b76" font-size="10.5" font-weight="600">{standbyStatus}</text>
+			</g>
 
-		<div class="mt-3 flex items-center justify-between gap-3">
+			<!-- primary region -->
+			<g>
+				{#if !primaryDown}
+					<circle cx={pAt.x} cy={pAt.y} r="13" fill="#2f9e44" opacity="0.18" class="pulse" />
+				{/if}
+				<circle cx={pAt.x} cy={pAt.y} r="6.5" fill={primaryDown ? '#e03131' : '#2f9e44'} stroke="#fff" stroke-width="2" />
+				<text x={pAt.x} y={pAt.y - 12} text-anchor="middle" fill="#16212b" font-size="12.5" font-weight="700">{tx.regions[PRIMARY.key]}</text>
+				<text x={pAt.x} y={pAt.y + 18} text-anchor="middle" fill="#5e6b76" font-size="10.5" font-weight="600">
+					{tx.primaryLabel}, {primaryDown ? tx.statusDown : tx.serving}
+				</text>
+			</g>
+		</svg>
+
+		<!-- drone strike toward the primary region -->
+		{#key strikeKey}
+			{#if striking}
+				<div class="drone text-danger pointer-events-none absolute" style="--tx:{droneTo.x}%; --ty:{droneTo.y}%" aria-hidden="true">
+					<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M2 12 L21 5 L14 12 L21 19 Z" /></svg>
+				</div>
+			{/if}
+		{/key}
+
+		<!-- controls -->
+		<div class="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 p-3">
 			<p class="text-faint text-[11px]">{tx.addHint}</p>
 			<button
 				type="button"
 				onclick={kill}
-				disabled={phase !== 'normal'}
-				class="shrink-0 rounded-full bg-ink px-4 py-1.5 text-xs font-semibold text-white transition-all hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-40"
+				disabled={phase !== 'normal' || striking}
+				class="pointer-events-auto shrink-0 rounded-full bg-ink px-4 py-1.5 text-xs font-semibold text-white transition-all hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-40"
 			>
 				{tx.kill}
 			</button>
@@ -131,3 +150,53 @@
 		</div>
 	</div>
 </div>
+
+<style>
+	.pin {
+		cursor: pointer;
+		outline: none;
+	}
+	.pin:focus,
+	.pin:focus-visible {
+		outline: none;
+	}
+	.pin:hover circle[stroke] {
+		stroke-width: 3;
+	}
+	.pulse {
+		transform-box: fill-box;
+		transform-origin: center;
+		animation: pulse 2s ease-in-out infinite;
+	}
+	@keyframes pulse {
+		0%,
+		100% {
+			transform: scale(1);
+			opacity: 0.18;
+		}
+		50% {
+			transform: scale(1.8);
+			opacity: 0.04;
+		}
+	}
+	.drone {
+		left: -10%;
+		top: -8%;
+		animation: strike 1s ease-in forwards;
+	}
+	@keyframes strike {
+		0% {
+			left: -10%;
+			top: -8%;
+			opacity: 0;
+		}
+		25% {
+			opacity: 1;
+		}
+		100% {
+			left: var(--tx);
+			top: var(--ty);
+			opacity: 1;
+		}
+	}
+</style>

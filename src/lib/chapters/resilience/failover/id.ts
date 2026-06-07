@@ -3,22 +3,23 @@ import type { FailoverText } from '../../types';
 export const id: FailoverText = {
 	title: 'Apa itu failover?',
 	intro: [
-		'Bayangkan website-mu cuma ditopang satu server utama. Kalau dia mati, ya sudah, semuanya ikut mati. Titik tunggal yang bisa menjatuhkan semuanya itu namanya <b>single point of failure</b>.',
-		'Solusinya, siapkan <b>server cadangan</b> yang standby. Begitu yang utama tumbang, trafik otomatis pindah ke cadangan. Perpindahan otomatis ini namanya <b>failover</b>.',
-		'Mirip ban serep, atau genset yang otomatis nyala pas listrik padam. Selalu ada pengganti yang siap.',
-		'Coba sendiri. Sekarang cuma ada server utama. Matikan dia, lalu lihat yang terjadi.'
+		'Sebar ke beberapa AZ aman kalau cuma satu gedung yang tumbang. Tapi kalau satu region utuh yang kena, seperti waktu pusat data di Timur Tengah dihantam, kamu butuh rencana yang lebih besar.',
+		'Caranya, siapkan <b>region cadangan</b> di tempat lain. Region utama yang melayani, cadangan menunggu siaga. Begitu yang utama tumbang, trafik otomatis pindah ke cadangan. Perpindahan otomatis ini namanya <b>failover</b>.',
+		'Mirip kantor cabang yang langsung ambil alih kalau kantor pusat tutup. Selalu ada pengganti yang siap.',
+		'Coba sendiri. Sekarang cuma ada region utama. Matikan dia, lalu lihat yang terjadi.'
 	],
 	reactions: {
-		spof: 'Nah, karena tidak ada cadangan, website-mu langsung mati begitu yang utama tumbang. Coba tambahkan server cadangan dulu, lalu matikan utamanya lagi.',
-		failover: 'Lihat, begitu yang utama mati, trafik otomatis pindah ke cadangan dan website-mu tetap jalan. Itulah failover.'
+		spof: 'Nah, tanpa region cadangan, website-mu langsung mati begitu region utama tumbang. Klik region lain untuk jadikan cadangan, lalu matikan utamanya lagi.',
+		failover: 'Lihat, begitu region utama mati, trafik otomatis pindah ke region cadangan dan website-mu tetap jalan. Itulah failover.'
 	},
-	primaryLabel: 'Server Utama',
-	standbyLabel: 'Server Cadangan',
+	primaryLabel: 'Utama',
+	standbyLabel: 'Cadangan',
 	serving: 'Melayani',
 	standbyState: 'Siaga',
 	failingOver: 'Pindah ke cadangan',
 	kill: 'Matikan utama',
-	addHint: 'Klik kotak cadangan untuk menyiapkannya',
+	addHint: 'Klik region lain untuk menyiapkan cadangan',
 	statusUp: 'Online',
-	statusDown: 'Mati'
+	statusDown: 'Mati',
+	regions: { virginia: 'Virginia', singapore: 'Singapura' }
 };

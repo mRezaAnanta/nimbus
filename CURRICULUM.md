@@ -55,12 +55,17 @@ The physical reality under the word "cloud".
 
 One copy in one place is fragile. Survive failures.
 
-- [x] **Availability Zone**. A region holds several isolated data centers; one can fail without
-  taking the rest down. Stage: run the app in one zone and trigger a "storm" (outage), the site
-  goes down; spread it across two or three zones, trigger an outage again, the site stays up.
-- [x] **Failover**. No single point of failure; keep a standby and switch to it on failure.
-  Stage: kill the lone primary and the site goes down; add a standby, kill the primary again,
-  and traffic fails over to the standby so the site stays up. Reality tie: a spare tire.
+- [x] **Availability Zone**. Opens with a real 2026 event (drones struck AWS data centers in
+  the UAE and Bahrain) to show physical threats are real, then teaches that a region holds
+  several isolated AZs, and the a/b/c naming is shuffled per account and kept secret. Stage: a
+  world map with two clickable regions (Virginia, Singapore); click to zoom into a region and
+  see its real AZs, spread servers across them, trigger an outage, and watch the site go down
+  (single AZ) or survive (multiple AZs).
+- [x] **Failover**. Escalates from one AZ to a whole region being lost (tied to the same
+  Middle East data center strikes): keep a standby region and switch to it automatically. Stage:
+  on the world map a primary region (Virginia) serves; kill it with no standby and the site goes
+  down; click another region (Singapore) to make it a standby, kill the primary again, and a
+  drone strike on the primary triggers failover so the site stays up.
 
 ## Chapter 3: Lalu Lintas (Traffic) [next]
 

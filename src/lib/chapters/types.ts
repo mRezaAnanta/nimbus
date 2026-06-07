@@ -66,15 +66,15 @@ export interface CableText extends LessonText {
 }
 
 export interface AZText extends LessonText {
-	regionLabel: string;
-	zonePrefix: string;
+	worldHint: string;
+	back: string;
 	serverLabel: string;
 	place: string;
 	trigger: string;
-	outage: string;
 	statusUp: string;
 	statusDown: string;
 	activeZones: string;
+	regions: Record<string, string>;
 }
 
 export interface FailoverText extends LessonText {
@@ -87,6 +87,7 @@ export interface FailoverText extends LessonText {
 	addHint: string;
 	statusUp: string;
 	statusDown: string;
+	regions: Record<string, string>;
 }
 
 export type Lesson = {
