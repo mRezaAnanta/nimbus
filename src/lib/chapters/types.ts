@@ -65,6 +65,18 @@ export interface CableText extends LessonText {
 	dests: Record<string, string>;
 }
 
+export interface AZText extends LessonText {
+	regionLabel: string;
+	zonePrefix: string;
+	serverLabel: string;
+	place: string;
+	trigger: string;
+	outage: string;
+	statusUp: string;
+	statusDown: string;
+	activeZones: string;
+}
+
 export type Lesson = {
 	id: string;
 	mood: Mood;
