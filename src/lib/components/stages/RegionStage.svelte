@@ -17,25 +17,62 @@
 		$props();
 	const tx = $derived(text as RegionText);
 
-	type RId = 'jkt' | 'sg' | 'tyo' | 'fra' | 'iad' | 'sao';
-	type LabelPos = 'below' | 'left' | 'right';
-	// lon/lat drive the globe; fx/fy + labelPos are the hand-tuned flat-map layout.
-	type Region = { id: RId; code: string; lon: number; lat: number; ms: number; fx: number; fy: number; labelPos: LabelPos };
+	// code drives the city label (text files) and is the unique key; lon/lat drive
+	// both the globe and the flat map (flat x/y are computed from lon/lat below).
+	type Region = { code: string; lon: number; lat: number; ms: number };
 
-	const users = { lon: -58.4, lat: -34.6, fx: 316, fy: 312 }; // Buenos Aires, Argentina
+	const users = { lon: -58.4, lat: -34.6 }; // Buenos Aires, Argentina
+
+	// Every AWS region in the standard commercial partition. ms is the estimated
+	// round-trip latency from Argentina (smaller is closer/faster).
 	const regions: Region[] = [
-		{ id: 'sao', code: 'sa-east-1', lon: -46.6, lat: -23.5, ms: 24, fx: 356, fy: 287, labelPos: 'right' },
-		{ id: 'iad', code: 'us-east-1', lon: -77.5, lat: 39.0, ms: 120, fx: 273, fy: 120, labelPos: 'below' },
-		{ id: 'fra', code: 'eu-central-1', lon: 8.68, lat: 50.1, ms: 220, fx: 503, fy: 90, labelPos: 'below' },
-		{ id: 'tyo', code: 'ap-northeast-1', lon: 139.7, lat: 35.7, ms: 290, fx: 852, fy: 129, labelPos: 'below' },
-		{ id: 'sg', code: 'ap-southeast-1', lon: 103.8, lat: 1.35, ms: 340, fx: 757, fy: 216, labelPos: 'left' },
-		{ id: 'jkt', code: 'ap-southeast-3', lon: 106.85, lat: -6.2, ms: 350, fx: 778, fy: 246, labelPos: 'right' }
+		// South America
+		{ code: 'sa-east-1', lon: -46.6, lat: -23.5, ms: 24 },
+		// North America
+		{ code: 'us-east-1', lon: -77.5, lat: 39.0, ms: 120 },
+		{ code: 'us-east-2', lon: -82.99, lat: 39.96, ms: 128 },
+		{ code: 'us-west-1', lon: -121.96, lat: 37.35, ms: 155 },
+		{ code: 'us-west-2', lon: -122.0, lat: 45.5, ms: 165 },
+		{ code: 'ca-central-1', lon: -73.6, lat: 45.5, ms: 130 },
+		{ code: 'ca-west-1', lon: -114.07, lat: 51.05, ms: 175 },
+		{ code: 'mx-central-1', lon: -100.39, lat: 20.59, ms: 150 },
+		// Europe
+		{ code: 'eu-west-1', lon: -6.26, lat: 53.35, ms: 210 },
+		{ code: 'eu-west-2', lon: -0.12, lat: 51.5, ms: 213 },
+		{ code: 'eu-west-3', lon: 2.35, lat: 48.85, ms: 216 },
+		{ code: 'eu-central-1', lon: 8.68, lat: 50.1, ms: 220 },
+		{ code: 'eu-central-2', lon: 8.54, lat: 47.37, ms: 224 },
+		{ code: 'eu-south-1', lon: 9.19, lat: 45.46, ms: 228 },
+		{ code: 'eu-south-2', lon: -0.88, lat: 41.65, ms: 205 },
+		{ code: 'eu-north-1', lon: 18.07, lat: 59.33, ms: 235 },
+		// Africa
+		{ code: 'af-south-1', lon: 18.42, lat: -33.93, ms: 330 },
+		// Middle East
+		{ code: 'il-central-1', lon: 34.78, lat: 32.07, ms: 310 },
+		{ code: 'me-south-1', lon: 50.58, lat: 26.07, ms: 335 },
+		{ code: 'me-central-1', lon: 55.27, lat: 25.2, ms: 345 },
+		// Asia Pacific
+		{ code: 'ap-south-1', lon: 72.88, lat: 19.08, ms: 320 },
+		{ code: 'ap-south-2', lon: 78.49, lat: 17.39, ms: 325 },
+		{ code: 'ap-east-1', lon: 114.16, lat: 22.32, ms: 330 },
+		{ code: 'ap-east-2', lon: 121.56, lat: 25.03, ms: 335 },
+		{ code: 'ap-northeast-1', lon: 139.7, lat: 35.7, ms: 290 },
+		{ code: 'ap-northeast-2', lon: 126.98, lat: 37.57, ms: 300 },
+		{ code: 'ap-northeast-3', lon: 135.5, lat: 34.69, ms: 295 },
+		{ code: 'ap-southeast-1', lon: 103.8, lat: 1.35, ms: 340 },
+		{ code: 'ap-southeast-2', lon: 151.21, lat: -33.87, ms: 305 },
+		{ code: 'ap-southeast-3', lon: 106.85, lat: -6.2, ms: 350 },
+		{ code: 'ap-southeast-4', lon: 144.96, lat: -37.81, ms: 312 },
+		{ code: 'ap-southeast-5', lon: 101.69, lat: 3.14, ms: 345 },
+		{ code: 'ap-southeast-7', lon: 100.5, lat: 13.75, ms: 348 }
 	];
 
 	let mode = $state<'flat' | 'globe'>('flat');
 
 	// ---- shared selection state ----
 	let selected = $state<Region | null>(null);
+	let hovered = $state<Region | null>(null);
+	const active = $derived(hovered ?? selected);
 	let tried = $state<string[]>([]);
 	let browser = $state<'idle' | 'loading' | 'loaded'>('idle');
 	let fired = false;
@@ -46,7 +83,7 @@
 		if (suppressClick) return;
 		selected = r;
 		latency.target = r.ms;
-		if (!tried.includes(r.id)) tried = [...tried, r.id];
+		if (!tried.includes(r.code)) tried = [...tried, r.code];
 		if (loadTimer) clearTimeout(loadTimer);
 		browser = 'loading';
 		loadTimer = setTimeout(() => (browser = 'loaded'), Math.min(2000, 250 + r.ms * 5));
@@ -73,15 +110,40 @@
 		danger: 'bg-danger-soft text-danger'
 	};
 
-	// ---- flat map ----
+	// ---- flat map (equirectangular, cropped 84N..56S to match WorldMap) ----
 	const FLAT_W = 960;
 	const FLAT_H = 373.33;
+	function fx(lon: number) {
+		return ((lon + 180) / 360) * FLAT_W;
+	}
+	function fy(lat: number) {
+		return ((84 - lat) / 140) * FLAT_H;
+	}
+	const userFx = $derived(fx(users.lon));
+	const userFy = $derived(fy(users.lat));
 	function arcFlat(r: Region) {
-		const cx = (users.fx + r.fx) / 2;
-		const cy = Math.min(users.fy, r.fy) - 70;
-		return `M ${users.fx} ${users.fy} Q ${cx} ${cy} ${r.fx} ${r.fy}`;
+		const ux = fx(users.lon);
+		const uy = fy(users.lat);
+		const rx = fx(r.lon);
+		const ry = fy(r.lat);
+		const cx = (ux + rx) / 2;
+		const cy = Math.min(uy, ry) - 70;
+		return `M ${ux} ${uy} Q ${cx} ${cy} ${rx} ${ry}`;
 	}
 	const flatArc = $derived(selected ? arcFlat(selected) : '');
+
+	// label placement for the one active pin (keeps it inside the frame)
+	function flatLabel(r: Region) {
+		const x = fx(r.lon);
+		const y = fy(r.lat);
+		const anchor = x > 820 ? 'end' : x < 140 ? 'start' : 'middle';
+		const lx = anchor === 'end' ? x - 13 : anchor === 'start' ? x + 13 : x;
+		const side = anchor !== 'middle';
+		const below = y < FLAT_H - 60;
+		const nameY = side ? y - 1 : below ? y + 24 : y - 19;
+		const codeY = side ? y + 13 : below ? y + 37 : y - 6;
+		return { anchor, lx, nameY, codeY };
+	}
 
 	// ---- globe ----
 	const SIZE = 440;
@@ -162,38 +224,41 @@
 				<WorldMap />
 
 				{#if flatArc}
-					{#key selected?.id}
+					{#key selected?.code}
 						<path d={flatArc} fill="none" stroke="#2e6fe0" stroke-width="2.5" stroke-linecap="round" class="arc" />
 					{/key}
 				{/if}
 
-				{#each regions as r (r.id)}
+				{#each regions as r (r.code)}
+					{@const x = fx(r.lon)}
+					{@const y = fy(r.lat)}
+					{@const on = selected?.code === r.code || hovered?.code === r.code}
 					<g
 						class="pin"
 						role="button"
 						tabindex="0"
-						aria-label={tx.cities[r.id]}
+						aria-label={tx.cities[r.code]}
 						onclick={() => pick(r)}
 						onkeydown={(e) => e.key === 'Enter' && pick(r)}
+						onpointerenter={() => (hovered = r)}
+						onpointerleave={() => hovered === r && (hovered = null)}
 					>
-						<circle cx={r.fx} cy={r.fy} r="14" fill="transparent" />
-						<circle cx={r.fx} cy={r.fy} r="7" fill={selected?.id === r.id ? '#2e6fe0' : '#fff'} stroke="#2e6fe0" stroke-width="2.5" />
-						{#if r.labelPos === 'left'}
-							<text x={r.fx - 13} y={r.fy - 1} text-anchor="end" fill="#16212b" font-size="13" font-weight="600">{tx.cities[r.id]}</text>
-							<text x={r.fx - 13} y={r.fy + 13} text-anchor="end" fill="#8a949d" font-size="10.5">{r.code}</text>
-						{:else if r.labelPos === 'right'}
-							<text x={r.fx + 13} y={r.fy - 1} text-anchor="start" fill="#16212b" font-size="13" font-weight="600">{tx.cities[r.id]}</text>
-							<text x={r.fx + 13} y={r.fy + 13} text-anchor="start" fill="#8a949d" font-size="10.5">{r.code}</text>
-						{:else}
-							<text x={r.fx} y={r.fy + 23} text-anchor="middle" fill="#16212b" font-size="13" font-weight="600">{tx.cities[r.id]}</text>
-							<text x={r.fx} y={r.fy + 37} text-anchor="middle" fill="#8a949d" font-size="10.5">{r.code}</text>
-						{/if}
+						<circle cx={x} cy={y} r="11" fill="transparent" />
+						<circle cx={x} cy={y} r={on ? 6.5 : 4.5} fill={selected?.code === r.code ? '#2e6fe0' : '#fff'} stroke="#2e6fe0" stroke-width="2.5" />
 					</g>
 				{/each}
 
-				<circle cx={users.fx} cy={users.fy} r="12" fill="#dd9e36" opacity="0.25" class="pulse" />
-				<circle cx={users.fx} cy={users.fy} r="6.5" fill="#16212b" />
-				<text x={users.fx} y={users.fy + 26} text-anchor="middle" fill="#16212b" font-size="13" font-weight="700">{tx.users}</text>
+				{#if active}
+					{@const lp = flatLabel(active)}
+					<g class="lbl" pointer-events="none">
+						<text x={lp.lx} y={lp.nameY} text-anchor={lp.anchor} fill="#16212b" font-size="13" font-weight="600">{tx.cities[active.code]}</text>
+						<text x={lp.lx} y={lp.codeY} text-anchor={lp.anchor} fill="#8a949d" font-size="10.5">{active.code}</text>
+					</g>
+				{/if}
+
+				<circle cx={userFx} cy={userFy} r="12" fill="#dd9e36" opacity="0.25" class="pulse" />
+				<circle cx={userFx} cy={userFy} r="6.5" fill="#16212b" />
+				<text x={userFx} y={userFy + 26} text-anchor="middle" fill="#16212b" font-size="13" font-weight="700">{tx.users}</text>
 			</svg>
 		{:else}
 			<svg
@@ -216,24 +281,35 @@
 					<path d={globeArc} fill="none" stroke="#2e6fe0" stroke-width="2.5" stroke-linecap="round" />
 				{/if}
 
-				{#each regions as r (r.id)}
+				{#each regions as r (r.code)}
 					{@const p = project(r.lon, r.lat)}
 					{#if p}
+						{@const on = selected?.code === r.code || hovered?.code === r.code}
 						<g
 							class="pin"
 							role="button"
 							tabindex="0"
-							aria-label={tx.cities[r.id]}
+							aria-label={tx.cities[r.code]}
 							onclick={() => pick(r)}
 							onkeydown={(e) => e.key === 'Enter' && pick(r)}
+							onpointerenter={() => (hovered = r)}
+							onpointerleave={() => hovered === r && (hovered = null)}
 						>
-							<circle cx={p[0]} cy={p[1]} r="13" fill="transparent" />
-							<circle cx={p[0]} cy={p[1]} r="6.5" fill={selected?.id === r.id ? '#2e6fe0' : '#fff'} stroke="#2e6fe0" stroke-width="2.5" />
-							<text x={p[0]} y={p[1] + 18} text-anchor="middle" fill="#16212b" font-size="11" font-weight="600">{tx.cities[r.id]}</text>
-							<text x={p[0]} y={p[1] + 30} text-anchor="middle" fill="#5e6b76" font-size="9">{r.code}</text>
+							<circle cx={p[0]} cy={p[1]} r="11" fill="transparent" />
+							<circle cx={p[0]} cy={p[1]} r={on ? 6.5 : 4} fill={selected?.code === r.code ? '#2e6fe0' : '#fff'} stroke="#2e6fe0" stroke-width="2.5" />
 						</g>
 					{/if}
 				{/each}
+
+				{#if active}
+					{@const p = project(active.lon, active.lat)}
+					{#if p}
+						<g pointer-events="none">
+							<text x={p[0]} y={p[1] - 12} text-anchor="middle" fill="#16212b" font-size="12" font-weight="600">{tx.cities[active.code]}</text>
+							<text x={p[0]} y={p[1] + 22} text-anchor="middle" fill="#5e6b76" font-size="10">{active.code}</text>
+						</g>
+					{/if}
+				{/if}
 
 				{#if usersPt}
 					<circle cx={usersPt[0]} cy={usersPt[1]} r="11" fill="#dd9e36" opacity="0.25" class="pulse" />
@@ -251,7 +327,7 @@
 		<div class="border-line bg-card w-[150px] rounded-2xl border p-4 text-center md:w-full">
 			{#if selected}
 				{@const vk = verdictKey(selected.ms)}
-				<p class="text-ink text-sm font-semibold">{tx.cities[selected.id]}</p>
+				<p class="text-ink text-sm font-semibold">{tx.cities[selected.code]}</p>
 				<p class="text-faint text-[11px]">{selected.code}</p>
 				<p class="mt-2 text-3xl font-bold tabular-nums {toneText[tone[vk]]}">
 					{Math.round(latency.current)}<span class="text-muted text-sm font-medium"> {tx.ms}</span>
@@ -295,6 +371,9 @@
 	}
 	.pin:hover circle[stroke] {
 		stroke-width: 3.5;
+	}
+	.lbl {
+		pointer-events: none;
 	}
 	.pulse {
 		transform-box: fill-box;

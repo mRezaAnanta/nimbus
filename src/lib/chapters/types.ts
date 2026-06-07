@@ -51,7 +51,7 @@ export interface RegionText extends LessonText {
 	globeLabel: string;
 	ms: string;
 	verdicts: { instant: string; fast: string; ok: string; slow: string; laggy: string };
-	cities: Record<'jkt' | 'sg' | 'tyo' | 'fra' | 'iad' | 'sao', string>;
+	cities: Record<string, string>;
 }
 
 export type Lesson = {
