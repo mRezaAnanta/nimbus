@@ -3,12 +3,12 @@ import type { CloudText } from '../../types';
 export const en: CloudText = {
 	title: 'What is the cloud?',
 	intro: [
-		'That server has to live somewhere. Two ways: run it yourself (called <b>on-premise</b>) or rent it in the <b>cloud</b>.',
-		'Many people think the cloud is something magical in the sky. But the cloud is <b>just servers too</b>. The difference is they live in a company’s <i>data center</i>, not your house, and you simply rent them without ever seeing the machines.',
-		'To feel the difference, click both: hosting the server yourself vs renting in the cloud.'
+		'That server has to live somewhere. There are two ways, run it yourself (called <b>on-premise</b>) or rent it in the <b>cloud</b>.',
+		'Many people think the cloud is something magical in the sky. But the cloud is... <b>just servers too</b>. The difference is they live in a company’s <i>data center</i>, not your house, and you simply rent them without ever seeing the machines.',
+		'To feel the difference, click both options above, the server at your home and the server in the cloud.'
 	],
 	reactions: {
-		home: 'Running it yourself at home or the office is <b>on-premise</b>. Look above: when the power cuts, your site goes down with it.',
+		home: 'Running it yourself at home or the office is <b>on-premise</b>. Look above, when the power cuts, your site goes down with it.',
 		cloud: 'You picked the <b>cloud</b>. The server runs 24/7 in a data center, so it rarely goes down. Now compare it with <b>on-premise</b>.',
 		both: 'See the difference? <b>On-premise</b> can fail on its own, while the <b>cloud</b> is far more stable and pay as you go.'
 	},
