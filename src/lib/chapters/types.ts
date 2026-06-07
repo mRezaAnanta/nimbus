@@ -77,6 +77,18 @@ export interface AZText extends LessonText {
 	activeZones: string;
 }
 
+export interface FailoverText extends LessonText {
+	primaryLabel: string;
+	standbyLabel: string;
+	serving: string;
+	standbyState: string;
+	failingOver: string;
+	kill: string;
+	addHint: string;
+	statusUp: string;
+	statusDown: string;
+}
+
 export type Lesson = {
 	id: string;
 	mood: Mood;

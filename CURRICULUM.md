@@ -51,18 +51,18 @@ The physical reality under the word "cloud".
 - [x] **Cable**. Data crosses oceans through real undersea cables, not satellites. Stage: send
   data from Argentina to a far data center and follow it along the real cable route.
 
-## Chapter 2: Ketahanan (Resilience) [next]
+## Chapter 2: Ketahanan (Resilience) [shipped]
 
 One copy in one place is fragile. Survive failures.
 
-- [ ] **Availability Zone**. A region holds several isolated data centers; one can fail without
+- [x] **Availability Zone**. A region holds several isolated data centers; one can fail without
   taking the rest down. Stage: run the app in one zone and trigger a "storm" (outage), the site
   goes down; spread it across two or three zones, trigger an outage again, the site stays up.
-- [ ] **Redundancy and Failover**. No single point of failure; keep a standby and switch to it
-  on failure. Stage: the primary goes dark and a standby takes over seamlessly. Reality tie: a
-  spare tire.
+- [x] **Failover**. No single point of failure; keep a standby and switch to it on failure.
+  Stage: kill the lone primary and the site goes down; add a standby, kill the primary again,
+  and traffic fails over to the standby so the site stays up. Reality tie: a spare tire.
 
-## Chapter 3: Lalu Lintas (Traffic) [planned]
+## Chapter 3: Lalu Lintas (Traffic) [next]
 
 Serve many users at once without falling over.
 
