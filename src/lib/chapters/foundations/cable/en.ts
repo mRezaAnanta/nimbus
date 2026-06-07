@@ -1,0 +1,30 @@
+import type { CableText } from '../../types';
+
+export const en: CableText = {
+	title: 'How does data travel?',
+	intro: [
+		'We saw that distance creates latency. But what does your data actually travel through to reach a server in another country?',
+		'Many people think it goes through satellites in the sky. In reality almost all of it, around 99%, travels through <b>fiber optic cables on the seabed</b>. The data is sent as pulses of light through glass as thin as a hair.',
+		'The thin lines on this map are real undersea cables that are live right now.',
+		'Each cable comes ashore at a spot called a <b>landing station</b> (those little dots). From there the data enters the land network, then reaches the data center.',
+		'Now try sending data from your users in Argentina to one of the destinations, and follow its journey.'
+	],
+	reactions: {
+		leaving: 'Your data leaves the phone, through the router and ISP, heading for the coast...',
+		undersea: 'Now it dives, crossing the seabed through cable, thousands of kilometers...',
+		near: 'Arrived! The destination is close, the cable is short, so the data gets there fast.',
+		far: 'It arrived. But your data just crossed half the planet through cable. That is why farther means slower.'
+	},
+	users: 'Your users',
+	prompt: 'Click a destination to send data',
+	again: 'Click again to resend',
+	phases: {
+		leaving: 'Leaving the phone toward the coast',
+		undersea: 'Crossing the seabed',
+		arrived: 'Arrived at the data center'
+	},
+	cablesNote: 'The thin lines are live undersea cables',
+	routeNote: 'Example route, the real path can vary by carrier.',
+	credit: 'Cable data by TeleGeography',
+	dests: { 'sa-east-1': 'São Paulo', 'eu-central-1': 'Frankfurt', 'ap-northeast-1': 'Tokyo' }
+};

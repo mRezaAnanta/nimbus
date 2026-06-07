@@ -54,6 +54,17 @@ export interface RegionText extends LessonText {
 	cities: Record<string, string>;
 }
 
+export interface CableText extends LessonText {
+	users: string;
+	prompt: string;
+	again: string;
+	phases: { leaving: string; undersea: string; arrived: string };
+	cablesNote: string;
+	routeNote: string;
+	credit: string;
+	dests: Record<string, string>;
+}
+
 export type Lesson = {
 	id: string;
 	mood: Mood;
