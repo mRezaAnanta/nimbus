@@ -120,6 +120,8 @@
 			s.add(c.code + 'a');
 			servers = s;
 		}
+		// Nim explains the AZ naming for this specific region, only after entering it.
+		onstate?.(k);
 	}
 	function back() {
 		if (striking) return;
