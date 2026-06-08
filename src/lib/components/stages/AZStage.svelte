@@ -203,6 +203,19 @@
 				<svg viewBox="0 0 {RW} {RH}" class="h-full w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label={tx.regions[region]}>
 					<rect width={RW} height={RH} fill="#eaf2fc" />
 					<path d={detail.path} fill="#cdddef" stroke="#4d82c9" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+					<text
+						x={RW / 2}
+						y={RH * 0.5}
+						text-anchor="middle"
+						dominant-baseline="middle"
+						fill="#42587a"
+						opacity="0.2"
+						font-size="46"
+						font-weight="800"
+						letter-spacing="3"
+					>
+						{tx.regions[region].toUpperCase()}
+					</text>
 					{#each cfg.azs as a (a.l)}
 						{@const azId = cfg.code + a.l}
 						{@const p = detail.proj([a.lon, a.lat])}
