@@ -3,9 +3,10 @@ import type { AZText } from '../../types';
 export const en: AZText = {
 	title: 'What is an Availability Zone?',
 	intro: [
-		'This is not just theory. Watch first, recently a real data center was actually attacked.',
-		'And not just once. Iranian drones hit AWS data centers in the United Arab Emirates and Bahrain, there was even a claimed strike on Oracle in Dubai, and many services there went down.',
-		'So a data center can hit real trouble, not only a power cut but a disaster or even an attack. The question is, how does your site stay up when a whole building falls?',
+		'Real data centers have actually been attacked.',
+		'And not just attacked. Fire, floods, earthquakes, lightning, even a wrong command, all have taken data centers down.',
+		'Hardware fails too, a single disk or server can die at any time, but that is usually handled by redundancy inside the data center.',
+		'The bigger danger is when a whole data center building falls. The question is, how does your site stay up when that happens?',
 		'The answer is, a <b>region</b> is not a single building. Inside it are several separate data centers called <b>Availability Zones</b> (AZ), set far apart with their own power and network.',
 		'Try it. Click a region to go inside, spread your servers across several AZs, then trigger an outage.'
 	],
@@ -47,6 +48,26 @@ export const en: AZText = {
 			src: 'Data Center Dynamics, 2022',
 			head: 'London heatwave, cooling fails, cloud services go down',
 			url: 'https://www.datacenterdynamics.com/en/news/googles-london-data-center-outage-during-heatwave-caused-by-simultaneous-failure-of-multiple-redundant-cooling-systems/'
+		},
+		{
+			src: 'Data Center Dynamics, 2012',
+			head: 'Hurricane Sandy floods data centers in New York',
+			url: 'https://www.datacenterdynamics.com/en/news/hurricane-sandy-data-center-stories-from-manhattan/'
+		},
+		{
+			src: 'Data Center Dynamics, 2015',
+			head: "Lightning hits Google's Belgium data center, some data lost",
+			url: 'https://www.datacenterdynamics.com/en/news/lightning-strikes-and-old-disks-cause-google-data-loss/'
+		},
+		{
+			src: 'Engineering at Meta, 2021',
+			head: 'A wrong command erased Facebook from the internet for six hours',
+			url: 'https://engineering.fb.com/2021/10/05/networking-traffic/outage-details/'
+		},
+		{
+			src: 'Fastly, 2021',
+			head: 'One config bug knocked major websites offline',
+			url: 'https://www.fastly.com/blog/summary-of-june-8-outage'
 		},
 		{
 			src: 'Data Center Dynamics, 2011',

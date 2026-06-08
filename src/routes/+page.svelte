@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { lang, t, setLang } from '$lib/i18n';
@@ -11,19 +10,16 @@
 	const target = `/${first.id}/${first.lessons[0].id}`;
 
 	let beat = $state(0);
-	let leaving = $state(false);
 	const lines = $derived($t.welcome);
 	const isLast = $derived(beat >= lines.length - 1);
 
-	let goTimer: ReturnType<typeof setTimeout> | undefined;
 	function next() {
-		if (leaving) return;
 		if (!isLast) {
 			beat += 1;
 			return;
 		}
-		leaving = true; // Nim glides toward the corner, then we enter the first lesson
-		goTimer = setTimeout(() => goto(target), 650);
+		// The view transition in the root layout glides Nim from here to the lesson corner.
+		goto(target);
 	}
 	function onKey(e: KeyboardEvent) {
 		if (e.code === 'Space') {
@@ -31,7 +27,6 @@
 			next();
 		}
 	}
-	onDestroy(() => clearTimeout(goTimer));
 </script>
 
 <svelte:head>
@@ -63,10 +58,10 @@
 	</header>
 
 	<main class="flex flex-1 items-center justify-center p-6">
-		<div class="intro flex items-end gap-2" class:leaving>
-			<!-- Nim, bobbing -->
-			<div class="float shrink-0 self-end">
-				<Nim mood="happy" size={128} />
+		<div class="flex items-end gap-2">
+			<!-- Nim, bobbing (glides to the lesson corner via the view transition) -->
+			<div class="float shrink-0 self-end" style="view-transition-name: nim">
+				<Nim mood="happy" size={180} />
 			</div>
 
 			<!-- cloud bubble -->
@@ -107,15 +102,6 @@
 </div>
 
 <style>
-	.intro {
-		transition:
-			transform 0.65s cubic-bezier(0.4, 0, 0.2, 1),
-			opacity 0.5s ease;
-	}
-	.intro.leaving {
-		transform: translate(-30vw, 28vh) scale(0.82);
-		opacity: 0;
-	}
 	.float {
 		animation: float 3s ease-in-out infinite;
 	}

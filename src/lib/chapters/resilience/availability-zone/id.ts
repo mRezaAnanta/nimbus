@@ -3,9 +3,10 @@ import type { AZText } from '../../types';
 export const id: AZText = {
 	title: 'Apa itu Availability Zone?',
 	intro: [
-		'Ini bukan teori. Lihat dulu, baru-baru ini data center sungguhan benar-benar diserang.',
-		'Bukan cuma sekali. Drone Iran menghantam data center AWS di Uni Emirat Arab dan Bahrain, bahkan ada klaim serangan ke Oracle di Dubai, dan banyak layanan di sana mati.',
-		'Artinya data center bisa kena masalah nyata, bukan cuma mati listrik, tapi juga bencana bahkan serangan. Pertanyaannya, gimana caranya website tetap jalan walau satu gedung tumbang?',
+		'Data center sungguhan pernah benar-benar diserang.',
+		'Bukan cuma serangan. Kebakaran, banjir, gempa, petir, sampai salah konfigurasi, semuanya pernah menjatuhkan data center.',
+		'Hardware juga sering rusak, satu disk atau server bisa mati kapan saja, tapi itu biasanya sudah ditangani redundansi di dalam data center.',
+		'Yang lebih bahaya kalau satu gedung data center utuh tumbang. Pertanyaannya, gimana caranya website tetap jalan kalau itu terjadi?',
 		'Jawabannya, satu <b>region</b> itu bukan satu gedung. Di dalamnya ada beberapa data center terpisah, namanya <b>Availability Zone</b> (AZ), letaknya berjauhan dengan listrik dan jaringan sendiri-sendiri.',
 		'Coba sendiri. Klik sebuah region untuk masuk ke dalamnya, sebar server-mu ke beberapa AZ, lalu picu gangguan.'
 	],
@@ -47,6 +48,26 @@ export const id: AZText = {
 			src: 'Data Center Dynamics, 2022',
 			head: 'Gelombang panas London, pendingin gagal, layanan cloud tumbang',
 			url: 'https://www.datacenterdynamics.com/en/news/googles-london-data-center-outage-during-heatwave-caused-by-simultaneous-failure-of-multiple-redundant-cooling-systems/'
+		},
+		{
+			src: 'Data Center Dynamics, 2012',
+			head: 'Banjir Badai Sandy melumpuhkan data center di New York',
+			url: 'https://www.datacenterdynamics.com/en/news/hurricane-sandy-data-center-stories-from-manhattan/'
+		},
+		{
+			src: 'Data Center Dynamics, 2015',
+			head: 'Petir menyambar data center Google di Belgia, sebagian data hilang',
+			url: 'https://www.datacenterdynamics.com/en/news/lightning-strikes-and-old-disks-cause-google-data-loss/'
+		},
+		{
+			src: 'Engineering at Meta, 2021',
+			head: 'Salah perintah membuat Facebook hilang dari internet 6 jam',
+			url: 'https://engineering.fb.com/2021/10/05/networking-traffic/outage-details/'
+		},
+		{
+			src: 'Fastly, 2021',
+			head: 'Satu bug konfigurasi menumbangkan banyak situs besar',
+			url: 'https://www.fastly.com/blog/summary-of-june-8-outage'
 		},
 		{
 			src: 'Data Center Dynamics, 2011',

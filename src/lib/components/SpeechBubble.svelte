@@ -24,8 +24,8 @@
 </script>
 
 <div class="flex items-end gap-2">
-	<!-- Nim, the character -->
-	<div class="shrink-0 self-end">
+	<!-- Nim, the character (shared element that glides in from the landing page) -->
+	<div class="shrink-0 self-end" style="view-transition-name: nim">
 		<span class="block md:hidden"><Nim {mood} size={64} /></span>
 		<span class="hidden md:block"><Nim {mood} size={116} /></span>
 	</div>

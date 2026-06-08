@@ -70,11 +70,15 @@
 	const meL = (meX / FLAT_W) * 100;
 	const meT = (meY / FLAT_H) * 100;
 	const NEWS_POS = [
-		{ l: 4, t: 9 },
-		{ l: 34, t: 5 },
-		{ l: 60, t: 12 },
-		{ l: 8, t: 46 },
-		{ l: 42, t: 52 }
+		{ l: 3, t: 6 },
+		{ l: 29, t: 4 },
+		{ l: 55, t: 5 },
+		{ l: 77, t: 13 },
+		{ l: 3, t: 32 },
+		{ l: 78, t: 39 },
+		{ l: 76, t: 63 },
+		{ l: 44, t: 64 },
+		{ l: 57, t: 47 }
 	];
 
 	let region = $state<RegionKey | null>(null);
@@ -97,7 +101,7 @@
 	let it3: ReturnType<typeof setTimeout> | undefined;
 	let it4: ReturnType<typeof setTimeout> | undefined;
 
-	const introMode = $derived(beat === 0 && region === null);
+	const introMode = $derived(beat <= 1 && region === null);
 	const inRegion = $derived(region !== null);
 	const cfg = $derived(region ? REGIONS[region] : null);
 	const siteDown = $derived(browser === 'offline');
@@ -150,11 +154,15 @@
 		browser = 'loaded';
 		clearTimeout(t1);
 		clearTimeout(t2);
-		if (beat === 0) {
+		// Beats 0 and 1 are the news intro: keep the stage un-dimmed. The strike plays on
+		// beat 0; the news stay up through beat 1 while Nim names the cases.
+		if (beat <= 1) {
 			onshow?.(true);
-			if (!introPlayed) {
+			if (beat === 0 && !introPlayed) {
 				introPlayed = true;
 				playIntro();
+			} else if (beat === 1) {
+				onlock?.(false);
 			}
 		} else {
 			onshow?.(false);
@@ -526,9 +534,9 @@
 	}
 	.newscard {
 		display: block;
-		width: 196px;
-		max-width: 46%;
-		padding: 9px 11px;
+		width: 172px;
+		max-width: 40%;
+		padding: 8px 10px;
 		border-radius: 12px;
 		background: #ffffff;
 		border: 1px solid #e7ecf2;
@@ -552,15 +560,15 @@
 		}
 	}
 	.src {
-		font-size: 10px;
+		font-size: 9px;
 		font-weight: 700;
 		color: #2e6fe0;
 	}
 	.head {
 		margin-top: 2px;
-		font-size: 11.5px;
+		font-size: 10.5px;
 		font-weight: 600;
-		line-height: 1.25;
+		line-height: 1.22;
 		color: #16212b;
 	}
 </style>
