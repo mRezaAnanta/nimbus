@@ -28,9 +28,30 @@ export const id: AZText = {
 	regions: { virginia: 'Virginia', singapore: 'Singapura' },
 	strikeLabel: 'Timur Tengah',
 	news: [
-		{ src: 'Financial Times, 1 Mar 2026', head: 'Drone Iran menghantam dua data center AWS di Uni Emirat Arab' },
-		{ src: 'Financial Times, 1 Apr 2026', head: 'Drone Iran menyerang data center Amazon di Bahrain' },
-		{ src: 'Media Iran, 2 Apr 2026', head: 'Klaim serangan ke data center Oracle di Dubai' },
-		{ src: 'CNBC, 7 Apr 2026', head: 'AWS kerja 24 jam menjaga layanan di Timur Tengah' }
+		{
+			src: 'CNBC, 2026',
+			head: 'Drone Iran menghantam data center AWS di Timur Tengah',
+			url: 'https://www.cnbc.com/2026/04/07/aws-iran-threats-us-tech-data-centers.html'
+		},
+		{
+			src: 'Data Center Dynamics, 2021',
+			head: 'Kebakaran menghancurkan data center OVHcloud di Strasbourg',
+			url: 'https://www.datacenterdynamics.com/en/news/fire-destroys-ovhclouds-sbg2-data-center-strasbourg/'
+		},
+		{
+			src: 'Amazon Web Services, 2021',
+			head: 'Gangguan besar melumpuhkan region us-east-1 (Virginia)',
+			url: 'https://aws.amazon.com/message/12721/'
+		},
+		{
+			src: 'Data Center Dynamics, 2022',
+			head: 'Gelombang panas London, pendingin gagal, layanan cloud tumbang',
+			url: 'https://www.datacenterdynamics.com/en/news/googles-london-data-center-outage-during-heatwave-caused-by-simultaneous-failure-of-multiple-redundant-cooling-systems/'
+		},
+		{
+			src: 'Data Center Dynamics, 2011',
+			head: 'Gempa besar Jepang, pemadaman dan krisis bahan bakar tekan data center',
+			url: 'https://www.datacenterdynamics.com/en/news/the-after-effect-of-the-japanese-earthquake/'
+		}
 	]
 };

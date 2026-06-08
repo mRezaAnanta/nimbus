@@ -34,8 +34,6 @@
 
 	type Az = { l: string; lon: number; lat: number };
 	type RegionKey = 'virginia' | 'singapore';
-	// Real AZ counts: us-east-1 has 6, ap-southeast-1 has 3. The points are illustrative, spread
-	// across the region for clarity (real AZs sit much closer together).
 	const REGIONS: Record<RegionKey, { code: string; lon: number; lat: number; azs: Az[] }> = {
 		virginia: {
 			code: 'us-east-1',
@@ -66,14 +64,17 @@
 	const RW = 600;
 	const RH = 360;
 
-	// Intro strike target (UAE / Bahrain area) and news popup positions.
+	// Intro strike target (UAE / Bahrain area) and scattered news popup positions.
 	const meX = wx(52);
 	const meY = wy(25);
+	const meL = (meX / FLAT_W) * 100;
+	const meT = (meY / FLAT_H) * 100;
 	const NEWS_POS = [
-		{ l: 8, t: 10 },
-		{ l: 54, t: 8 },
-		{ l: 33, t: 35 },
-		{ l: 60, t: 49 }
+		{ l: 4, t: 9 },
+		{ l: 34, t: 5 },
+		{ l: 60, t: 12 },
+		{ l: 8, t: 46 },
+		{ l: 42, t: 52 }
 	];
 
 	let region = $state<RegionKey | null>(null);
@@ -88,12 +89,13 @@
 
 	// intro sequence (beat 0)
 	let introStrike = $state(false);
-	let introStruck = $state(false);
+	let introBoom = $state(false);
 	let showNews = $state(false);
 	let introPlayed = false;
 	let it1: ReturnType<typeof setTimeout> | undefined;
 	let it2: ReturnType<typeof setTimeout> | undefined;
 	let it3: ReturnType<typeof setTimeout> | undefined;
+	let it4: ReturnType<typeof setTimeout> | undefined;
 
 	const introMode = $derived(beat === 0 && region === null);
 	const inRegion = $derived(region !== null);
@@ -155,9 +157,13 @@
 	function playIntro() {
 		onlock?.(true);
 		introStrike = true;
-		it1 = setTimeout(() => (introStruck = true), 1150);
-		it2 = setTimeout(() => (showNews = true), 1350);
-		it3 = setTimeout(() => onlock?.(false), 4800);
+		it1 = setTimeout(() => {
+			introStrike = false; // missile reaches the target and is gone
+			introBoom = true; // explosion bursts
+		}, 1100);
+		it2 = setTimeout(() => (introBoom = false), 1850); // explosion fades out and disappears
+		it3 = setTimeout(() => (showNews = true), 1400);
+		it4 = setTimeout(() => onlock?.(false), 5600);
 	}
 
 	function enterRegion(k: RegionKey) {
@@ -218,6 +224,7 @@
 		clearTimeout(it1);
 		clearTimeout(it2);
 		clearTimeout(it3);
+		clearTimeout(it4);
 	});
 </script>
 
@@ -227,6 +234,33 @@
 		<rect x="3.5" y="13" width="17" height="6" rx="1.6" />
 		<circle cx="7" cy="8" r="1" fill="currentColor" stroke="none" />
 		<circle cx="7" cy="16" r="1" fill="currentColor" stroke="none" />
+	</svg>
+{/snippet}
+
+{#snippet missile()}
+	<svg width="34" height="34" viewBox="0 0 40 40" style="transform: rotate(40deg)" aria-hidden="true">
+		<path d="M12 14 L5 8 L13 16 Z" fill="#7c8a99" />
+		<path d="M12 26 L5 32 L13 24 Z" fill="#7c8a99" />
+		<rect x="10" y="16" width="16" height="8" rx="4" fill="#3a4654" />
+		<path d="M26 16 L36 20 L26 24 Z" fill="#e03131" />
+		<circle cx="15" cy="20" r="1.5" fill="#aebccb" />
+	</svg>
+{/snippet}
+
+{#snippet boom()}
+	<svg viewBox="0 0 100 100" width="96" height="96" aria-hidden="true">
+		<g stroke="#ff7a1a" stroke-width="7" stroke-linecap="round">
+			<line x1="66" y1="50" x2="96" y2="50" />
+			<line x1="61" y1="61" x2="83" y2="83" />
+			<line x1="50" y1="66" x2="50" y2="96" />
+			<line x1="39" y1="61" x2="17" y2="83" />
+			<line x1="34" y1="50" x2="4" y2="50" />
+			<line x1="39" y1="39" x2="17" y2="17" />
+			<line x1="50" y1="34" x2="50" y2="4" />
+			<line x1="61" y1="39" x2="83" y2="17" />
+		</g>
+		<circle cx="50" cy="50" r="22" fill="#ff9e2c" />
+		<circle cx="50" cy="50" r="12" fill="#ffe08a" />
 	</svg>
 {/snippet}
 
@@ -242,10 +276,7 @@
 				<WorldMap />
 
 				{#if introMode}
-					{#if introStruck}
-						<circle cx={meX} cy={meY} r="11" fill="none" stroke="#e03131" stroke-width="2.5" class="shock" />
-					{/if}
-					<rect x={meX - 7} y={meY - 7} width="14" height="14" rx="2.5" fill={introStruck ? '#e03131' : '#16212b'} />
+					<rect x={meX - 7} y={meY - 7} width="14" height="14" rx="2.5" fill="#16212b" />
 					<text x={meX} y={meY - 13} text-anchor="middle" fill="#16212b" font-size="12" font-weight="700">{tx.strikeLabel}</text>
 				{:else}
 					{#each pins as p (p.key)}
@@ -267,20 +298,28 @@
 
 			{#if introMode}
 				{#if introStrike}
-					<div class="drone-intro text-danger pointer-events-none absolute" style="--tx:{(meX / FLAT_W) * 100}%; --ty:{(meY / FLAT_H) * 100}%" aria-hidden="true">
-						<svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M2 12 L21 5 L14 12 L21 19 Z" /></svg>
+					<div class="drone-intro pointer-events-none absolute" style="--tx:{meL}%; --ty:{meT}%">
+						{@render missile()}
+					</div>
+				{/if}
+				{#if introBoom}
+					<div class="kaboom pointer-events-none absolute" style="left:{meL}%; top:{meT}%">
+						{@render boom()}
 					</div>
 				{/if}
 				{#if showNews}
 					<div class="pointer-events-none absolute inset-0">
-						{#each tx.news as n, i (n.head)}
-							<div class="newscard absolute" style="left:{NEWS_POS[i % NEWS_POS.length].l}%; top:{NEWS_POS[i % NEWS_POS.length].t}%; animation-delay:{i * 0.55 + 0.15}s">
-								<div class="thumb"></div>
-								<div class="min-w-0">
-									<p class="src">{n.src}</p>
-									<p class="head">{n.head}</p>
-								</div>
-							</div>
+						{#each tx.news as n, i (n.url)}
+							<a
+								class="newscard absolute"
+								href={n.url}
+								target="_blank"
+								rel="noopener noreferrer"
+								style="left:{NEWS_POS[i % NEWS_POS.length].l}%; top:{NEWS_POS[i % NEWS_POS.length].t}%; animation-delay:{i * 0.45 + 0.1}s"
+							>
+								<p class="src">{n.src}</p>
+								<p class="head">{n.head}</p>
+							</a>
 						{/each}
 					</div>
 				{/if}
@@ -369,8 +408,8 @@
 
 				{#key strikeKey}
 					{#if striking}
-						<div class="drone text-danger pointer-events-none absolute" aria-hidden="true">
-							<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M2 12 L21 5 L14 12 L21 19 Z" /></svg>
+						<div class="drone pointer-events-none absolute">
+							{@render missile()}
 						</div>
 					{/if}
 				{/key}
@@ -420,21 +459,6 @@
 			opacity: 0.04;
 		}
 	}
-	.shock {
-		transform-box: fill-box;
-		transform-origin: center;
-		animation: shock 0.8s ease-out;
-	}
-	@keyframes shock {
-		0% {
-			transform: scale(0.4);
-			opacity: 0.6;
-		}
-		100% {
-			transform: scale(2.6);
-			opacity: 0;
-		}
-	}
 	.drone {
 		animation: drone-fly 1.2s ease-in forwards;
 	}
@@ -455,8 +479,8 @@
 	}
 	.drone-intro {
 		left: -10%;
-		top: -8%;
-		animation: drone-strike 1.15s ease-in forwards;
+		top: -10%;
+		animation: drone-strike 1.1s ease-in forwards;
 	}
 	@keyframes drone-strike {
 		0% {
@@ -471,19 +495,47 @@
 			opacity: 1;
 		}
 	}
+	.kaboom {
+		transform: translate(-50%, -50%);
+	}
+	.kaboom :global(svg) {
+		display: block;
+		transform-origin: center;
+		animation: kaboom 0.7s ease-out forwards;
+	}
+	@keyframes kaboom {
+		0% {
+			transform: scale(0.3);
+			opacity: 1;
+		}
+		60% {
+			opacity: 0.95;
+		}
+		100% {
+			transform: scale(1.5);
+			opacity: 0;
+		}
+	}
 	.newscard {
-		display: flex;
-		gap: 8px;
-		width: 220px;
-		max-width: 44%;
-		padding: 8px 10px;
+		display: block;
+		width: 196px;
+		max-width: 46%;
+		padding: 9px 11px;
 		border-radius: 12px;
 		background: #ffffff;
 		border: 1px solid #e7ecf2;
 		box-shadow: 0 10px 26px rgba(22, 40, 60, 0.16);
+		text-decoration: none;
+		pointer-events: auto;
 		opacity: 0;
 		transform: translateY(10px) scale(0.96);
 		animation: news-pop 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+		transition:
+			box-shadow 0.15s,
+			transform 0.15s;
+	}
+	.newscard:hover {
+		box-shadow: 0 14px 30px rgba(22, 40, 60, 0.22);
 	}
 	@keyframes news-pop {
 		to {
@@ -491,20 +543,14 @@
 			transform: none;
 		}
 	}
-	.thumb {
-		flex: none;
-		width: 34px;
-		height: 34px;
-		border-radius: 6px;
-		background: linear-gradient(135deg, #d6e3f3, #c2d4ec);
-	}
 	.src {
-		font-size: 9.5px;
-		font-weight: 600;
-		color: #8a949d;
+		font-size: 10px;
+		font-weight: 700;
+		color: #2e6fe0;
 	}
 	.head {
-		font-size: 11px;
+		margin-top: 2px;
+		font-size: 11.5px;
 		font-weight: 600;
 		line-height: 1.25;
 		color: #16212b;

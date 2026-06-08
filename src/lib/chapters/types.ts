@@ -82,7 +82,7 @@ export interface AZText extends LessonText {
 	activeZones: string;
 	regions: Record<string, string>;
 	strikeLabel: string;
-	news: { src: string; head: string }[];
+	news: { src: string; head: string; url: string }[];
 }
 
 export interface FailoverText extends LessonText {

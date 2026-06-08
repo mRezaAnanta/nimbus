@@ -28,9 +28,30 @@ export const en: AZText = {
 	regions: { virginia: 'Virginia', singapore: 'Singapore' },
 	strikeLabel: 'Middle East',
 	news: [
-		{ src: 'Financial Times, Mar 1 2026', head: 'Iranian drones hit two AWS data centers in the UAE' },
-		{ src: 'Financial Times, Apr 1 2026', head: 'Iranian drone strikes an Amazon data center in Bahrain' },
-		{ src: 'Iranian media, Apr 2 2026', head: 'Claimed strike on an Oracle data center in Dubai' },
-		{ src: 'CNBC, Apr 7 2026', head: 'AWS works around the clock to keep Middle East services up' }
+		{
+			src: 'CNBC, 2026',
+			head: 'Iranian drones strike AWS data centers in the Middle East',
+			url: 'https://www.cnbc.com/2026/04/07/aws-iran-threats-us-tech-data-centers.html'
+		},
+		{
+			src: 'Data Center Dynamics, 2021',
+			head: 'Fire destroys the OVHcloud data center in Strasbourg',
+			url: 'https://www.datacenterdynamics.com/en/news/fire-destroys-ovhclouds-sbg2-data-center-strasbourg/'
+		},
+		{
+			src: 'Amazon Web Services, 2021',
+			head: 'A major outage takes down the us-east-1 (Virginia) region',
+			url: 'https://aws.amazon.com/message/12721/'
+		},
+		{
+			src: 'Data Center Dynamics, 2022',
+			head: 'London heatwave, cooling fails, cloud services go down',
+			url: 'https://www.datacenterdynamics.com/en/news/googles-london-data-center-outage-during-heatwave-caused-by-simultaneous-failure-of-multiple-redundant-cooling-systems/'
+		},
+		{
+			src: 'Data Center Dynamics, 2011',
+			head: "Japan's quake, blackouts and fuel shortages strain data centers",
+			url: 'https://www.datacenterdynamics.com/en/news/the-after-effect-of-the-japanese-earthquake/'
+		}
 	]
 };
