@@ -6,6 +6,8 @@ import { en } from './en';
 export const server: Lesson = {
 	id: 'server',
 	mood: 'calm',
+	moods: ['calm', 'thinking', 'happy'],
+	reactionMood: { served: 'idea' },
 	stage: ServerStage,
 	text: { id, en }
 };

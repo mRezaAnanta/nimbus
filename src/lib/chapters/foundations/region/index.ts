@@ -6,6 +6,8 @@ import { en } from './en';
 export const region: Lesson = {
 	id: 'region',
 	mood: 'happy',
+	moods: ['calm', 'thinking', 'thinking', 'idea', 'happy'],
+	reactionMood: { near: 'happy', mid: 'thinking', far: 'worried' },
 	stage: RegionStage,
 	text: { id, en }
 };

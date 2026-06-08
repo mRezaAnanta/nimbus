@@ -14,6 +14,7 @@
 	// "Next" both paginates the narrative beats and, on the last beat, advances the lesson.
 	let beat = $state(0);
 	let reaction = $state<string | null>(null);
+	let reactionToken = $state<string | null>(null);
 	let completed = $state(false);
 	// A stage can lock Next (during an intro animation) and ask to be shown on an early beat.
 	let locked = $state(false);
@@ -23,6 +24,7 @@
 		void data.lessonId;
 		beat = 0;
 		reaction = null;
+		reactionToken = null;
 		completed = false;
 	});
 
@@ -35,6 +37,12 @@
 	// Stage stays locked + dimmed while Nim is still narrating; it unlocks on the last beat,
 	// the one that invites interaction, or earlier if the stage asks to be shown (an intro).
 	const stageActive = $derived(isLastBeat || shown);
+	// Nim's face: a reaction mood if one is showing, else this beat's mood, else the lesson default.
+	const currentMood = $derived(
+		(reactionToken ? lesson.reactionMood?.[reactionToken] : undefined) ??
+			lesson.moods?.[Math.min(beat, (lesson.moods?.length ?? 1) - 1)] ??
+			lesson.mood
+	);
 
 	function onComplete() {
 		completed = true;
@@ -46,10 +54,12 @@
 		shown = v;
 	}
 	function onState(s: string) {
+		reactionToken = s;
 		reaction = text.reactions[s] ?? null;
 	}
 	function next() {
 		reaction = null;
+		reactionToken = null;
 		if (beat < text.intro.length - 1) {
 			beat += 1;
 			return;
@@ -61,6 +71,7 @@
 	}
 	function back() {
 		reaction = null;
+		reactionToken = null;
 		if (beat > 0) {
 			beat -= 1;
 			return;
@@ -109,7 +120,7 @@
 
 	<!-- Nim + cloud bubble (bottom-left) -->
 	<div class="z-10 shrink-0 p-4 md:absolute md:bottom-5 md:left-5 md:p-0">
-		<SpeechBubble nim={message} mood={lesson.mood} {canNext} {canBack} {final} onnext={next} onback={back} />
+		<SpeechBubble nim={message} mood={currentMood} {canNext} {canBack} {final} onnext={next} onback={back} />
 	</div>
 </main>
 

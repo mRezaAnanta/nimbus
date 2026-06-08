@@ -6,6 +6,8 @@ import { en } from './en';
 export const cloud: Lesson = {
 	id: 'cloud',
 	mood: 'thinking',
+	moods: ['thinking', 'surprised', 'happy'],
+	reactionMood: { home: 'worried', cloud: 'happy', both: 'idea' },
 	stage: CloudStage,
 	text: { id, en }
 };

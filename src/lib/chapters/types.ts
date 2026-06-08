@@ -1,6 +1,15 @@
 import type { Component } from 'svelte';
 
-export type Mood = 'calm' | 'happy' | 'thinking';
+export type Mood =
+	| 'calm'
+	| 'happy'
+	| 'thinking'
+	| 'surprised'
+	| 'worried'
+	| 'excited'
+	| 'wink'
+	| 'idea'
+	| 'sad';
 
 /**
  * Every interactive stage receives its (already language-resolved) text plus
@@ -101,6 +110,10 @@ export interface FailoverText extends LessonText {
 export type Lesson = {
 	id: string;
 	mood: Mood;
+	/** Optional mood per narrative beat (visual, language independent). Falls back to `mood`. */
+	moods?: Mood[];
+	/** Optional mood per reaction token (e.g. a sad face when the site goes down). */
+	reactionMood?: Record<string, Mood>;
 	stage: Component<StageProps>;
 	/** Same shape per language. Resolve with `lesson.text[lang]`. */
 	text: { id: LessonText; en: LessonText };

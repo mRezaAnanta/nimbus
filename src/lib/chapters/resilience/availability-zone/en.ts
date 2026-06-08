@@ -3,11 +3,11 @@ import type { AZText } from '../../types';
 export const en: AZText = {
 	title: 'What is an Availability Zone?',
 	intro: [
-		'Real data centers have actually been attacked.',
-		'And not just attacked. Fire, floods, earthquakes, lightning, even a wrong command, all have taken data centers down.',
+		'Back in 2026, Iranian drones actually struck AWS data centers in the Middle East, and many services there went down.',
+		'And not just attacks. Fire, floods, earthquakes, lightning, even a wrong command, all have taken data centers down.',
 		'Hardware fails too, a single disk or server can die at any time, but that is usually handled by redundancy inside the data center.',
 		'The bigger danger is when a whole data center building falls. The question is, how does your site stay up when that happens?',
-		'The answer is, a <b>region</b> is not a single building. Inside it are several separate data centers called <b>Availability Zones</b> (AZ), set far apart with their own power and network.',
+		'The answer is, a <b>region</b> is not a single building. Inside it are several <b>Availability Zones</b> (AZ), separate data centers set far apart, each with its own power and network. So if one AZ runs into trouble, the others keep running.',
 		'Try it. Click a region to go inside, spread your servers across several AZs, then trigger an outage.'
 	],
 	reactions: {

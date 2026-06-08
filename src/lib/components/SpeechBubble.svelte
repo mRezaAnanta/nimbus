@@ -2,8 +2,8 @@
 	import { fade } from 'svelte/transition';
 	import Nim from './Nim.svelte';
 	import { t } from '$lib/i18n';
+	import type { Mood } from '$lib/chapters/types';
 
-	type Mood = 'calm' | 'happy' | 'thinking';
 	let {
 		nim,
 		mood = 'calm',

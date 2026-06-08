@@ -3,11 +3,11 @@ import type { AZText } from '../../types';
 export const id: AZText = {
 	title: 'Apa itu Availability Zone?',
 	intro: [
-		'Data center sungguhan pernah benar-benar diserang.',
-		'Bukan cuma serangan. Kebakaran, banjir, gempa, petir, sampai salah konfigurasi, semuanya pernah menjatuhkan data center.',
+		'Baru di 2026, drone Iran benar-benar menghantam data center AWS di Timur Tengah, dan banyak layanan di sana mati.',
+		'Dan bukan cuma serangan. Kebakaran, banjir, gempa, petir, sampai salah konfigurasi, semuanya pernah menjatuhkan data center.',
 		'Hardware juga sering rusak, satu disk atau server bisa mati kapan saja, tapi itu biasanya sudah ditangani redundansi di dalam data center.',
 		'Yang lebih bahaya kalau satu gedung data center utuh tumbang. Pertanyaannya, gimana caranya website tetap jalan kalau itu terjadi?',
-		'Jawabannya, satu <b>region</b> itu bukan satu gedung. Di dalamnya ada beberapa data center terpisah, namanya <b>Availability Zone</b> (AZ), letaknya berjauhan dengan listrik dan jaringan sendiri-sendiri.',
+		'Jawabannya, satu <b>region</b> itu bukan satu gedung. Di dalamnya ada beberapa <b>Availability Zone</b> (AZ), yaitu data center terpisah yang letaknya berjauhan dan punya listrik serta jaringan sendiri. Jadi kalau satu AZ kena masalah, yang lain tetap jalan.',
 		'Coba sendiri. Klik sebuah region untuk masuk ke dalamnya, sebar server-mu ke beberapa AZ, lalu picu gangguan.'
 	],
 	reactions: {

@@ -6,6 +6,8 @@ import { en } from './en';
 export const failover: Lesson = {
 	id: 'failover',
 	mood: 'thinking',
+	moods: ['worried', 'thinking', 'calm', 'happy'],
+	reactionMood: { spof: 'sad', failover: 'excited' },
 	stage: FailoverStage,
 	text: { id, en }
 };
