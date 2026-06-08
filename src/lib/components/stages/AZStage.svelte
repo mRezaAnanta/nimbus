@@ -142,6 +142,14 @@
 	});
 
 	$effect(() => {
+		// Any beat change returns the stage to the zoomed-out world, so going back via Nim's
+		// chat (not the in-stage button) never leaves it stuck zoomed into a region.
+		region = null;
+		downAz = null;
+		striking = false;
+		browser = 'loaded';
+		clearTimeout(t1);
+		clearTimeout(t2);
 		if (beat === 0) {
 			onshow?.(true);
 			if (!introPlayed) {

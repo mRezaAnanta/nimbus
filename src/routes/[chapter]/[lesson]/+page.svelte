@@ -24,8 +24,6 @@
 		beat = 0;
 		reaction = null;
 		completed = false;
-		locked = false;
-		shown = false;
 	});
 
 	const isLastBeat = $derived(beat >= text.intro.length - 1);
@@ -56,6 +54,8 @@
 			beat += 1;
 			return;
 		}
+		shown = false;
+		locked = false;
 		if (isLastLesson) goto(`/${chapter.id}/done`);
 		else goto(`/${chapter.id}/${chapter.lessons[data.index + 1].id}`);
 	}
@@ -65,6 +65,8 @@
 			beat -= 1;
 			return;
 		}
+		shown = false;
+		locked = false;
 		if (data.index > 0) goto(`/${chapter.id}/${chapter.lessons[data.index - 1].id}`);
 	}
 	function onKey(e: KeyboardEvent) {
