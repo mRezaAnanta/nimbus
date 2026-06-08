@@ -55,12 +55,13 @@ The physical reality under the word "cloud".
 
 One copy in one place is fragile. Survive failures.
 
-- [x] **Availability Zone**. Opens with a real 2026 event (drones struck AWS data centers in
-  the UAE and Bahrain) to show physical threats are real, then teaches that a region holds
-  several isolated AZs, and the a/b/c naming is shuffled per account and kept secret. Stage: a
-  world map with two clickable regions (Virginia, Singapore); click to zoom into a region and
-  see its real AZs, spread servers across them, trigger an outage, and watch the site go down
-  (single AZ) or survive (multiple AZs).
+- [x] **Availability Zone**. Opens with a real 2026 event: a drone-strike animation on a data
+  center plus news popups (drones struck AWS data centers in the UAE and Bahrain), with Next
+  locked until it plays, to show physical threats are real. Then teaches that a region holds
+  several isolated AZs, and (on entering a region) that the a/b/c naming is shuffled per account
+  and kept secret. Stage: a world map with two clickable regions (Virginia, Singapore); click to
+  open a close-up of that region's real boundary and AZs, spread servers across them, trigger an
+  outage, and watch the site go down (single AZ) or survive (multiple AZs).
 - [x] **Failover**. Escalates from one AZ to a whole region being lost (tied to the same
   Middle East data center strikes): keep a standby region and switch to it automatically. Stage:
   on the world map a primary region (Virginia) serves; kill it with no standby and the site goes

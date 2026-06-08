@@ -10,11 +10,23 @@
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const SHAPES = regionShapesData as any as Record<string, any>;
 
-	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
-		$props();
+	let {
+		text,
+		oncomplete,
+		onstate,
+		beat = 0,
+		onlock,
+		onshow
+	}: {
+		text: LessonText;
+		oncomplete?: () => void;
+		onstate?: (s: string) => void;
+		beat?: number;
+		onlock?: (v: boolean) => void;
+		onshow?: (v: boolean) => void;
+	} = $props();
 	const tx = $derived(text as AZText);
 
-	// equirectangular, cropped 84N..56S to match WorldMap (for the world view pins)
 	const FLAT_W = 960;
 	const FLAT_H = 373.33;
 	const wx = (lon: number) => ((lon + 180) / 360) * FLAT_W;
@@ -54,6 +66,16 @@
 	const RW = 600;
 	const RH = 360;
 
+	// Intro strike target (UAE / Bahrain area) and news popup positions.
+	const meX = wx(52);
+	const meY = wy(25);
+	const NEWS_POS = [
+		{ l: 8, t: 10 },
+		{ l: 54, t: 8 },
+		{ l: 33, t: 35 },
+		{ l: 60, t: 49 }
+	];
+
 	let region = $state<RegionKey | null>(null);
 	let servers = $state(new Set<string>());
 	let downAz = $state<string | null>(null);
@@ -64,6 +86,16 @@
 	let t1: ReturnType<typeof setTimeout> | undefined;
 	let t2: ReturnType<typeof setTimeout> | undefined;
 
+	// intro sequence (beat 0)
+	let introStrike = $state(false);
+	let introStruck = $state(false);
+	let showNews = $state(false);
+	let introPlayed = false;
+	let it1: ReturnType<typeof setTimeout> | undefined;
+	let it2: ReturnType<typeof setTimeout> | undefined;
+	let it3: ReturnType<typeof setTimeout> | undefined;
+
+	const introMode = $derived(beat === 0 && region === null);
 	const inRegion = $derived(region !== null);
 	const cfg = $derived(region ? REGIONS[region] : null);
 	const siteDown = $derived(browser === 'offline');
@@ -93,8 +125,6 @@
 		];
 	}
 
-	// Close-up of just this region, fitted so a small country (Singapore) zooms in more than a
-	// large state. Scale/center are set manually to avoid d3 fitSize spherical-winding issues.
 	const detail = $derived.by(() => {
 		if (!region) return null;
 		const shape = SHAPES[region];
@@ -109,6 +139,27 @@
 		return { proj, path: geoPath(proj)(shape) ?? '' };
 	});
 
+	$effect(() => {
+		if (beat === 0) {
+			onshow?.(true);
+			if (!introPlayed) {
+				introPlayed = true;
+				playIntro();
+			}
+		} else {
+			onshow?.(false);
+			onlock?.(false);
+		}
+	});
+
+	function playIntro() {
+		onlock?.(true);
+		introStrike = true;
+		it1 = setTimeout(() => (introStruck = true), 1150);
+		it2 = setTimeout(() => (showNews = true), 1350);
+		it3 = setTimeout(() => onlock?.(false), 4800);
+	}
+
 	function enterRegion(k: RegionKey) {
 		region = k;
 		downAz = null;
@@ -120,7 +171,6 @@
 			s.add(c.code + 'a');
 			servers = s;
 		}
-		// Nim explains the AZ naming for this specific region, only after entering it.
 		onstate?.(k);
 	}
 	function back() {
@@ -165,12 +215,24 @@
 	onDestroy(() => {
 		clearTimeout(t1);
 		clearTimeout(t2);
+		clearTimeout(it1);
+		clearTimeout(it2);
+		clearTimeout(it3);
 	});
 </script>
 
+{#snippet serverIcon()}
+	<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+		<rect x="3.5" y="5" width="17" height="6" rx="1.6" />
+		<rect x="3.5" y="13" width="17" height="6" rx="1.6" />
+		<circle cx="7" cy="8" r="1" fill="currentColor" stroke="none" />
+		<circle cx="7" cy="16" r="1" fill="currentColor" stroke="none" />
+	</svg>
+{/snippet}
+
 <div class="flex h-full w-full flex-col gap-4 md:flex-row">
 	<div class="border-line relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl border" style="background:#f1f6fc;">
-		<!-- world view -->
+		<!-- world view (intro strike or region pins) -->
 		<div
 			class="absolute inset-0 transition-all duration-500 ease-out"
 			style="opacity:{inRegion ? 0 : 1}; transform:scale({inRegion ? 1.4 : 1}); {inRegion ? 'pointer-events:none;' : ''}"
@@ -178,22 +240,53 @@
 			<svg viewBox="0 0 {FLAT_W} {FLAT_H}" class="h-full w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label="world map">
 				<rect width={FLAT_W} height={FLAT_H} fill="#f1f6fc" />
 				<WorldMap />
-				{#each pins as p (p.key)}
-					<g
-						class="pin"
-						role="button"
-						tabindex="0"
-						aria-label={tx.regions[p.key]}
-						onclick={() => enterRegion(p.key)}
-						onkeydown={(e) => e.key === 'Enter' && enterRegion(p.key)}
-					>
-						<circle cx={p.x} cy={p.y} r="13" fill="#2e6fe0" opacity="0.18" class="pulse" />
-						<circle cx={p.x} cy={p.y} r="6.5" fill="#2e6fe0" stroke="#fff" stroke-width="2" />
-						<text x={p.x} y={p.y - 12} text-anchor="middle" fill="#16212b" font-size="13" font-weight="700">{tx.regions[p.key]}</text>
-					</g>
-				{/each}
+
+				{#if introMode}
+					{#if introStruck}
+						<circle cx={meX} cy={meY} r="11" fill="none" stroke="#e03131" stroke-width="2.5" class="shock" />
+					{/if}
+					<rect x={meX - 7} y={meY - 7} width="14" height="14" rx="2.5" fill={introStruck ? '#e03131' : '#16212b'} />
+					<text x={meX} y={meY - 13} text-anchor="middle" fill="#16212b" font-size="12" font-weight="700">{tx.strikeLabel}</text>
+				{:else}
+					{#each pins as p (p.key)}
+						<g
+							class="pin"
+							role="button"
+							tabindex="0"
+							aria-label={tx.regions[p.key]}
+							onclick={() => enterRegion(p.key)}
+							onkeydown={(e) => e.key === 'Enter' && enterRegion(p.key)}
+						>
+							<circle cx={p.x} cy={p.y} r="13" fill="#2e6fe0" opacity="0.18" class="pulse" />
+							<circle cx={p.x} cy={p.y} r="6.5" fill="#2e6fe0" stroke="#fff" stroke-width="2" />
+							<text x={p.x} y={p.y - 12} text-anchor="middle" fill="#16212b" font-size="13" font-weight="700">{tx.regions[p.key]}</text>
+						</g>
+					{/each}
+				{/if}
 			</svg>
-			<p class="text-faint pointer-events-none absolute inset-x-0 bottom-2 text-center text-[11px]">{tx.worldHint}</p>
+
+			{#if introMode}
+				{#if introStrike}
+					<div class="drone-intro text-danger pointer-events-none absolute" style="--tx:{(meX / FLAT_W) * 100}%; --ty:{(meY / FLAT_H) * 100}%" aria-hidden="true">
+						<svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M2 12 L21 5 L14 12 L21 19 Z" /></svg>
+					</div>
+				{/if}
+				{#if showNews}
+					<div class="pointer-events-none absolute inset-0">
+						{#each tx.news as n, i (n.head)}
+							<div class="newscard absolute" style="left:{NEWS_POS[i % NEWS_POS.length].l}%; top:{NEWS_POS[i % NEWS_POS.length].t}%; animation-delay:{i * 0.55 + 0.15}s">
+								<div class="thumb"></div>
+								<div class="min-w-0">
+									<p class="src">{n.src}</p>
+									<p class="head">{n.head}</p>
+								</div>
+							</div>
+						{/each}
+					</div>
+				{/if}
+			{:else}
+				<p class="text-faint pointer-events-none absolute inset-x-0 bottom-2 text-center text-[11px]">{tx.worldHint}</p>
+			{/if}
 		</div>
 
 		<!-- region close-up -->
@@ -250,7 +343,6 @@
 					{/each}
 				</svg>
 
-				<!-- top bar -->
 				<div class="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between p-3">
 					<button
 						type="button"
@@ -263,7 +355,6 @@
 					<span class="text-ink rounded-full bg-white/80 px-2.5 py-1 text-[13px] font-semibold backdrop-blur">{cfg.code} ({tx.regions[region]})</span>
 				</div>
 
-				<!-- bottom bar -->
 				<div class="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 p-3">
 					<p class="text-faint text-[11px]">{tx.place}</p>
 					<button
@@ -276,7 +367,6 @@
 					</button>
 				</div>
 
-				<!-- drone strike -->
 				{#key strikeKey}
 					{#if striking}
 						<div class="drone text-danger pointer-events-none absolute" aria-hidden="true">
@@ -330,6 +420,21 @@
 			opacity: 0.04;
 		}
 	}
+	.shock {
+		transform-box: fill-box;
+		transform-origin: center;
+		animation: shock 0.8s ease-out;
+	}
+	@keyframes shock {
+		0% {
+			transform: scale(0.4);
+			opacity: 0.6;
+		}
+		100% {
+			transform: scale(2.6);
+			opacity: 0;
+		}
+	}
 	.drone {
 		animation: drone-fly 1.2s ease-in forwards;
 	}
@@ -347,5 +452,61 @@
 			top: 60%;
 			opacity: 0.85;
 		}
+	}
+	.drone-intro {
+		left: -10%;
+		top: -8%;
+		animation: drone-strike 1.15s ease-in forwards;
+	}
+	@keyframes drone-strike {
+		0% {
+			opacity: 0;
+		}
+		20% {
+			opacity: 1;
+		}
+		100% {
+			left: var(--tx);
+			top: var(--ty);
+			opacity: 1;
+		}
+	}
+	.newscard {
+		display: flex;
+		gap: 8px;
+		width: 220px;
+		max-width: 44%;
+		padding: 8px 10px;
+		border-radius: 12px;
+		background: #ffffff;
+		border: 1px solid #e7ecf2;
+		box-shadow: 0 10px 26px rgba(22, 40, 60, 0.16);
+		opacity: 0;
+		transform: translateY(10px) scale(0.96);
+		animation: news-pop 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+	}
+	@keyframes news-pop {
+		to {
+			opacity: 1;
+			transform: none;
+		}
+	}
+	.thumb {
+		flex: none;
+		width: 34px;
+		height: 34px;
+		border-radius: 6px;
+		background: linear-gradient(135deg, #d6e3f3, #c2d4ec);
+	}
+	.src {
+		font-size: 9.5px;
+		font-weight: 600;
+		color: #8a949d;
+	}
+	.head {
+		font-size: 11px;
+		font-weight: 600;
+		line-height: 1.25;
+		color: #16212b;
 	}
 </style>

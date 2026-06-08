@@ -3,7 +3,8 @@ import type { AZText } from '../../types';
 export const en: AZText = {
 	title: 'What is an Availability Zone?',
 	intro: [
-		'This is not just theory. In 2026 drones actually struck AWS data centers in the United Arab Emirates and Bahrain, and many services there went down.',
+		'This is not just theory. Watch first, recently a real data center was actually attacked.',
+		'And not just once. Iranian drones hit AWS data centers in the United Arab Emirates and Bahrain, there was even a claimed strike on Oracle in Dubai, and many services there went down.',
 		'So a data center can hit real trouble, not only a power cut but a disaster or even an attack. The question is, how does your site stay up when a whole building falls?',
 		'The answer is, a <b>region</b> is not a single building. Inside it are several separate data centers called <b>Availability Zones</b> (AZ), set far apart with their own power and network.',
 		'Try it. Click a region to go inside, spread your servers across several AZs, then trigger an outage.'
@@ -24,5 +25,12 @@ export const en: AZText = {
 	statusUp: 'Online',
 	statusDown: 'Down',
 	activeZones: 'Active AZs',
-	regions: { virginia: 'Virginia', singapore: 'Singapore' }
+	regions: { virginia: 'Virginia', singapore: 'Singapore' },
+	strikeLabel: 'Middle East',
+	news: [
+		{ src: 'Financial Times, Mar 1 2026', head: 'Iranian drones hit two AWS data centers in the UAE' },
+		{ src: 'Financial Times, Apr 1 2026', head: 'Iranian drone strikes an Amazon data center in Bahrain' },
+		{ src: 'Iranian media, Apr 2 2026', head: 'Claimed strike on an Oracle data center in Dubai' },
+		{ src: 'CNBC, Apr 7 2026', head: 'AWS works around the clock to keep Middle East services up' }
+	]
 };

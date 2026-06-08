@@ -3,7 +3,8 @@ import type { AZText } from '../../types';
 export const id: AZText = {
 	title: 'Apa itu Availability Zone?',
 	intro: [
-		'Ini bukan teori. Tahun 2026 drone benar-benar menghantam data center AWS di Uni Emirat Arab dan Bahrain, dan banyak layanan di sana mati.',
+		'Ini bukan teori. Lihat dulu, baru-baru ini data center sungguhan benar-benar diserang.',
+		'Bukan cuma sekali. Drone Iran menghantam data center AWS di Uni Emirat Arab dan Bahrain, bahkan ada klaim serangan ke Oracle di Dubai, dan banyak layanan di sana mati.',
 		'Artinya data center bisa kena masalah nyata, bukan cuma mati listrik, tapi juga bencana bahkan serangan. Pertanyaannya, gimana caranya website tetap jalan walau satu gedung tumbang?',
 		'Jawabannya, satu <b>region</b> itu bukan satu gedung. Di dalamnya ada beberapa data center terpisah, namanya <b>Availability Zone</b> (AZ), letaknya berjauhan dengan listrik dan jaringan sendiri-sendiri.',
 		'Coba sendiri. Klik sebuah region untuk masuk ke dalamnya, sebar server-mu ke beberapa AZ, lalu picu gangguan.'
@@ -24,5 +25,12 @@ export const id: AZText = {
 	statusUp: 'Online',
 	statusDown: 'Mati',
 	activeZones: 'AZ aktif',
-	regions: { virginia: 'Virginia', singapore: 'Singapura' }
+	regions: { virginia: 'Virginia', singapore: 'Singapura' },
+	strikeLabel: 'Timur Tengah',
+	news: [
+		{ src: 'Financial Times, 1 Mar 2026', head: 'Drone Iran menghantam dua data center AWS di Uni Emirat Arab' },
+		{ src: 'Financial Times, 1 Apr 2026', head: 'Drone Iran menyerang data center Amazon di Bahrain' },
+		{ src: 'Media Iran, 2 Apr 2026', head: 'Klaim serangan ke data center Oracle di Dubai' },
+		{ src: 'CNBC, 7 Apr 2026', head: 'AWS kerja 24 jam menjaga layanan di Timur Tengah' }
+	]
 };

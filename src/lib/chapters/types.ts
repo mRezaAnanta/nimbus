@@ -11,6 +11,12 @@ export type StageProps = {
 	text: LessonText;
 	oncomplete?: () => void;
 	onstate?: (s: string) => void;
+	/** Current narrative beat index, so a stage can play an intro on a specific beat. */
+	beat?: number;
+	/** Lock or unlock the Next button (e.g. while an intro animation is playing). */
+	onlock?: (locked: boolean) => void;
+	/** Ask the player to show (un-dim) the stage even when it is not the last beat. */
+	onshow?: (visible: boolean) => void;
 };
 
 /** Base shape shared by every lesson's text. */
@@ -75,6 +81,8 @@ export interface AZText extends LessonText {
 	statusDown: string;
 	activeZones: string;
 	regions: Record<string, string>;
+	strikeLabel: string;
+	news: { src: string; head: string }[];
 }
 
 export interface FailoverText extends LessonText {

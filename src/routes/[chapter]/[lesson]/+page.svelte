@@ -15,26 +15,37 @@
 	let beat = $state(0);
 	let reaction = $state<string | null>(null);
 	let completed = $state(false);
+	// A stage can lock Next (during an intro animation) and ask to be shown on an early beat.
+	let locked = $state(false);
+	let shown = $state(false);
 	// reset when the lesson (URL) changes
 	$effect(() => {
 		void data.lessonId;
 		beat = 0;
 		reaction = null;
 		completed = false;
+		locked = false;
+		shown = false;
 	});
 
 	const isLastBeat = $derived(beat >= text.intro.length - 1);
 	const isLastLesson = $derived(data.index === data.total - 1);
-	const canNext = $derived(!(isLastBeat && !completed));
+	const canNext = $derived(!((isLastBeat && !completed) || locked));
 	const final = $derived(isLastLesson && isLastBeat);
 	const canBack = $derived(beat > 0 || data.index > 0);
 	const message = $derived(reaction ?? text.intro[Math.min(beat, text.intro.length - 1)]);
 	// Stage stays locked + dimmed while Nim is still narrating; it unlocks on the last beat,
-	// the one that actually invites the user to interact.
-	const stageActive = $derived(isLastBeat);
+	// the one that invites interaction, or earlier if the stage asks to be shown (an intro).
+	const stageActive = $derived(isLastBeat || shown);
 
 	function onComplete() {
 		completed = true;
+	}
+	function onLock(v: boolean) {
+		locked = v;
+	}
+	function onShow(v: boolean) {
+		shown = v;
 	}
 	function onState(s: string) {
 		reaction = text.reactions[s] ?? null;
@@ -88,7 +99,7 @@
 						? ''
 						: 'pointer-events-none opacity-40 select-none'}"
 				>
-					<Stage {text} oncomplete={onComplete} onstate={onState} />
+					<Stage {text} {beat} oncomplete={onComplete} onstate={onState} onlock={onLock} onshow={onShow} />
 				</div>
 			</div>
 		{/key}
