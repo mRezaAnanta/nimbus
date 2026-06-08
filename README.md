@@ -41,6 +41,7 @@ Currently bilingual: Indonesian and English.
 ## Data credits
 
 - World map: [Natural Earth](https://www.naturalearthdata.com/) (public domain), via `bun scripts/generate-worldmap.mjs`.
+- Region boundaries (Virginia, Singapore) for the Availability Zone lesson: [Natural Earth](https://www.naturalearthdata.com/) (public domain), via `bun scripts/generate-region-shapes.mjs`.
 - Undersea cables and landing stations: [TeleGeography Submarine Cable Map](https://www.submarinecablemap.com/), via `bun scripts/generate-cables.mjs`. Shown with attribution in the Cable lesson. The data packet routes are generated from the real cable graph; check that they follow actual cables with `bun scripts/verify-routes.mjs`.
 
 ## License

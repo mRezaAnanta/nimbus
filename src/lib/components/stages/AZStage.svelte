@@ -4,11 +4,11 @@
 	import Browser from '../Browser.svelte';
 	import WorldMap from '../WorldMap.svelte';
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	import landData from '$lib/data/land-110m.json';
+	import regionShapesData from '$lib/data/region-shapes.json';
 	import type { LessonText, AZText } from '$lib/chapters/types';
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const land = landData as any;
+	const SHAPES = regionShapesData as any as Record<string, any>;
 
 	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
 		$props();
@@ -22,41 +22,30 @@
 
 	type Az = { l: string; lon: number; lat: number };
 	type RegionKey = 'virginia' | 'singapore';
-	// Real AZ counts: us-east-1 has 6, ap-southeast-1 has 3. Points are illustrative, placed
-	// within the region's area (not exact data center coordinates).
-	const REGIONS: Record<
-		RegionKey,
-		{ code: string; lon: number; lat: number; bbox: [[number, number], [number, number]]; azs: Az[] }
-	> = {
+	// Real AZ counts: us-east-1 has 6, ap-southeast-1 has 3. The points are illustrative, spread
+	// across the region for clarity (real AZs sit much closer together).
+	const REGIONS: Record<RegionKey, { code: string; lon: number; lat: number; azs: Az[] }> = {
 		virginia: {
 			code: 'us-east-1',
 			lon: -77.5,
 			lat: 39,
-			bbox: [
-				[-90, 31],
-				[-68, 44]
-			],
 			azs: [
-				{ l: 'a', lon: -77.4, lat: 38.9 },
-				{ l: 'b', lon: -81.5, lat: 36.0 },
-				{ l: 'c', lon: -73.6, lat: 40.8 },
-				{ l: 'd', lon: -84.0, lat: 39.6 },
-				{ l: 'e', lon: -72.6, lat: 41.6 },
-				{ l: 'f', lon: -83.0, lat: 35.2 }
+				{ l: 'a', lon: -77.43, lat: 37.54 },
+				{ l: 'b', lon: -79.94, lat: 37.27 },
+				{ l: 'c', lon: -78.48, lat: 38.03 },
+				{ l: 'd', lon: -77.09, lat: 38.88 },
+				{ l: 'e', lon: -75.98, lat: 36.85 },
+				{ l: 'f', lon: -82.55, lat: 36.7 }
 			]
 		},
 		singapore: {
 			code: 'ap-southeast-1',
 			lon: 103.8,
 			lat: 1.35,
-			bbox: [
-				[100, -2.5],
-				[106.5, 4.5]
-			],
 			azs: [
-				{ l: 'a', lon: 103.6, lat: 1.45 },
-				{ l: 'b', lon: 104.1, lat: 1.15 },
-				{ l: 'c', lon: 103.5, lat: 0.95 }
+				{ l: 'a', lon: 103.7, lat: 1.33 },
+				{ l: 'b', lon: 103.84, lat: 1.36 },
+				{ l: 'c', lon: 103.98, lat: 1.35 }
 			]
 		}
 	};
@@ -80,19 +69,44 @@
 	const siteDown = $derived(browser === 'offline');
 	const countHere = $derived(cfg ? cfg.azs.filter((a) => servers.has(cfg.code + a.l)).length : 0);
 
-	// Close-up of just this region's land. Scale/center are set manually (fitSize on a spherical
-	// bbox polygon can flip to the whole globe), so only this area fills the panel.
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	function geomBounds(g: any): [[number, number], [number, number]] {
+		let minX = 180;
+		let minY = 90;
+		let maxX = -180;
+		let maxY = -90;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const scan = (ring: any) => {
+			for (const [x, y] of ring) {
+				if (x < minX) minX = x;
+				if (x > maxX) maxX = x;
+				if (y < minY) minY = y;
+				if (y > maxY) maxY = y;
+			}
+		};
+		if (g.type === 'Polygon') g.coordinates.forEach(scan);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		else g.coordinates.forEach((p: any) => p.forEach(scan));
+		return [
+			[minX, minY],
+			[maxX, maxY]
+		];
+	}
+
+	// Close-up of just this region, fitted so a small country (Singapore) zooms in more than a
+	// large state. Scale/center are set manually to avoid d3 fitSize spherical-winding issues.
 	const detail = $derived.by(() => {
-		if (!cfg) return null;
-		const b = cfg.bbox;
-		const lonSpan = ((b[1][0] - b[0][0]) * Math.PI) / 180;
-		const latSpan = ((b[1][1] - b[0][1]) * Math.PI) / 180;
-		const scale = Math.min(RW / lonSpan, RH / latSpan) * 0.92;
+		if (!region) return null;
+		const shape = SHAPES[region];
+		const b = geomBounds(shape);
+		const lonSpan = Math.max(((b[1][0] - b[0][0]) * Math.PI) / 180, 1e-4);
+		const latSpan = Math.max(((b[1][1] - b[0][1]) * Math.PI) / 180, 1e-4);
+		const scale = Math.min(RW / lonSpan, RH / latSpan) * 0.86;
 		const proj = geoEquirectangular()
 			.scale(scale)
 			.center([(b[0][0] + b[1][0]) / 2, (b[0][1] + b[1][1]) / 2])
 			.translate([RW / 2, RH / 2]);
-		return { proj, path: geoPath(proj)(land) ?? '' };
+		return { proj, path: geoPath(proj)(shape) ?? '' };
 	});
 
 	function enterRegion(k: RegionKey) {
@@ -188,7 +202,7 @@
 			{#if cfg && region && detail}
 				<svg viewBox="0 0 {RW} {RH}" class="h-full w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label={tx.regions[region]}>
 					<rect width={RW} height={RH} fill="#eaf2fc" />
-					<path d={detail.path} fill="#cdddef" stroke="#b6cce6" stroke-width="0.6" />
+					<path d={detail.path} fill="#cdddef" stroke="#4d82c9" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
 					{#each cfg.azs as a (a.l)}
 						{@const azId = cfg.code + a.l}
 						{@const p = detail.proj([a.lon, a.lat])}
