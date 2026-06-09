@@ -2,6 +2,7 @@
 	import { onDestroy } from 'svelte';
 	import Browser from '../Browser.svelte';
 	import WorldMap from '../WorldMap.svelte';
+	import Plane from '../Plane.svelte';
 	import type { LessonText, FailoverText } from '$lib/chapters/types';
 
 	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
@@ -23,6 +24,7 @@
 	let phase = $state<Phase>('normal');
 	let striking = $state(false);
 	let strikeKey = $state(0);
+	let showMissile = $state(false);
 	let showBoom = $state(false);
 	let fired = false;
 	let t1: ReturnType<typeof setTimeout> | undefined;
@@ -43,8 +45,10 @@
 		if (phase !== 'normal' || striking) return;
 		strikeKey += 1;
 		striking = true;
+		showMissile = true; // a jet streaks in toward the primary region
 		t1 = setTimeout(() => {
-			showBoom = true; // the strike lands on the primary region
+			showMissile = false;
+			showBoom = true; // then the strike lands and explodes
 			tB = setTimeout(() => (showBoom = false), 800);
 			if (standby) {
 				phase = 'failing';
@@ -60,11 +64,11 @@
 				phase = 'down';
 				onstate?.('spof');
 			}
-		}, 350);
+		}, 850);
 		tR = setTimeout(() => {
 			phase = 'normal';
 			striking = false;
-		}, standby ? 4800 : 3200);
+		}, standby ? 5000 : 3400);
 	}
 
 	const standbyStatus = $derived(
@@ -120,8 +124,11 @@
 				</text>
 			</g>
 
-			<!-- explosion on the primary region, drawn in map coordinates so it lands exactly -->
+			<!-- a jet streaks in toward the primary region, then the explosion (both in map coords) -->
 			{#key strikeKey}
+				{#if showMissile}
+					<g transform="translate({pAt.x} {pAt.y})"><g class="incoming"><Plane /></g></g>
+				{/if}
 				{#if showBoom}
 					<g transform="translate({pAt.x} {pAt.y})">
 						<g class="boomg">
@@ -194,6 +201,22 @@
 		50% {
 			transform: scale(1.8);
 			opacity: 0.04;
+		}
+	}
+	.incoming {
+		animation: incoming 0.8s cubic-bezier(0.3, 0, 0.5, 1) forwards;
+	}
+	@keyframes incoming {
+		0% {
+			transform: translate(-230px, -180px);
+			opacity: 0;
+		}
+		25% {
+			opacity: 1;
+		}
+		100% {
+			transform: translate(0, 0);
+			opacity: 1;
 		}
 	}
 	.boomg {

@@ -3,6 +3,7 @@
 	import { geoEquirectangular, geoPath } from 'd3-geo';
 	import Browser from '../Browser.svelte';
 	import WorldMap from '../WorldMap.svelte';
+	import Plane from '../Plane.svelte';
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	import regionShapesData from '$lib/data/region-shapes.json';
 	import type { LessonText, AZText } from '$lib/chapters/types';
@@ -82,6 +83,7 @@
 	let region = $state<RegionKey | null>(null);
 	let servers = $state(new Set<string>());
 	let downAz = $state<string | null>(null);
+	let strikeTo = $state<[number, number] | null>(null); // where the incoming jet is headed (region coords)
 	let namedShown = false; // whether Nim has explained the AZ naming for this region visit
 	let striking = $state(false);
 	let strikeKey = $state(0);
@@ -91,13 +93,14 @@
 	let t2: ReturnType<typeof setTimeout> | undefined;
 
 	// intro sequence (beat 0)
+	let introMissile = $state(false);
 	let introBoom = $state(false);
 	let showNews = $state(false);
 	let introPlayed = false;
+	let it0: ReturnType<typeof setTimeout> | undefined;
 	let it1: ReturnType<typeof setTimeout> | undefined;
 	let it2: ReturnType<typeof setTimeout> | undefined;
 	let it3: ReturnType<typeof setTimeout> | undefined;
-	let it4: ReturnType<typeof setTimeout> | undefined;
 
 	const introMode = $derived(beat <= 1 && region === null);
 	const inRegion = $derived(region !== null);
@@ -155,6 +158,7 @@
 		// chat (not the in-stage button) never leaves it stuck zoomed into a region.
 		region = null;
 		downAz = null;
+		strikeTo = null;
 		striking = false;
 		browser = 'loaded';
 		clearTimeout(t1);
@@ -177,15 +181,20 @@
 
 	function playIntro() {
 		onlock?.(true);
-		it1 = setTimeout(() => (introBoom = true), 350); // explosion bursts on the data center
-		it2 = setTimeout(() => (introBoom = false), 1150); // and then fades away
-		it3 = setTimeout(() => (showNews = true), 1300);
-		it4 = setTimeout(() => onlock?.(false), 5600);
+		introMissile = true; // a jet streaks in toward the data center
+		it0 = setTimeout(() => {
+			introMissile = false;
+			introBoom = true; // then it explodes
+		}, 850);
+		it1 = setTimeout(() => (introBoom = false), 1650); // and the explosion fades away
+		it2 = setTimeout(() => (showNews = true), 1800);
+		it3 = setTimeout(() => onlock?.(false), 6000);
 	}
 
 	function enterRegion(k: RegionKey) {
 		region = k;
 		downAz = null;
+		strikeTo = null;
 		striking = false;
 		browser = 'loaded';
 		namedShown = false;
@@ -219,6 +228,8 @@
 		const withServer = cfg.azs.map((a) => cfg.code + a.l).filter((id) => servers.has(id));
 		if (withServer.length === 0) return;
 		const victim = withServer[0];
+		const va = cfg.azs.find((a) => cfg.code + a.l === victim);
+		strikeTo = va && detail ? detail.proj([va.lon, va.lat]) : null; // jet flies to this AZ
 		strikeKey += 1;
 		striking = true;
 		t1 = setTimeout(() => {
@@ -234,21 +245,22 @@
 			} else {
 				onstate?.('down');
 			}
-		}, 720);
+		}, 850);
 		t2 = setTimeout(() => {
 			downAz = null;
 			striking = false;
 			browser = 'loaded';
-		}, 2900);
+			strikeTo = null;
+		}, 3000);
 	}
 
 	onDestroy(() => {
 		clearTimeout(t1);
 		clearTimeout(t2);
+		clearTimeout(it0);
 		clearTimeout(it1);
 		clearTimeout(it2);
 		clearTimeout(it3);
-		clearTimeout(it4);
 	});
 </script>
 
@@ -292,6 +304,9 @@
 				{#if introMode}
 					<rect x={meX - 7} y={meY - 7} width="14" height="14" rx="2.5" fill="#16212b" />
 					<text x={meX} y={meY - 13} text-anchor="middle" fill="#16212b" font-size="12" font-weight="700">{tx.strikeLabel}</text>
+					{#if introMissile}
+						<g transform="translate({meX} {meY})"><g class="incoming"><Plane /></g></g>
+					{/if}
 					{#if introBoom}
 						<g transform="translate({meX} {meY})">{@render boomBurst()}</g>
 					{/if}
@@ -387,6 +402,11 @@
 							</g>
 						{/if}
 					{/each}
+					{#key strikeKey}
+						{#if strikeTo && striking && downAz === null}
+							<g transform="translate({strikeTo[0]} {strikeTo[1]})"><g class="incoming"><Plane /></g></g>
+						{/if}
+					{/key}
 					{#if victimPt}
 						<g transform="translate({victimPt[0]} {victimPt[1]})">{@render boomBurst()}</g>
 					{/if}
@@ -460,6 +480,22 @@
 		50% {
 			transform: scale(1.8);
 			opacity: 0.04;
+		}
+	}
+	.incoming {
+		animation: incoming 0.8s cubic-bezier(0.3, 0, 0.5, 1) forwards;
+	}
+	@keyframes incoming {
+		0% {
+			transform: translate(-230px, -180px);
+			opacity: 0;
+		}
+		25% {
+			opacity: 1;
+		}
+		100% {
+			transform: translate(0, 0);
+			opacity: 1;
 		}
 	}
 	.azboom {
