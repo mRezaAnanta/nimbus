@@ -67,8 +67,6 @@
 	// Intro strike target (UAE / Bahrain area) and scattered news popup positions.
 	const meX = wx(52);
 	const meY = wy(25);
-	const meL = (meX / FLAT_W) * 100;
-	const meT = (meY / FLAT_H) * 100;
 	const NEWS_POS = [
 		{ l: 3, t: 6 },
 		{ l: 29, t: 4 },
@@ -84,6 +82,7 @@
 	let region = $state<RegionKey | null>(null);
 	let servers = $state(new Set<string>());
 	let downAz = $state<string | null>(null);
+	let namedShown = false; // whether Nim has explained the AZ naming for this region visit
 	let striking = $state(false);
 	let strikeKey = $state(0);
 	let browser = $state<'loaded' | 'offline'>('loaded');
@@ -92,7 +91,6 @@
 	let t2: ReturnType<typeof setTimeout> | undefined;
 
 	// intro sequence (beat 0)
-	let introStrike = $state(false);
 	let introBoom = $state(false);
 	let showNews = $state(false);
 	let introPlayed = false;
@@ -145,6 +143,13 @@
 		return { proj, path: geoPath(proj)(shape) ?? '' };
 	});
 
+	// Where the explosion lands (the AZ currently knocked out), in region-map coordinates.
+	const victimPt = $derived.by(() => {
+		if (!downAz || !cfg || !detail) return null;
+		const a = cfg.azs.find((x) => cfg.code + x.l === downAz);
+		return a ? detail.proj([a.lon, a.lat]) : null;
+	});
+
 	$effect(() => {
 		// Any beat change returns the stage to the zoomed-out world, so going back via Nim's
 		// chat (not the in-stage button) never leaves it stuck zoomed into a region.
@@ -172,13 +177,9 @@
 
 	function playIntro() {
 		onlock?.(true);
-		introStrike = true;
-		it1 = setTimeout(() => {
-			introStrike = false; // missile reaches the target and is gone
-			introBoom = true; // explosion bursts
-		}, 1100);
-		it2 = setTimeout(() => (introBoom = false), 1850); // explosion fades out and disappears
-		it3 = setTimeout(() => (showNews = true), 1400);
+		it1 = setTimeout(() => (introBoom = true), 350); // explosion bursts on the data center
+		it2 = setTimeout(() => (introBoom = false), 1150); // and then fades away
+		it3 = setTimeout(() => (showNews = true), 1300);
 		it4 = setTimeout(() => onlock?.(false), 5600);
 	}
 
@@ -187,12 +188,14 @@
 		downAz = null;
 		striking = false;
 		browser = 'loaded';
+		namedShown = false;
 		const c = REGIONS[k];
 		if (!c.azs.some((a) => servers.has(c.code + a.l))) {
 			const s = new Set(servers);
 			s.add(c.code + 'a');
 			servers = s;
 		}
+		// First Nim says which region this is and what the dots are.
 		onstate?.(k);
 	}
 	function back() {
@@ -201,6 +204,11 @@
 	}
 	function toggleServer(id: string) {
 		if (striking) return;
+		// On the first server the learner places here, Nim follows up with the AZ naming.
+		if (!namedShown && region) {
+			namedShown = true;
+			onstate?.(region + '-name');
+		}
 		const s = new Set(servers);
 		if (s.has(id)) s.delete(id);
 		else s.add(id);
@@ -253,31 +261,21 @@
 	</svg>
 {/snippet}
 
-{#snippet missile()}
-	<svg width="34" height="34" viewBox="0 0 40 40" style="transform: rotate(40deg)" aria-hidden="true">
-		<path d="M12 14 L5 8 L13 16 Z" fill="#7c8a99" />
-		<path d="M12 26 L5 32 L13 24 Z" fill="#7c8a99" />
-		<rect x="10" y="16" width="16" height="8" rx="4" fill="#3a4654" />
-		<path d="M26 16 L36 20 L26 24 Z" fill="#e03131" />
-		<circle cx="15" cy="20" r="1.5" fill="#aebccb" />
-	</svg>
-{/snippet}
-
-{#snippet boom()}
-	<svg viewBox="0 0 100 100" width="96" height="96" aria-hidden="true">
-		<g stroke="#ff7a1a" stroke-width="7" stroke-linecap="round">
-			<line x1="66" y1="50" x2="96" y2="50" />
-			<line x1="61" y1="61" x2="83" y2="83" />
-			<line x1="50" y1="66" x2="50" y2="96" />
-			<line x1="39" y1="61" x2="17" y2="83" />
-			<line x1="34" y1="50" x2="4" y2="50" />
-			<line x1="39" y1="39" x2="17" y2="17" />
-			<line x1="50" y1="34" x2="50" y2="4" />
-			<line x1="61" y1="39" x2="83" y2="17" />
+{#snippet boomBurst()}
+	<g class="azboom">
+		<g stroke="#ff7a1a" stroke-width="4" stroke-linecap="round">
+			<line x1="10" y1="0" x2="26" y2="0" />
+			<line x1="7.1" y1="7.1" x2="18.4" y2="18.4" />
+			<line x1="0" y1="10" x2="0" y2="26" />
+			<line x1="-7.1" y1="7.1" x2="-18.4" y2="18.4" />
+			<line x1="-10" y1="0" x2="-26" y2="0" />
+			<line x1="-7.1" y1="-7.1" x2="-18.4" y2="-18.4" />
+			<line x1="0" y1="-10" x2="0" y2="-26" />
+			<line x1="7.1" y1="-7.1" x2="18.4" y2="-18.4" />
 		</g>
-		<circle cx="50" cy="50" r="22" fill="#ff9e2c" />
-		<circle cx="50" cy="50" r="12" fill="#ffe08a" />
-	</svg>
+		<circle r="13" fill="#ff9e2c" />
+		<circle r="7" fill="#ffe08a" />
+	</g>
 {/snippet}
 
 <div class="flex h-full w-full flex-col gap-4 md:flex-row">
@@ -294,6 +292,9 @@
 				{#if introMode}
 					<rect x={meX - 7} y={meY - 7} width="14" height="14" rx="2.5" fill="#16212b" />
 					<text x={meX} y={meY - 13} text-anchor="middle" fill="#16212b" font-size="12" font-weight="700">{tx.strikeLabel}</text>
+					{#if introBoom}
+						<g transform="translate({meX} {meY})">{@render boomBurst()}</g>
+					{/if}
 				{:else}
 					{#each pins as p (p.key)}
 						<g
@@ -313,16 +314,6 @@
 			</svg>
 
 			{#if introMode}
-				{#if introStrike}
-					<div class="drone-intro pointer-events-none absolute" style="--tx:{meL}%; --ty:{meT}%">
-						{@render missile()}
-					</div>
-				{/if}
-				{#if introBoom}
-					<div class="kaboom pointer-events-none absolute" style="left:{meL}%; top:{meT}%">
-						{@render boom()}
-					</div>
-				{/if}
 				{#if showNews}
 					<div class="pointer-events-none absolute inset-0">
 						{#each tx.news as n, i (n.url)}
@@ -396,6 +387,9 @@
 							</g>
 						{/if}
 					{/each}
+					{#if victimPt}
+						<g transform="translate({victimPt[0]} {victimPt[1]})">{@render boomBurst()}</g>
+					{/if}
 				</svg>
 
 				<div class="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between p-3">
@@ -422,13 +416,6 @@
 					</button>
 				</div>
 
-				{#key strikeKey}
-					{#if striking}
-						<div class="drone pointer-events-none absolute">
-							{@render missile()}
-						</div>
-					{/if}
-				{/key}
 			{/if}
 		</div>
 	</div>
@@ -475,60 +462,18 @@
 			opacity: 0.04;
 		}
 	}
-	.drone {
-		animation: drone-fly 1.2s ease-in forwards;
-	}
-	@keyframes drone-fly {
-		0% {
-			left: -12%;
-			top: 10%;
-			opacity: 0;
-		}
-		20% {
-			opacity: 1;
-		}
-		100% {
-			left: 104%;
-			top: 60%;
-			opacity: 0.85;
-		}
-	}
-	.drone-intro {
-		left: -10%;
-		top: -10%;
-		animation: drone-strike 1.1s ease-in forwards;
-	}
-	@keyframes drone-strike {
-		0% {
-			opacity: 0;
-		}
-		20% {
-			opacity: 1;
-		}
-		100% {
-			left: var(--tx);
-			top: var(--ty);
-			opacity: 1;
-		}
-	}
-	.kaboom {
-		transform: translate(-50%, -50%);
-	}
-	.kaboom :global(svg) {
-		display: block;
+	.azboom {
+		transform-box: fill-box;
 		transform-origin: center;
-		animation: kaboom 0.7s ease-out forwards;
+		animation: azboom 0.7s ease-out forwards;
 	}
-	@keyframes kaboom {
+	@keyframes azboom {
 		0% {
 			transform: scale(0.3);
 			opacity: 1;
 		}
-		60% {
-			opacity: 0.95;
-		}
 		100% {
-			transform: scale(1.5);
+			transform: scale(1.4);
 			opacity: 0;
 		}
 	}

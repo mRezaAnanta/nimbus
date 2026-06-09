@@ -11,10 +11,12 @@ export const en: AZText = {
 		'Try it. Click a region to go inside, spread your servers across several AZs, then trigger an outage.'
 	],
 	reactions: {
-		virginia:
-			'Notice the AZ names, <b>us-east-1a</b>, <b>us-east-1b</b>, and so on, always ending in a letter. The twist is that the letter is shuffled differently for every account and kept secret, so people do not all pile into "a" and the load spreads evenly. This holds in every region. Now spread your servers across several AZs, then trigger an outage.',
-		singapore:
-			'Notice the AZ names, <b>ap-southeast-1a</b>, <b>ap-southeast-1b</b>, and so on, always ending in a letter. The twist is that the letter is shuffled differently for every account and kept secret, so people do not all pile into "a" and the load spreads evenly. This holds in every region. Now spread your servers across several AZs, then trigger an outage.',
+		virginia: 'This is the Virginia region. Those dots are its Availability Zones, each one a separate data center.',
+		'virginia-name':
+			'Look at the names, <b>us-east-1a</b>, <b>us-east-1b</b>, and so on. The trailing letter is shuffled per account and kept secret, so load spreads evenly instead of piling into "a". Now spread your servers across several AZs, then trigger an outage.',
+		singapore: 'This is the Singapore region. Those dots are its Availability Zones, each one a separate data center.',
+		'singapore-name':
+			'Look at the names, <b>ap-southeast-1a</b>, <b>ap-southeast-1b</b>, and so on. The trailing letter is shuffled per account and kept secret, so load spreads evenly instead of piling into "a". Now spread your servers across several AZs, then trigger an outage.',
 		down: 'There it is. Your server was in a single AZ, so when that AZ was hit your site went down with it. Spread to other AZs, then trigger it again.',
 		survived: 'Feel the difference. One AZ falls, but the others keep serving, so your site survives. That is what spreading across AZs is for.'
 	},

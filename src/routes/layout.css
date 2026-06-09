@@ -40,3 +40,19 @@
 		-webkit-tap-highlight-color: transparent;
 	}
 }
+
+/* Slow, smooth cross-route view transitions so Nim glides between pages instead of snapping. */
+@media (prefers-reduced-motion: no-preference) {
+	::view-transition-group(nim) {
+		animation-duration: 0.6s;
+		animation-timing-function: cubic-bezier(0.45, 0, 0.2, 1);
+	}
+	::view-transition-old(nim),
+	::view-transition-new(nim) {
+		animation-duration: 0.6s;
+	}
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation-duration: 0.42s;
+	}
+}

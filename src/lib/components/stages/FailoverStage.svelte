@@ -17,16 +17,17 @@
 	const STANDBY = { key: 'singapore', lon: 103.8, lat: 1.35 };
 	const pAt = { x: fx(PRIMARY.lon), y: fy(PRIMARY.lat) };
 	const sAt = { x: fx(STANDBY.lon), y: fy(STANDBY.lat) };
-	const droneTo = { x: (pAt.x / FLAT_W) * 100, y: (pAt.y / FLAT_H) * 100 };
 
 	type Phase = 'normal' | 'down' | 'failing' | 'failed-over';
 	let standby = $state(false);
 	let phase = $state<Phase>('normal');
 	let striking = $state(false);
 	let strikeKey = $state(0);
+	let showBoom = $state(false);
 	let fired = false;
 	let t1: ReturnType<typeof setTimeout> | undefined;
 	let t2: ReturnType<typeof setTimeout> | undefined;
+	let tB: ReturnType<typeof setTimeout> | undefined;
 	let tR: ReturnType<typeof setTimeout> | undefined;
 
 	const primaryDown = $derived(phase !== 'normal');
@@ -43,6 +44,8 @@
 		strikeKey += 1;
 		striking = true;
 		t1 = setTimeout(() => {
+			showBoom = true; // the strike lands on the primary region
+			tB = setTimeout(() => (showBoom = false), 800);
 			if (standby) {
 				phase = 'failing';
 				t2 = setTimeout(() => {
@@ -57,7 +60,7 @@
 				phase = 'down';
 				onstate?.('spof');
 			}
-		}, 1000);
+		}, 350);
 		tR = setTimeout(() => {
 			phase = 'normal';
 			striking = false;
@@ -80,6 +83,7 @@
 	onDestroy(() => {
 		clearTimeout(t1);
 		clearTimeout(t2);
+		clearTimeout(tB);
 		clearTimeout(tR);
 	});
 </script>
@@ -115,16 +119,29 @@
 					{tx.primaryLabel}, {primaryDown ? tx.statusDown : tx.serving}
 				</text>
 			</g>
-		</svg>
 
-		<!-- drone strike toward the primary region -->
-		{#key strikeKey}
-			{#if striking}
-				<div class="drone text-danger pointer-events-none absolute" style="--tx:{droneTo.x}%; --ty:{droneTo.y}%" aria-hidden="true">
-					<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M2 12 L21 5 L14 12 L21 19 Z" /></svg>
-				</div>
-			{/if}
-		{/key}
+			<!-- explosion on the primary region, drawn in map coordinates so it lands exactly -->
+			{#key strikeKey}
+				{#if showBoom}
+					<g transform="translate({pAt.x} {pAt.y})">
+						<g class="boomg">
+							<g stroke="#ff7a1a" stroke-width="4" stroke-linecap="round">
+								<line x1="10" y1="0" x2="26" y2="0" />
+								<line x1="7.1" y1="7.1" x2="18.4" y2="18.4" />
+								<line x1="0" y1="10" x2="0" y2="26" />
+								<line x1="-7.1" y1="7.1" x2="-18.4" y2="18.4" />
+								<line x1="-10" y1="0" x2="-26" y2="0" />
+								<line x1="-7.1" y1="-7.1" x2="-18.4" y2="-18.4" />
+								<line x1="0" y1="-10" x2="0" y2="-26" />
+								<line x1="7.1" y1="-7.1" x2="18.4" y2="-18.4" />
+							</g>
+							<circle r="13" fill="#ff9e2c" />
+							<circle r="7" fill="#ffe08a" />
+						</g>
+					</g>
+				{/if}
+			{/key}
+		</svg>
 
 		<!-- controls -->
 		<div class="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 p-3">
@@ -179,24 +196,19 @@
 			opacity: 0.04;
 		}
 	}
-	.drone {
-		left: -10%;
-		top: -8%;
-		animation: strike 1s ease-in forwards;
+	.boomg {
+		transform-box: fill-box;
+		transform-origin: center;
+		animation: boomg 0.7s ease-out forwards;
 	}
-	@keyframes strike {
+	@keyframes boomg {
 		0% {
-			left: -10%;
-			top: -8%;
-			opacity: 0;
-		}
-		25% {
+			transform: scale(0.3);
 			opacity: 1;
 		}
 		100% {
-			left: var(--tx);
-			top: var(--ty);
-			opacity: 1;
+			transform: scale(1.5);
+			opacity: 0;
 		}
 	}
 </style>
