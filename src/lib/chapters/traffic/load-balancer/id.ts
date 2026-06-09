@@ -1,0 +1,33 @@
+import type { LoadBalancerText } from '../types';
+
+export const id: LoadBalancerText = {
+	title: 'Load balancer',
+	intro: [
+		'Satu server itu ada batasnya. Selama trafik kalem, dia santai. Tapi begitu pengunjung membludak, dia kewalahan.',
+		'Bayangkan kamu lagi adain <b>flash sale</b>. Jam 12 tepat, ribuan orang buka situsmu barengan. Satu server langsung penuh, situs melambat, lalu down.',
+		'Solusinya, taruh <b>load balancer</b> di depan beberapa server yang identik. Tugasnya membagi permintaan rata ke semua server, jadi tidak ada satu pun yang kebanjiran sendirian.',
+		'Bonusnya, kalau satu server mati, balancer langsung berhenti mengirim ke server itu dan mengalihkan trafik ke yang masih hidup. Pengunjung tidak sadar apa apa.',
+		'Coba sendiri. Mulai flash sale dengan satu server dulu, lihat dia tumbang. Lalu tambahkan load balancer dan beberapa server, dan perhatikan bebannya terbagi rata.'
+	],
+	reactions: {
+		overload:
+			'Nah, satu server tidak kuat menampung lonjakan flash sale. Bebannya tembus merah dan situs mulai down. Tambahkan load balancer biar bebannya dibagi.',
+		balanced:
+			'Lihat, sekarang beban terbagi rata ke semua server. Semuanya tetap hijau dan situs tetap ngebut walau trafik tinggi. Itulah kerja load balancer.',
+		rerouted:
+			'Satu server mati, tapi balancer langsung mengalihkan trafiknya ke server yang masih hidup. Situs jalan terus tanpa gangguan.'
+	},
+	startSale: 'Mulai flash sale',
+	addBalancer: 'Tambah load balancer',
+	killServer: 'Matikan satu server',
+	reset: 'Ulangi',
+	balancerLabel: 'Load balancer',
+	serverLabel: 'Server {n}',
+	statusUp: 'Online',
+	statusOver: 'Kewalahan',
+	statusDown: 'Mati',
+	siteFast: 'Situs ngebut',
+	siteSlow: 'Situs lambat',
+	siteDown: 'Situs down',
+	loadLabel: 'Beban'
+};
