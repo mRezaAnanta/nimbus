@@ -34,6 +34,10 @@
 	const final = $derived(isLastLesson && isLastBeat);
 	const canBack = $derived(beat > 0 || data.index > 0);
 	const message = $derived(reaction ?? text.intro[Math.min(beat, text.intro.length - 1)]);
+	// "Your turn": on the last beat, once Nim has said its piece and is waiting for you to act
+	// (no reaction showing yet), Nim steps out so the whole stage is free to play with. A tap
+	// brings the bubble back, and any reaction or completion pops it back on its own.
+	const aside = $derived(isLastBeat && !completed && reaction === null);
 	// Stage stays locked + dimmed while Nim is still narrating; it unlocks on the last beat,
 	// the one that invites interaction, or earlier if the stage asks to be shown (an intro).
 	const stageActive = $derived(isLastBeat || shown);
@@ -103,8 +107,8 @@
 		<h1 class="font-display text-ink mt-1 text-2xl font-medium md:text-[1.9rem]">{text.title}</h1>
 	</div>
 
-	<!-- Stage. Content aligns to the top (region fills via h-full); never far from the title. -->
-	<section class="flex min-h-[40vh] flex-1 items-start justify-center px-4 pb-4 pt-2 md:min-h-0 md:px-8 md:pb-6 md:pt-5">
+	<!-- Stage. Sits between the title and Nim and is bounded so neither ever gets pushed off screen. -->
+	<section class="flex min-h-0 flex-1 items-start justify-center overflow-hidden px-4 pb-4 pt-2 md:px-8 md:pb-6 md:pt-5">
 		{#key data.lessonId}
 			<div class="stage-in h-full w-full">
 				<div
@@ -118,9 +122,14 @@
 		{/key}
 	</section>
 
-	<!-- Nim + cloud bubble (bottom-left) -->
-	<div class="z-10 shrink-0 p-4 md:absolute md:bottom-5 md:left-5 md:p-0">
-		<SpeechBubble nim={message} mood={currentMood} {canNext} {canBack} {final} onnext={next} onback={back} />
+	<!-- Nim + cloud bubble: floats in the bottom-left corner (every screen) so Nim stays put and
+	     the stage never resizes when the bubble pops in or out. The wrapper ignores pointer events
+	     so taps fall through to the stage; only Nim and the bubble themselves are interactive.
+	     Safe-area padding keeps it clear of the phone's home bar. -->
+	<div
+		class="pointer-events-none absolute bottom-0 left-0 z-10 px-3 pb-[max(0.6rem,env(safe-area-inset-bottom))] md:bottom-5 md:left-5 md:px-0 md:pb-0"
+	>
+		<SpeechBubble nim={message} mood={currentMood} {canNext} {canBack} {final} {aside} onnext={next} onback={back} />
 	</div>
 </main>
 

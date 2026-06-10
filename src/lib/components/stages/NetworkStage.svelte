@@ -57,7 +57,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4 pb-[8vh]">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
 	<!-- the VPC building -->
 	<div class="border-line bg-card w-full max-w-2xl rounded-2xl border p-4">
 		<p class="text-faint mb-3 text-[11px] font-semibold tracking-widest uppercase">{tx.vpcLabel}</p>

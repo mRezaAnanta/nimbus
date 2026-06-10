@@ -59,7 +59,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-6 pb-[12vh]">
+<div class="flex h-full w-full flex-col items-center justify-center gap-6">
 	<div class="grid w-full max-w-3xl grid-cols-[auto_1fr_auto] items-center gap-3 md:gap-5">
 		<!-- visitors send requests with different paths -->
 		<div class="flex flex-col gap-2">

@@ -41,7 +41,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-7 pb-[16vh]">
+<div class="flex h-full w-full flex-col items-center justify-center gap-7">
 	<div class="flex w-full max-w-2xl items-center justify-center gap-3 md:gap-6">
 		<!-- phone (visitor) -->
 		<div class="flex shrink-0 flex-col items-center gap-2">

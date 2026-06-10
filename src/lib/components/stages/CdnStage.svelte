@@ -64,7 +64,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-6 pb-[8vh]">
+<div class="flex h-full w-full flex-col items-center justify-center gap-6">
 	<div class="flex w-full max-w-2xl items-center justify-between gap-2">
 		<!-- the user, far away -->
 		<div class="flex shrink-0 flex-col items-center gap-2">

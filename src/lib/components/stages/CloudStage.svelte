@@ -55,7 +55,7 @@
 	onDestroy(clearAll);
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-6 pb-[16vh]">
+<div class="flex h-full w-full flex-col items-center justify-center gap-6">
 	<!-- live preview above the two choices -->
 	<div class="flex flex-col items-center gap-2">
 		{#if open}

@@ -13,10 +13,12 @@
 </script>
 
 <div
-	class="flex min-h-dvh flex-col overflow-x-hidden md:h-dvh md:overflow-hidden"
+	class="flex h-dvh flex-col overflow-hidden"
 	style="background: radial-gradient(120% 90% at 75% 8%, #eef4fc 0%, #f6f4ee 55%, #faf9f6 100%);"
 >
-	<header class="z-20 flex shrink-0 items-center justify-between px-5 pt-4 md:px-8">
+	<header
+		class="z-20 flex shrink-0 items-center justify-between px-5 pt-[max(1rem,env(safe-area-inset-top))] md:px-8"
+	>
 		<a href="/" class="font-display text-lg font-semibold tracking-tight">Nimbus</a>
 		<div class="flex items-center gap-3">
 			<div class="border-line flex items-center gap-0.5 rounded-full border bg-white/70 p-0.5 text-[11px] font-bold backdrop-blur">

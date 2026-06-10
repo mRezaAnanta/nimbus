@@ -22,8 +22,8 @@
 	<title>Nimbus: {s.title}</title>
 </svelte:head>
 
-<main class="flex min-h-0 flex-1 items-center justify-center p-6">
-	<div class="max-w-md text-center">
+<main class="flex min-h-0 flex-1 flex-col overflow-y-auto">
+	<div class="mx-auto flex min-h-full max-w-md flex-col justify-center px-6 py-8 text-center">
 		<div class="flex justify-center"><span style="view-transition-name: nim"><Nim mood="happy" size={92} /></span></div>
 		<h1 class="font-display text-ink mt-4 text-4xl font-medium">{s.title}</h1>
 		<p class="text-muted mt-2">{s.sub}</p>

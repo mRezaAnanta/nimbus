@@ -77,7 +77,7 @@
 	onDestroy(() => clearInterval(timer));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-5 pb-[10vh]">
+<div class="flex h-full w-full flex-col items-center justify-center gap-5">
 	<!-- 24h traffic curve with a moving cursor -->
 	<div class="w-full max-w-md rounded-2xl border border-line bg-card p-4">
 		<div class="mb-2 flex items-center justify-between text-[11px] font-semibold text-faint">

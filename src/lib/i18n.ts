@@ -10,6 +10,8 @@ const ui = {
 		finish: 'Selesai',
 		start: 'Mulai',
 		completeHint: 'Selesaikan dulu langkahnya',
+		hideNim: 'Sembunyikan Nim',
+		showNim: 'Tampilkan Nim',
 		chapter: 'Bab',
 		welcome: [
 			'Halo! Aku <b>Nim</b>, si awan pemandu. Aku bakal nemenin kamu belajar <b>cloud</b> dari benar-benar nol.',
@@ -23,6 +25,8 @@ const ui = {
 		finish: 'Finish',
 		start: 'Start',
 		completeHint: 'Finish the step first',
+		hideNim: 'Hide Nim',
+		showNim: 'Show Nim',
 		chapter: 'Chapter',
 		welcome: [
 			"Hi! I'm <b>Nim</b>, your cloud guide. I'll help you learn <b>cloud</b> from absolute zero.",

@@ -83,7 +83,7 @@
 	};
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4 pb-[8vh] md:flex-row md:items-stretch">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4 md:flex-row md:items-stretch">
 	<!-- Resources -->
 	<div class="flex w-full max-w-md flex-col gap-3">
 		{#each boxes as b (b.key)}

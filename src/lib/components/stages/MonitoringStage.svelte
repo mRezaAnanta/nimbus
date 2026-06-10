@@ -101,7 +101,7 @@
 	};
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4 pb-[10vh]">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
 	<!-- Dashboard panel -->
 	<div class="border-line bg-card w-full max-w-md rounded-2xl border p-5 shadow-sm">
 		<div class="mb-3 flex items-center justify-between">

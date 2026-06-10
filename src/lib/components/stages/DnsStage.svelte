@@ -67,7 +67,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-5 pb-[10vh]">
+<div class="flex h-full w-full flex-col items-center justify-center gap-5">
 	<!-- domain chips -->
 	<div class="flex flex-wrap items-center justify-center gap-2">
 		<span class="text-faint mr-1 text-xs font-semibold">{tx.prompt}:</span>
