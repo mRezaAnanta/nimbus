@@ -1,30 +1,33 @@
 import type { CostText } from '../types';
 
 export const en: CostText = {
-	title: 'Keeping cost in check',
+	title: 'Taming the bill',
 	intro: [
-		'The cloud is like a utility bill. You <b>pay as you go</b>. Use more, pay more. Turn it off, stop paying. There is no flat fee for a machine sitting idle in a warehouse.',
-		'That makes one habit quietly expensive: leaving resources running when nothing uses them, or renting a machine far bigger than the job needs. The meter keeps ticking and the bill keeps climbing, even with no one on it.',
-		'The fix is called <b>right sizing</b>: matching resources to real need. Turn off what is idle, shrink what is oversized. But be careful, too small is bad too: if a machine is overwhelmed, your users pay for it. The goal is the right size, not the smallest.',
-		'Look at your monthly bill on the side. One box sits idle and one is oversized. Tidy up both and watch the bill drop.'
+		'In the cloud you pay for what you use. That is the charm and the danger, because everything you forget to turn off keeps quietly charging.',
+		'The two most common bill diseases, an <b>idle</b> server running with no work to do, and an <b>oversized</b> server using only a sliver of its power.',
+		'The cure is called <b>right sizing</b>, matching size to real need. Turn off the idle one, shrink the oversized one, and the bill slims down without your site noticing.',
+		'Clean up the two wastes below, then watch the bill drop.'
 	],
 	reactions: {
-		wasteful:
-			'Look at the number. That idle box serves no one at all, yet its bill is full. The oversized one too, its capacity dwarfs what it actually uses. That is money burned every month.',
-		rightsized:
-			'There, much leaner. You switched off the idle box and shrank the oversized one to a fitting size, so it still serves users well but the bill drops a lot. That is right sizing.'
+		off: 'One idle server switched off, thirty dollars straight back into your pocket every month. In real companies this exact waste is the most common one.',
+		resize:
+			'The oversized machine shrank to fit, the work still gets done, the price is far lower. That is right sizing.'
 	},
-	billLabel: 'Monthly bill',
+	billLabel: 'This month’s bill',
 	perMonth: 'per month',
-	idleLabel: 'Test server',
-	idleSub: 'Idle, no traffic',
-	bigLabel: 'Web server',
-	bigSub: 'Oversized for its load',
-	rightLabel: 'Database',
-	rightSub: 'Already right sized',
+	idleName: 'Test server',
+	idleSub: 'always on, 2% used',
+	bigName: 'Report server',
+	bigSub: 'huge, 15% used',
+	rightName: 'Web server',
+	rightSub: 'sized just right',
 	turnOff: 'Turn off',
-	downsize: 'Downsize',
-	usageLabel: '{n} percent used',
-	tooSmall: 'Too small, users overwhelmed',
-	hint: 'Turn off the idle one, shrink the oversized one'
+	downsize: 'Shrink',
+	offTag: 'off, $0',
+	resizedTag: 'fits now',
+	savedTag: 'saved ${n}',
+	noteIdle: 'Two wastes are hiding in this bill',
+	noteOff: 'The idle one stopped charging',
+	noteResize: 'The oversized one fits now',
+	noteDone: 'A slim bill, the site still runs'
 };

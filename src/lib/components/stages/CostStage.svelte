@@ -1,174 +1,315 @@
 <script lang="ts">
+	import { Tween } from 'svelte/motion';
+	import { cubicOut } from 'svelte/easing';
+	import { SvelteSet } from 'svelte/reactivity';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { CostText } from '$lib/chapters/compute/types';
 
-	let {
-		text,
-		oncomplete,
-		onstate
-	}: {
-		text: LessonText;
-		oncomplete?: () => void;
-		onstate?: (s: string) => void;
-	} = $props();
+	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
+		$props();
 	const tx = $derived(text as CostText);
 
-	// Each box: a size (1..4) drives both its cost and how much headroom it has.
-	// `load` is the real demand. usage% = load / capacity, so an oversized box reads low.
-	// Cost per size step, in dollars per month.
-	const STEP_COST = 60;
-
-	type Box = { key: 'idle' | 'big' | 'right'; label: string; sub: string; size: number; load: number; on: boolean; canOff: boolean };
-
-	let boxes = $state<Box[]>([
-		{ key: 'idle', label: '', sub: '', size: 3, load: 0, on: true, canOff: true }, // idle test server
-		{ key: 'big', label: '', sub: '', size: 4, load: 1, on: true, canOff: false }, // oversized web server
-		{ key: 'right', label: '', sub: '', size: 2, load: 1.6, on: true, canOff: false } // already right sized
-	]);
-
-	let wastefulFired = false;
+	let offDone = $state(false);
+	let resizeDone = $state(false);
+	const fixed = new SvelteSet<string>();
 	let done = false;
+	const bill = new Tween(90, { duration: 700, easing: cubicOut });
 
-	const costOf = (b: Box) => (b.on ? b.size * STEP_COST : 0);
-	const bill = $derived(boxes.reduce((s, b) => s + costOf(b), 0));
-	const startBill = 3 * STEP_COST + 4 * STEP_COST + 2 * STEP_COST; // 540
-
-	// usage = load / capacity, capped. A turned-off or zero-load box reads 0.
-	const usagePct = (b: Box) => (!b.on || b.size === 0 ? 0 : Math.min(Math.round((b.load / b.size) * 100), 100));
-
-	// Right sizing is reached when nothing idle is left running and nothing is oversized,
-	// yet nothing is starved (no box under provisioned).
-	function evaluate() {
-		const idle = boxes.find((b) => b.key === 'idle')!;
-		const anyStarved = boxes.some((b) => b.on && usagePct(b) > 92);
-		const trimmedEnough = bill <= 240 && !idle.on; // turned idle off and shrank the big one
-		if (trimmedEnough && !anyStarved && !done) {
+	function turnOff() {
+		if (offDone) return;
+		offDone = true;
+		bill.target = bill.target - 30;
+		onstate?.('off');
+		finish('off');
+	}
+	function resize() {
+		if (resizeDone) return;
+		resizeDone = true;
+		bill.target = bill.target - 25;
+		onstate?.('resize');
+		finish('resize');
+	}
+	function finish(k: string) {
+		fixed.add(k);
+		if (fixed.size === 2 && !done) {
 			done = true;
-			onstate?.('rightsized');
 			oncomplete?.();
 		}
 	}
-
-	function toggle(b: Box) {
-		if (!b.canOff) return;
-		b.on = !b.on;
-		evaluate();
-	}
-	function downsize(b: Box) {
-		if (b.size > 1) b.size -= 1;
-		evaluate();
-	}
-
-	// Fire the "wasteful" hint once on first paint so the starting state is explained.
-	$effect(() => {
-		if (!wastefulFired) {
-			wastefulFired = true;
-			onstate?.('wasteful');
-		}
-	});
-
-	const fillLabel = (b: Box) => {
-		if (!b.on) return tx.idleSub;
-		if (b.key === 'right') return tx.rightSub;
-		return b.key === 'idle' ? tx.idleSub : tx.bigSub;
-	};
-	const localLabel = (b: Box) => (b.key === 'idle' ? tx.idleLabel : b.key === 'big' ? tx.bigLabel : tx.rightLabel);
-
-	const usageTone = (b: Box) => {
-		const u = usagePct(b);
-		if (!b.on) return '#8a949d';
-		if (u > 92) return '#d3584a';
-		if (u < 45) return '#dd9e36';
-		return '#3a9c64';
-	};
+	const note = $derived(
+		offDone && resizeDone ? tx.noteDone : resizeDone ? tx.noteResize : offDone ? tx.noteOff : tx.noteIdle
+	);
+	const saved = $derived(90 - Math.round(bill.current));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4 md:flex-row md:items-stretch">
-	<!-- Resources -->
-	<div class="flex w-full max-w-md flex-col gap-3">
-		{#each boxes as b (b.key)}
-			<div class="border-line bg-card rounded-2xl border p-4 {b.on ? '' : 'opacity-55'}">
-				<div class="flex items-start justify-between gap-3">
-					<div class="min-w-0">
-						<p class="text-ink text-sm font-bold">{localLabel(b)}</p>
-						<p class="text-faint text-[11px]">{fillLabel(b)}</p>
-					</div>
-					<span class="text-muted shrink-0 text-sm font-bold tabular-nums">${costOf(b)}</span>
-				</div>
-
-				<!-- capacity vs usage -->
-				<div class="mt-3 flex items-center gap-2">
-					<div class="relative h-2.5 flex-1 overflow-hidden rounded-full bg-line">
-						{#each [0, 1, 2, 3] as s (s)}
-							<div
-								class="absolute top-0 h-2.5 border-r border-white/70"
-								style="left:{(s / 4) * 100}%; width:{(1 / 4) * 100}%; background:{s < b.size && b.on
-									? '#cfd9e6'
-									: 'transparent'};"
-							></div>
-						{/each}
-						<div
-							class="relative h-2.5 rounded-full transition-[width] duration-500 ease-out"
-							style="width:{b.on ? (b.load / 4) * 100 : 0}%; background:{usageTone(b)};"
-						></div>
-					</div>
-					<span class="text-[11px] font-semibold tabular-nums" style="color:{usageTone(b)};">
-						{b.on ? tx.usageLabel.replace('{n}', String(usagePct(b))) : tx.idleSub}
-					</span>
-				</div>
-
-				{#if b.on && usagePct(b) > 92}
-					<p class="text-danger mt-2 text-[11px] font-semibold">{tx.tooSmall}</p>
-				{/if}
-
-				<!-- controls -->
-				<div class="mt-3 flex gap-2">
-					{#if b.canOff}
-						<button
-							type="button"
-							onclick={() => toggle(b)}
-							class="rounded-full border border-line px-3 py-1 text-[11px] font-semibold text-muted transition-colors hover:bg-paper"
-						>
-							{tx.turnOff}
-						</button>
-					{/if}
-					{#if b.on}
-						<button
-							type="button"
-							onclick={() => downsize(b)}
-							disabled={b.size <= 1}
-							class="rounded-full border border-line px-3 py-1 text-[11px] font-semibold text-muted transition-colors hover:bg-paper disabled:cursor-not-allowed disabled:opacity-40"
-						>
-							{tx.downsize}
-						</button>
-					{/if}
-				</div>
-			</div>
-		{/each}
+<div class="flex h-full w-full flex-col items-center justify-center gap-3">
+	<!-- the bill, big and honest -->
+	<div class="bill">
+		<span class="blabel">{tx.billLabel}</span>
+		<span class="bnum">${Math.round(bill.current)}<em>{tx.perMonth}</em></span>
+		{#if saved > 0}
+			{#key saved}<span class="saved">{tx.savedTag.replace('{n}', String(saved))}</span>{/key}
+		{/if}
 	</div>
 
-	<!-- Bill meter -->
-	<div class="flex shrink-0 flex-col items-center justify-center md:w-[180px]">
-		<div class="border-line bg-card flex w-[200px] flex-col items-center rounded-2xl border p-5 text-center md:w-full">
-			<span class="text-faint text-[11px] font-semibold tracking-widest uppercase">{tx.billLabel}</span>
-			<span
-				class="font-display mt-2 text-4xl font-medium tabular-nums transition-colors {bill <= 240
-					? 'text-grass'
-					: bill < startBill
-						? 'text-amber'
-						: 'text-ink'}"
-			>
-				${bill}
-			</span>
-			<span class="text-muted mt-1 text-xs">{tx.perMonth}</span>
-			<!-- meter -->
-			<div class="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-line">
-				<div
-					class="h-2.5 rounded-full transition-[width] duration-500 ease-out"
-					style="width:{(bill / startBill) * 100}%; background:{bill <= 240 ? '#3a9c64' : bill < startBill ? '#dd9e36' : '#d3584a'};"
-				></div>
+	<!-- the three machines behind it -->
+	<div class="rows">
+		<div class="row" class:dead={offDone}>
+			<div class="mini" style="--c:{offDone ? '#cfd6dd' : '#d3584a'}">
+				{#if offDone}<span class="x">×</span>{:else}<span class="md"></span><span class="md"></span>{/if}
 			</div>
-			<p class="text-faint mt-4 text-[11px] leading-snug">{tx.hint}</p>
+			<div class="info">
+				<b>{tx.idleName}</b>
+				<span>{offDone ? tx.offTag : tx.idleSub}</span>
+			</div>
+			<span class="price" class:strike={offDone}>$30</span>
+			{#if !offDone}
+				<button type="button" class="fix" onclick={turnOff}>{tx.turnOff}</button>
+			{:else}
+				<span class="okx">✓</span>
+			{/if}
+		</div>
+		<div class="row">
+			<div class="mini big" class:shrunk={resizeDone} style="--c:{resizeDone ? '#3a9c64' : '#dd9e36'}">
+				<span class="md"></span><span class="md"></span>
+			</div>
+			<div class="info">
+				<b>{tx.bigName}</b>
+				<span>{resizeDone ? tx.resizedTag : tx.bigSub}</span>
+			</div>
+			<span class="price">{resizeDone ? '$15' : '$40'}</span>
+			{#if !resizeDone}
+				<button type="button" class="fix" onclick={resize}>{tx.downsize}</button>
+			{:else}
+				<span class="okx">✓</span>
+			{/if}
+		</div>
+		<div class="row">
+			<div class="mini" style="--c:#3a9c64"><span class="md"></span><span class="md"></span></div>
+			<div class="info">
+				<b>{tx.rightName}</b>
+				<span>{tx.rightSub}</span>
+			</div>
+			<span class="price">$20</span>
+			<span class="okx">✓</span>
 		</div>
 	</div>
+
+	<p class="note">{note}</p>
 </div>
+
+<style>
+	.bill {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1px;
+		border-radius: 16px;
+		border: 1px solid #e8e2d8;
+		background: #fff;
+		padding: 12px 30px;
+		box-shadow: 0 10px 24px rgba(22, 40, 60, 0.07);
+	}
+	.blabel {
+		font-size: 9.5px;
+		font-weight: 800;
+		color: #8a949d;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+	.bnum {
+		font-size: 30px;
+		font-weight: 800;
+		color: #16212b;
+		font-variant-numeric: tabular-nums;
+		line-height: 1.05;
+	}
+	.bnum em {
+		font-style: normal;
+		font-size: 10px;
+		font-weight: 600;
+		color: #8a949d;
+		margin-left: 4px;
+	}
+	.saved {
+		position: absolute;
+		top: -9px;
+		right: -10px;
+		border-radius: 999px;
+		background: #3a9c64;
+		color: #fff;
+		font-size: 9.5px;
+		font-weight: 800;
+		padding: 3px 9px;
+		animation: popin 0.3s ease;
+		box-shadow: 0 4px 10px rgba(58, 156, 100, 0.3);
+	}
+	@keyframes popin {
+		from {
+			transform: scale(0.5);
+			opacity: 0;
+		}
+		to {
+			transform: scale(1);
+			opacity: 1;
+		}
+	}
+	.rows {
+		display: flex;
+		flex-direction: column;
+		gap: 7px;
+		width: min(94vw, 350px);
+	}
+	.row {
+		display: flex;
+		align-items: center;
+		gap: 9px;
+		border-radius: 14px;
+		border: 1px solid #e8e2d8;
+		background: #fff;
+		padding: 9px 11px;
+		box-shadow: 0 6px 16px rgba(22, 40, 60, 0.05);
+		transition: opacity 0.3s ease;
+	}
+	.row.dead {
+		opacity: 0.65;
+	}
+	.mini {
+		display: flex;
+		flex: none;
+		width: 34px;
+		height: 30px;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 3px;
+		border-radius: 8px;
+		border: 1.5px solid var(--c);
+		background: color-mix(in srgb, var(--c) 9%, #fff);
+		transition: all 0.4s ease;
+	}
+	.mini.big {
+		width: 46px;
+		height: 40px;
+	}
+	.mini.big.shrunk {
+		width: 34px;
+		height: 30px;
+	}
+	.md {
+		width: 60%;
+		height: 3px;
+		border-radius: 2px;
+		background: var(--c);
+		opacity: 0.7;
+	}
+	.x {
+		font-size: 15px;
+		font-weight: 800;
+		color: #b9c0c7;
+		line-height: 1;
+	}
+	.info {
+		display: flex;
+		flex: 1;
+		min-width: 0;
+		flex-direction: column;
+		line-height: 1.2;
+	}
+	.info b {
+		font-size: 11px;
+		font-weight: 800;
+		color: #16212b;
+	}
+	.info span {
+		font-size: 8.5px;
+		color: #8a949d;
+	}
+	.price {
+		font-size: 12px;
+		font-weight: 800;
+		color: #16212b;
+		font-variant-numeric: tabular-nums;
+	}
+	.price.strike {
+		text-decoration: line-through;
+		color: #b9c0c7;
+	}
+	.fix {
+		border-radius: 999px;
+		background: #16212b;
+		color: #fff;
+		font-size: 10.5px;
+		font-weight: 700;
+		padding: 6px 12px;
+		animation: pulse 1.8s ease-in-out infinite;
+		transition: filter 0.2s ease;
+	}
+	.fix:hover {
+		filter: brightness(1.18);
+	}
+	.okx {
+		width: 18px;
+		text-align: center;
+		color: #3a9c64;
+		font-size: 12px;
+		font-weight: 800;
+	}
+	@keyframes pulse {
+		0%,
+		100% {
+			box-shadow: 0 0 0 0 rgba(46, 111, 224, 0);
+		}
+		50% {
+			box-shadow: 0 0 0 4px rgba(46, 111, 224, 0.16);
+		}
+	}
+	.note {
+		min-height: 1.3em;
+		text-align: center;
+		font-size: 12px;
+		font-weight: 600;
+		color: #6a7681;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.fix,
+		.saved {
+			animation-duration: 0.01s;
+		}
+	}
+	@media (min-width: 768px) {
+		.bill {
+			padding: 14px 40px;
+		}
+		.bnum {
+			font-size: 38px;
+		}
+		.bnum em {
+			font-size: 12px;
+		}
+		.rows {
+			width: 430px;
+			gap: 9px;
+		}
+		.row {
+			padding: 11px 14px;
+		}
+		.info b {
+			font-size: 13.5px;
+		}
+		.info span {
+			font-size: 10.5px;
+		}
+		.price {
+			font-size: 14px;
+		}
+		.fix {
+			font-size: 12px;
+			padding: 7px 15px;
+		}
+		.note {
+			font-size: 14px;
+		}
+	}
+</style>

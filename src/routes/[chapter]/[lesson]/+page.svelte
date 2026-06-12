@@ -103,7 +103,7 @@
 	<!-- Title band (in normal flow, never overlaps the stage) -->
 	<div class="shrink-0 px-4 pt-3 pb-1 text-center">
 		<p class="text-faint text-[11px] font-semibold tracking-widest uppercase">
-			{$t.chapter} {chapter.number}: {chapter.title[$lang]}
+			{chapter.unnumbered ? chapter.title[$lang] : `${$t.chapter} ${chapter.number}: ${chapter.title[$lang]}`}
 		</p>
 		<h1 class="font-display text-ink mt-1 text-2xl font-medium md:text-[1.9rem]">{text.title}</h1>
 	</div>

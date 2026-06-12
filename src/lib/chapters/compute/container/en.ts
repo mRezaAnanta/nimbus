@@ -1,32 +1,36 @@
 import type { ContainerText } from '../types';
 
 export const en: ContainerText = {
-	title: 'What is a container?',
+	title: 'Containers',
 	intro: [
-		'An app needs a lot around it to run: a language runtime, libraries, config files. Move it to another machine, forget one thing, and it breaks. The classic line: "but it works on my laptop".',
-		'The fix is to package the app together with everything it needs into one neat bundle. That bundle is a <b>container</b>. Once built, it runs exactly the same anywhere.',
-		'Think of a standardized shipping container at a port. The contents vary, but the outside is uniform. Lift it onto any ship or any truck and it just fits. A container is far lighter and faster to start than a VM, because it shares the server operating system kernel instead of booting a whole OS of its own.',
-		'Try it. Build your app into one image, then run an identical copy on a different server.'
+		'Your app does not run alone. It needs a language, libraries, and config files. Move it to another computer, forget one piece, instant error. The classic, "works on my laptop".',
+		'So everything it needs gets wrapped into one package called a <b>container</b>. Look at the stack. The machine sits at the bottom, <b>Docker</b> sits on it as the base that runs containers, and on top the containers stand in a row, each carrying its own needs.',
+		'<b>Docker</b> is the most common container tool, nearly everyone starts here. When there is more than one machine, <b>Docker Swarm</b> makes a few machines run containers together.',
+		'Then there is <b>Kubernetes</b>, and that is a different world. A brain called the <b>control plane</b> manages many machines holding hundreds of containers, with its own automatic scaling and failover. Spotify and Gojek live in this world. And note this, Docker does not have to come with Kubernetes. Many people assume they are a bundle, yet Docker stands perfectly well on its own, and your small project does fine with plain Docker.',
+		'Your turn now. Pack your app into an image, then run the exact same copy in three different places.'
 	],
 	reactions: {
-		shipped: 'There you go, built once, your app becomes a single image ready to ship. Now run that same image on another server.',
-		scaled: 'See, the exact same image runs on two servers without changing a thing. That is the power of containers: package once, run anywhere, and start instantly.'
+		built:
+			'The image is built. Your app, libraries, and settings are locked into one package that cannot forget anything.',
+		ran: 'See, three different places running the exact same container, no "works on my laptop" drama. That is why containers are everywhere.'
 	},
-	buildLabel: 'Build image',
-	buildHint: 'Package the app plus its dependencies into one image',
-	imageLabel: 'Image ready',
-	runHere: 'Run here',
-	hostLabel: 'Server {n}',
-	vmTitle: 'Virtual machine',
-	vmSub: 'each copy boots a full OS first',
-	vmSize: 'Heavy (GB)',
-	vmBoot: 'Slow boot',
-	containerTitle: 'Container',
-	containerSub: 'shares the server OS, starts instantly',
-	containerSize: 'Light (MB)',
-	containerBoot: 'Starts instantly',
-	bootingOs: 'Booting OS...',
-	appLabel: 'App',
-	depsLabel: 'Dependencies',
-	runningHere: 'Running here'
+	buildLabel: 'Pack into an image',
+	runLabel: 'Run in 3 places',
+	imageLabel: 'nimbus-app v1',
+	machines: ['Your laptop', 'Office server', 'Cloud'],
+	sameTag: 'identical',
+	pieces: ['app.js', 'library', 'config'],
+	yourLaptop: 'Your laptop',
+	otherMachine: 'Another computer',
+	brokenTag: 'error, something forgotten',
+	archMachine: 'Machine, laptop or server',
+	archDocker: 'Docker',
+	archApps: ['App A + its needs', 'App B + its needs'],
+	swarmTag: 'Docker Swarm, a few machines managed together',
+	k8sPlane: 'Control plane, the Kubernetes brain',
+	nodeLabel: 'Node {n}',
+	k8sBadge: 'automatic scaling & failover',
+	noteIdle: 'Pack your app first',
+	noteBuilt: 'Packed tight, ready to travel anywhere',
+	noteRan: 'One image, three places, the exact same result'
 };

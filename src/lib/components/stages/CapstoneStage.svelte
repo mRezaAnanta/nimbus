@@ -1,174 +1,343 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { CapstoneText } from '$lib/chapters/capstone/types';
 
-	let {
-		text,
-		oncomplete,
-		onstate
-	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
+	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
+		$props();
 	const tx = $derived(text as CapstoneText);
 
-	let added = $state<Record<string, boolean>>({});
-	let testing = $state(false);
-	let step = $state(-1); // which stress step is flashing
-	let tested = $state(false);
-	let fired = false;
-	let timers: ReturnType<typeof setTimeout>[] = [];
+	let picked = $state('');
+	let email = $state('');
+	let subState = $state<'' | 'bad' | 'err' | 'busy' | 'ok'>('');
+	let done = false;
 
-	const count = $derived(Object.values(added).filter(Boolean).length);
-	const allAdded = $derived(count === tx.caps.length);
-	const ratio = $derived(count / tx.caps.length);
-
-	function add(key: string) {
-		if (added[key] || testing || tested) return;
-		added = { ...added, [key]: true };
-		onstate?.(key);
+	function pick(k: string) {
+		picked = k;
+		onstate?.('picked');
+		if (!done) {
+			done = true;
+			oncomplete?.();
+		}
+		try {
+			localStorage.setItem('nimbus-track', k);
+		} catch {
+			/* storage may be unavailable, the pick still counts */
+		}
 	}
-
-	function runTest() {
-		if (!allAdded || testing || tested) return;
-		testing = true;
-		tx.testSteps.forEach((_, i) => {
-			timers.push(setTimeout(() => (step = i), 500 + i * 650));
-		});
-		timers.push(
-			setTimeout(
-				() => {
-					testing = false;
-					step = -1;
-					tested = true;
-					onstate?.('tested');
-					if (!fired) {
-						fired = true;
-						oncomplete?.();
-					}
-				},
-				700 + tx.testSteps.length * 650
-			)
-		);
+	async function subscribe(e: SubmitEvent) {
+		e.preventDefault();
+		if (subState === 'busy') return;
+		if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
+			subState = 'bad';
+			return;
+		}
+		subState = 'busy';
+		try {
+			const res = await fetch('/api/newsletter', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ email: email.trim(), track: picked })
+			});
+			if (!res.ok) throw new Error(String(res.status));
+			subState = 'ok';
+			onstate?.('subscribed');
+		} catch {
+			subState = 'err';
+		}
 	}
-
-	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col gap-4 md:flex-row">
-	<!-- The app, growing from fragile to resilient -->
-	<div class="border-line bg-card relative flex min-h-[180px] flex-1 flex-col items-center justify-center gap-3 overflow-hidden rounded-2xl border p-5">
-		<div
-			class="flex flex-col items-center gap-2 rounded-2xl border px-7 py-5 transition-all duration-500 {tested
-				? 'border-grass bg-grass-soft'
-				: allAdded
-					? 'border-brand bg-brand-soft'
-					: 'border-line bg-paper'}"
-		>
-			<svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
-				<rect x="6" y="13" width="28" height="20" rx="3" fill={tested ? '#3a9c64' : allAdded ? '#2e6fe0' : '#8a949d'} />
-				<rect x="11" y="8" width="18" height="8" rx="2" fill={tested ? '#2f8553' : allAdded ? '#255fc4' : '#74808a'} />
-				<circle cx="20" cy="23" r="3.5" fill="#fff" />
-			</svg>
-			<span class="text-ink text-sm font-bold">{tx.appName}</span>
-			<span class="text-[11px] font-semibold {tested ? 'text-grass' : 'text-faint'}">
-				{tested || allAdded ? tx.appReady : tx.appWeak}
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+	<!-- pick the provider you want to learn first -->
+	<div class="cards">
+		<button type="button" class="prov" class:on={picked === 'aws'} onclick={() => pick('aws')}>
+			<span class="soon">{tx.comingSoon}</span>
+			<span class="mark aws">
+				<svg width="34" height="22" viewBox="0 0 48 30" fill="none" aria-hidden="true">
+					<text x="24" y="15" text-anchor="middle" font-size="15" font-weight="800" fill="#16212b" font-family="inherit">aws</text>
+					<path d="M8 22c10 6 26 6 33-1m-4-1.5 4.6 1-2 4" stroke="#ff9900" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+				</svg>
 			</span>
-		</div>
-
-		{#if testing}
-			<div class="mt-1 flex flex-wrap items-center justify-center gap-1.5">
-				{#each tx.testSteps as s, i (s)}
-					<span
-						class="rounded-full px-2.5 py-1 text-[11px] font-semibold transition-all duration-200 {step >= i
-							? i === tx.testSteps.length - 1
-								? 'bg-grass-soft text-grass'
-								: 'bg-amber-soft text-amber'
-							: 'bg-line text-faint opacity-40'}"
-					>
-						{s}
-					</span>
-				{/each}
-			</div>
-		{/if}
-
-		{#if tested}
-			<div class="pop mt-1 flex items-center gap-2">
-				<span class="relative flex h-2.5 w-2.5">
-					<span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-grass opacity-60"></span>
-					<span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-grass"></span>
-				</span>
-				<span class="text-grass text-lg font-bold tracking-wide">{tx.online}</span>
-			</div>
-		{/if}
+			<b>{tx.providers[0].name}</b>
+			<span class="psub">{tx.providers[0].sub}</span>
+			{#if picked === 'aws'}<span class="pickedtag">{tx.pickedTag}</span>{/if}
+		</button>
+		<button type="button" class="prov" class:on={picked === 'gcp'} onclick={() => pick('gcp')}>
+			<span class="soon">{tx.comingSoon}</span>
+			<span class="mark">
+				<svg width="30" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+					<path d="M7 19a5 5 0 0 1-.9-9.92A6.5 6.5 0 0 1 18.6 10.6 4.5 4.5 0 0 1 17.5 19Z" stroke="#4285f4" stroke-width="1.8" stroke-linejoin="round" />
+					<circle cx="8.6" cy="14.6" r="1.15" fill="#ea4335" />
+					<circle cx="12" cy="14.6" r="1.15" fill="#fbbc05" />
+					<circle cx="15.4" cy="14.6" r="1.15" fill="#34a853" />
+				</svg>
+			</span>
+			<b>{tx.providers[1].name}</b>
+			<span class="psub">{tx.providers[1].sub}</span>
+			{#if picked === 'gcp'}<span class="pickedtag">{tx.pickedTag}</span>{/if}
+		</button>
+		<button type="button" class="prov" class:on={picked === 'azure'} onclick={() => pick('azure')}>
+			<span class="soon">{tx.comingSoon}</span>
+			<span class="mark">
+				<svg width="26" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+					<path d="M13.6 3 5 19.6h4.4L20 6.4 13.6 3Z" fill="#0f6cbd" />
+					<path d="M11.2 9.2 4 21h10.8l1.6-3.4H9.8l5-8.4Z" fill="#3aa0e8" />
+				</svg>
+			</span>
+			<b>{tx.providers[2].name}</b>
+			<span class="psub">{tx.providers[2].sub}</span>
+			{#if picked === 'azure'}<span class="pickedtag">{tx.pickedTag}</span>{/if}
+		</button>
 	</div>
 
-	<!-- The capability checklist -->
-	<div class="flex shrink-0 flex-col gap-2.5 md:w-[300px]">
-		<div class="flex items-center justify-between">
-			<span class="text-faint text-[11px] font-semibold tracking-wide uppercase">{tx.readiness}</span>
-			<span class="text-muted text-[11px] font-bold">{count}/{tx.caps.length}</span>
-		</div>
-		<div class="bg-line h-1.5 w-full overflow-hidden rounded-full">
-			<div
-				class="h-full rounded-full transition-all duration-500 {tested ? 'bg-grass' : 'bg-brand'}"
-				style="width:{ratio * 100}%"
-			></div>
-		</div>
+	<p class="note">{picked ? tx.notePicked : tx.noteIdle}</p>
 
-		<div class="flex flex-col gap-1.5">
-			{#each tx.caps as cap (cap.key)}
-				<button
-					type="button"
-					onclick={() => add(cap.key)}
-					disabled={added[cap.key] || testing || tested}
-					class="flex items-center gap-2.5 rounded-xl border px-3 py-2 text-left transition-all {added[cap.key]
-						? 'border-grass bg-grass-soft'
-						: 'border-line bg-card hover:border-brand hover:bg-brand-soft'} disabled:cursor-default"
-				>
-					<span
-						class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold {added[cap.key]
-							? 'bg-grass text-white'
-							: 'border-line text-faint border'}"
-					>
-						{#if added[cap.key]}✓{/if}
-					</span>
-					<span class="min-w-0">
-						<span class="text-ink block text-[12.5px] font-semibold leading-tight">{cap.name}</span>
-						<span class="text-faint block text-[10.5px] leading-tight">{cap.recall}</span>
-					</span>
-				</button>
-			{/each}
+	<!-- the heads-up letter -->
+	<div class="news">
+		<div class="ntext">
+			<b>{tx.newsTitle}</b>
+			<span>{tx.newsSub}</span>
 		</div>
-
-		{#if !tested}
-			<button
-				type="button"
-				onclick={runTest}
-				disabled={!allAdded || testing}
-				class="bg-ink mt-1 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition-all enabled:hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-40"
-			>
-				{testing ? `${tx.testing}...` : tx.runTest}
-			</button>
+		{#if subState === 'ok'}
+			<div class="okmsg">✓ {tx.subscribedMsg}</div>
 		{:else}
-			<p class="text-grass mt-1 text-center text-sm font-bold">✓ {tx.appReady}</p>
-		{/if}
-		{#if !allAdded && !testing}
-			<p class="text-faint text-center text-[11px]">{tx.addHint}</p>
+			<form class="frm" onsubmit={subscribe}>
+				<input
+					type="email"
+					placeholder={tx.emailPh}
+					bind:value={email}
+					class:bad={subState === 'bad'}
+					oninput={() => (subState = '')}
+				/>
+				<button type="submit" class="sub" disabled={subState === 'busy'}>{tx.subscribe}</button>
+			</form>
+			{#if subState === 'bad'}<span class="badmsg">{tx.invalidMsg}</span>{/if}
+			{#if subState === 'err'}<span class="badmsg">{tx.errMsg}</span>{/if}
 		{/if}
 	</div>
 </div>
 
 <style>
-	.pop {
-		animation: pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+	.cards {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 9px;
+		width: min(94vw, 390px);
 	}
-	@keyframes pop {
+	.prov {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 3px;
+		border-radius: 16px;
+		border: 1.5px solid #e8e2d8;
+		background: #fff;
+		padding: 22px 8px 13px;
+		box-shadow: 0 8px 20px rgba(22, 40, 60, 0.06);
+		transition: all 0.25s ease;
+	}
+	.prov:hover {
+		border-color: #b9c0c7;
+		transform: translateY(-2px);
+	}
+	.prov.on {
+		border-color: #2e6fe0;
+		box-shadow: 0 0 0 4px rgba(46, 111, 224, 0.14);
+	}
+	.soon {
+		position: absolute;
+		top: -8px;
+		left: 50%;
+		transform: translateX(-50%);
+		border-radius: 999px;
+		background: #dd9e36;
+		color: #fff;
+		font-size: 7.5px;
+		font-weight: 800;
+		padding: 2px 8px;
+		white-space: nowrap;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+	.mark {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 30px;
+	}
+	.prov b {
+		font-size: 11.5px;
+		font-weight: 800;
+		color: #16212b;
+	}
+	.psub {
+		font-size: 7.5px;
+		font-weight: 600;
+		color: #8a949d;
+		white-space: nowrap;
+	}
+	.pickedtag {
+		margin-top: 3px;
+		border-radius: 999px;
+		background: #2e6fe0;
+		color: #fff;
+		font-size: 7.5px;
+		font-weight: 800;
+		padding: 2px 8px;
+		animation: popin 0.25s ease;
+	}
+	@keyframes popin {
 		from {
+			transform: scale(0.5);
 			opacity: 0;
-			transform: scale(0.6);
 		}
 		to {
-			opacity: 1;
 			transform: scale(1);
+			opacity: 1;
+		}
+	}
+	.note {
+		min-height: 1.3em;
+		text-align: center;
+		font-size: 12px;
+		font-weight: 600;
+		color: #6a7681;
+	}
+	.news {
+		display: flex;
+		flex-direction: column;
+		gap: 9px;
+		width: min(94vw, 390px);
+		border-radius: 16px;
+		border: 1px solid #e8e2d8;
+		background: #fff;
+		padding: 13px 14px;
+		box-shadow: 0 8px 22px rgba(22, 40, 60, 0.06);
+	}
+	.ntext {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		line-height: 1.3;
+	}
+	.ntext b {
+		font-size: 12.5px;
+		font-weight: 800;
+		color: #16212b;
+	}
+	.ntext span {
+		font-size: 10px;
+		color: #8a949d;
+	}
+	.frm {
+		display: flex;
+		gap: 6px;
+	}
+	.frm input {
+		flex: 1;
+		min-width: 0;
+		border-radius: 11px;
+		border: 1.5px solid #e8e2d8;
+		background: #faf9f6;
+		padding: 9px 12px;
+		font-size: 12px;
+		font-weight: 600;
+		color: #16212b;
+		outline: none;
+		transition: border-color 0.2s ease;
+	}
+	.frm input:focus {
+		border-color: #2e6fe0;
+		background: #fff;
+	}
+	.frm input.bad {
+		border-color: #d3584a;
+	}
+	.sub {
+		border-radius: 11px;
+		background: #16212b;
+		color: #fff;
+		font-size: 12px;
+		font-weight: 700;
+		padding: 9px 15px;
+		white-space: nowrap;
+		transition: filter 0.2s ease;
+	}
+	.sub:hover {
+		filter: brightness(1.18);
+	}
+	.sub:disabled {
+		opacity: 0.6;
+	}
+	.badmsg {
+		font-size: 10px;
+		font-weight: 700;
+		color: #b8392c;
+	}
+	.okmsg {
+		border-radius: 11px;
+		border: 1px solid #cde6d7;
+		background: #ecf6f0;
+		color: #2f7d54;
+		font-size: 12px;
+		font-weight: 700;
+		padding: 10px 12px;
+		text-align: center;
+		animation: popin 0.3s ease;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.pickedtag,
+		.okmsg {
+			animation-duration: 0.01s;
+		}
+	}
+	@media (min-width: 768px) {
+		.cards {
+			width: 520px;
+			gap: 14px;
+		}
+		.prov {
+			padding: 28px 10px 17px;
+		}
+		.prov b {
+			font-size: 14.5px;
+		}
+		.psub {
+			font-size: 9.5px;
+		}
+		.soon {
+			font-size: 9px;
+		}
+		.pickedtag {
+			font-size: 9px;
+		}
+		.mark {
+			height: 38px;
+		}
+		.mark svg {
+			transform: scale(1.25);
+		}
+		.note {
+			font-size: 14px;
+		}
+		.news {
+			width: 520px;
+			padding: 16px 18px;
+		}
+		.ntext b {
+			font-size: 15px;
+		}
+		.ntext span {
+			font-size: 12px;
+		}
+		.frm input {
+			font-size: 13.5px;
+			padding: 11px 14px;
+		}
+		.sub {
+			font-size: 13.5px;
+			padding: 11px 19px;
 		}
 	}
 </style>

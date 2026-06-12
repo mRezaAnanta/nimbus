@@ -4,7 +4,8 @@ import { build } from './build';
 export const capstone: Chapter = {
 	id: 'capstone',
 	number: 7,
-	title: { id: 'Proyek Akhir', en: 'Final Project' },
+	unnumbered: true,
+	title: { id: 'Jalur Provider', en: 'Provider Tracks' },
 	lessons: [build],
 	summary: {
 		id: {

@@ -39,7 +39,7 @@
 					onclick={goNext}
 					class="bg-ink rounded-xl px-6 py-3 text-sm font-semibold text-white transition-all hover:brightness-125"
 				>
-					{$t.chapter} {next.number}: {next.title[$lang]}
+					{next.unnumbered ? next.title[$lang] : `${$t.chapter} ${next.number}: ${next.title[$lang]}`}
 				</button>
 				<button onclick={restart} class="text-faint hover:text-ink text-[13px] transition-colors">{s.restart}</button>
 			</div>

@@ -1,37 +1,32 @@
 import type { CapstoneText } from '../types';
 
 export const id: CapstoneText = {
-	title: 'Proyek Akhir',
+	title: 'Pilih jalurmu',
 	intro: [
-		'Selamat, kamu sampai di ujung Bagian 1. Semua konsep tadi, sekarang kita satukan jadi satu sistem utuh.',
-		'Anggap kamu punya satu toko online kecil. Sekarang dia jalan cuma di satu server, rapuh dan gampang tumbang.',
-		'Tugasmu, lengkapi toko ini pakai semua yang sudah kamu pelajari, lalu uji dengan lonjakan pengunjung dan satu gangguan. Mulai rangkai.'
+		'Sampai juga di ujung Bagian 1. Dari satu server di laptop sampai arsitektur yang tahan banting, kamu sudah pegang semua konsep besarnya.',
+		'Bagian 2 turun ke dunia nyata per penyedia. Konsep yang sama persis, tapi dengan nama dan tombol aslinya, EC2, Cloud Run, dan kawan kawannya.',
+		'Pilih penyedia yang paling ingin kamu pelajari duluan. Ketiganya masih tahap pembangunan, dan kamu bisa titip email biar dikabari begitu jalurnya siap.'
 	],
 	reactions: {
-		multiaz: 'Server-mu sekarang tersebar di beberapa AZ. Satu data center tumbang, yang lain tetap melayani.',
-		traffic: 'Load balancer membagi trafik rata, dan auto scaling menambah server sendiri pas ramai.',
-		cdn: 'Salinan halaman ada di banyak kota. Pengunjung jauh pun ditolong cache terdekat, jadi cepat.',
-		data: 'Datamu tersimpan di penyimpanan dan database yang tepat untuk bentuknya.',
-		security: 'Database disembunyikan di subnet privat, firewall menutup pintu yang tidak perlu, dan datanya diacak dengan enkripsi.',
-		monitoring: 'Sekarang kamu bisa melihat kesehatan sistem dan dapat alarm sebelum pengunjung sadar ada masalah.',
-		tested:
-			'Lihat itu. Pengunjung membludak, satu AZ mati, serangan datang, dan tokomu tetap ONLINE. Kamu baru saja merancang sistem yang sungguhan. Bagian 1 selesai.'
+		picked:
+			'Dicatat! Jalur itu sedang disiapkan baik baik. Sambil menunggu, konsep di Bagian 1 ini fondasi yang sama untuk penyedia mana pun, jadi kamu sudah selangkah di depan.',
+		subscribed:
+			'Emailmu tersimpan. Begitu jalur pilihanmu terbit, kabar pertamanya buat kamu. Sampai jumpa di Bagian 2!'
 	},
-	caps: [
-		{ key: 'multiaz', name: 'Sebar ke beberapa AZ', recall: 'Bab 3, Ketahanan & Data' },
-		{ key: 'traffic', name: 'Load balancer dan auto scaling', recall: 'Bab 4, Lalu Lintas' },
-		{ key: 'cdn', name: 'CDN dan cache', recall: 'Bab 4, Lalu Lintas' },
-		{ key: 'data', name: 'Penyimpanan dan database yang pas', recall: 'Bab 3, Ketahanan & Data' },
-		{ key: 'security', name: 'Subnet privat, firewall, enkripsi', recall: 'Bab 5, Jaringan & Keamanan' },
-		{ key: 'monitoring', name: 'Monitoring dan alarm', recall: 'Bab 6, Komputasi & Operasi' }
+	providers: [
+		{ key: 'aws', name: 'AWS', sub: 'Amazon Web Services' },
+		{ key: 'gcp', name: 'Google Cloud', sub: 'GCP' },
+		{ key: 'azure', name: 'Azure', sub: 'Microsoft Azure' }
 	],
-	addHint: 'Klik tiap kemampuan untuk memasangnya ke tokomu',
-	readiness: 'Kesiapan',
-	runTest: 'Jalankan uji beban',
-	testing: 'Menguji',
-	online: 'ONLINE',
-	appName: 'Toko Nim',
-	appWeak: 'satu server, rapuh',
-	appReady: 'siap dan tahan gangguan',
-	testSteps: ['Lonjakan pengunjung', 'AZ Singapura mati', 'Serangan diblokir']
+	comingSoon: 'Segera hadir',
+	pickedTag: 'pilihanmu',
+	newsTitle: 'Dikabari pas rilis?',
+	newsSub: 'Jalurnya masih dibangun. Tinggalkan email, kami kirim kabar begitu siap.',
+	emailPh: 'email kamu',
+	subscribe: 'Kabari aku',
+	subscribedMsg: 'Tercatat! Sampai jumpa di Bagian 2',
+	invalidMsg: 'Hmm, cek lagi emailnya',
+	errMsg: 'Lagi gangguan, coba lagi sebentar lagi',
+	noteIdle: 'Tiga penyedia besar, satu fondasi yang sama',
+	notePicked: 'Jalurmu masih tahap pembangunan, ditunggu ya'
 };

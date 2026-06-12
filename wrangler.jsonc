@@ -7,5 +7,12 @@
 	"assets": {
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
-	}
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "nimbus-newsletter",
+			"database_id": "3d9f894f-0de7-4bdc-9e47-b151a3411b8b"
+		}
+	]
 }

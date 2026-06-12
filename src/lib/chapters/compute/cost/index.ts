@@ -6,8 +6,8 @@ import { en } from './en';
 export const cost: Lesson = {
 	id: 'cost',
 	mood: 'thinking',
-	moods: ['calm', 'thinking', 'worried', 'idea'],
-	reactionMood: { wasteful: 'worried', rightsized: 'happy' },
+	moods: ['thinking', 'worried', 'idea', 'happy'],
+	reactionMood: { off: 'happy', resize: 'excited' },
 	stage: CostStage,
 	text: { id, en }
 };

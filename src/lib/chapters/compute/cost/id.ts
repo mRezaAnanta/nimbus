@@ -3,28 +3,31 @@ import type { CostText } from '../types';
 export const id: CostText = {
 	title: 'Mengatur biaya',
 	intro: [
-		'Cloud itu seperti tagihan listrik. Kamu <b>bayar sesuai pakai</b>. Pakai lebih banyak, bayar lebih banyak. Matikan, berhenti membayar. Tidak ada biaya tetap untuk mesin yang menganggur di gudang.',
-		'Karena itu, ada satu kebiasaan buruk yang mahal: membiarkan resource hidup padahal tidak terpakai, atau memesan mesin jauh lebih besar dari yang dibutuhkan. Meternya tetap jalan dan tagihan terus naik, walau tidak ada yang memakainya.',
-		'Solusinya disebut <b>right sizing</b>, yaitu mencocokkan resource dengan kebutuhan nyata. Matikan yang nganggur, kecilkan yang kebesaran. Tapi hati-hati, terlalu kecil juga buruk: kalau mesin kewalahan, pengguna yang kena. Targetnya ukuran yang pas, bukan yang paling kecil.',
-		'Lihat tagihan bulananmu di sebelah. Ada satu kotak yang nganggur dan satu yang kebesaran. Rapikan keduanya dan perhatikan tagihannya turun.'
+		'Di cloud kamu bayar sesuai pakai. Enaknya di situ, bahayanya juga di situ, karena semua yang lupa dimatikan terus menagih diam diam.',
+		'Dua penyakit tagihan paling umum, server <b>nganggur</b> yang menyala tanpa kerjaan, dan server <b>kebesaran</b> yang tenaganya cuma kepakai sedikit.',
+		'Obatnya namanya <b>right sizing</b>, sesuaikan ukuran dengan kebutuhan nyata. Matikan yang nganggur, kecilkan yang kebesaran, dan tagihanmu langsung kurus tanpa situsmu terganggu.',
+		'Coba bereskan dua pemborosan di bawah, lalu lihat tagihannya turun.'
 	],
 	reactions: {
-		wasteful:
-			'Lihat angkanya. Kotak nganggur itu sama sekali tidak melayani siapa pun, tapi tagihannya tetap penuh. Yang kebesaran juga, kapasitasnya jauh lebih besar dari yang dipakai. Itu uang yang terbuang tiap bulan.',
-		rightsized:
-			'Nah, jauh lebih ramping. Kamu mematikan yang nganggur dan mengecilkan yang kebesaran ke ukuran pas, jadi tetap kuat melayani pengguna tapi tagihannya turun banyak. Itulah right sizing.'
+		off: 'Satu server nganggur dimatikan, tiga puluh dolar langsung balik ke kantong tiap bulan. Di perusahaan sungguhan, pemborosan beginilah yang paling sering kejadian.',
+		resize:
+			'Mesin kebesaran dikecilkan menjadi pas, kerjanya tetap beres, harganya jauh lebih murah. Itulah right sizing.'
 	},
-	billLabel: 'Tagihan bulanan',
+	billLabel: 'Tagihan bulan ini',
 	perMonth: 'per bulan',
-	idleLabel: 'Server uji coba',
-	idleSub: 'Nganggur, tidak ada trafik',
-	bigLabel: 'Server web',
-	bigSub: 'Kebesaran untuk bebannya',
-	rightLabel: 'Database',
-	rightSub: 'Sudah pas',
+	idleName: 'Server uji coba',
+	idleSub: 'nyala terus, kepakai 2%',
+	bigName: 'Server laporan',
+	bigSub: 'gede banget, kepakai 15%',
+	rightName: 'Server web',
+	rightSub: 'ukurannya pas',
 	turnOff: 'Matikan',
 	downsize: 'Kecilkan',
-	usageLabel: 'Pemakaian {n} persen',
-	tooSmall: 'Terlalu kecil, pengguna kewalahan',
-	hint: 'Matikan yang nganggur, kecilkan yang kebesaran'
+	offTag: 'mati, $0',
+	resizedTag: 'pas sekarang',
+	savedTag: 'hemat ${n}',
+	noteIdle: 'Ada dua pemborosan bersembunyi di tagihan ini',
+	noteOff: 'Yang nganggur tidak menagih lagi',
+	noteResize: 'Yang kebesaran sekarang pas',
+	noteDone: 'Tagihan kurus, situs tetap jalan'
 };

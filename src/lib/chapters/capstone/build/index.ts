@@ -6,16 +6,8 @@ import { en } from './en';
 export const build: Lesson = {
 	id: 'build',
 	mood: 'excited',
-	moods: ['happy', 'thinking', 'idea'],
-	reactionMood: {
-		multiaz: 'happy',
-		traffic: 'happy',
-		cdn: 'happy',
-		data: 'happy',
-		security: 'happy',
-		monitoring: 'wink',
-		tested: 'excited'
-	},
+	moods: ['excited', 'idea', 'happy'],
+	reactionMood: { picked: 'excited', subscribed: 'happy' },
 	stage: CapstoneStage,
 	text: { id, en }
 };

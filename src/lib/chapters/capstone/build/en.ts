@@ -1,38 +1,32 @@
 import type { CapstoneText } from '../types';
 
 export const en: CapstoneText = {
-	title: 'Final Project',
+	title: 'Pick your track',
 	intro: [
-		'You made it to the end of Part 1. Now we bring every concept together into one whole system.',
-		'Say you have a small online store. Right now it runs on a single server, fragile and easy to knock over.',
-		'Your job is to complete this store using everything you learned, then stress it with a traffic surge and an outage. Start building.'
+		'You made it to the end of Part 1. From one laptop server to an architecture that takes a punch, you now hold all the big concepts.',
+		'Part 2 descends into the real world, provider by provider. The exact same concepts, wearing their real names and buttons, EC2, Cloud Run, and friends.',
+		'Pick the provider you want to learn first. All three are still under construction, and you can leave an email to be told the moment your track is ready.'
 	],
 	reactions: {
-		multiaz: 'Your servers are now spread across several AZs. One data center falls, the others keep serving.',
-		traffic: 'The load balancer splits traffic evenly, and auto scaling adds servers on its own when it gets busy.',
-		cdn: 'Copies of your pages sit in many cities, so even far away visitors are served by a nearby cache, fast.',
-		data: 'Your data lives in the storage and database that fit its shape.',
-		security:
-			'The database is hidden in a private subnet, the firewall closes the doors you do not need, and the data is scrambled with encryption.',
-		monitoring: 'Now you can see the health of the system and get an alarm before visitors ever notice a problem.',
-		tested:
-			'Look at that. Visitors flood in, one AZ dies, an attack arrives, and your store stays ONLINE. You just designed a real system. Part 1 complete.'
+		picked:
+			'Noted! That track is being carefully prepared. Meanwhile, the concepts in Part 1 are the same foundation for every provider, so you are already a step ahead.',
+		subscribed:
+			'Your email is saved. The moment your track ships, you hear it first. See you in Part 2!'
 	},
-	caps: [
-		{ key: 'multiaz', name: 'Spread across several AZs', recall: 'Chapter 3, Resilience & Data' },
-		{ key: 'traffic', name: 'Load balancer and auto scaling', recall: 'Chapter 4, Traffic' },
-		{ key: 'cdn', name: 'CDN and cache', recall: 'Chapter 4, Traffic' },
-		{ key: 'data', name: 'The right storage and database', recall: 'Chapter 3, Resilience & Data' },
-		{ key: 'security', name: 'Private subnet, firewall, encryption', recall: 'Chapter 5, Networking & Security' },
-		{ key: 'monitoring', name: 'Monitoring and alarms', recall: 'Chapter 6, Compute & Operations' }
+	providers: [
+		{ key: 'aws', name: 'AWS', sub: 'Amazon Web Services' },
+		{ key: 'gcp', name: 'Google Cloud', sub: 'GCP' },
+		{ key: 'azure', name: 'Azure', sub: 'Microsoft Azure' }
 	],
-	addHint: 'Click each capability to bolt it onto your store',
-	readiness: 'Readiness',
-	runTest: 'Run the stress test',
-	testing: 'Testing',
-	online: 'ONLINE',
-	appName: 'Nim Store',
-	appWeak: 'one server, fragile',
-	appReady: 'ready and resilient',
-	testSteps: ['Traffic surge', 'Singapore AZ down', 'Attack blocked']
+	comingSoon: 'Coming soon',
+	pickedTag: 'your pick',
+	newsTitle: 'Want a heads up?',
+	newsSub: 'The tracks are still being built. Leave an email and we will write the moment yours is ready.',
+	emailPh: 'your email',
+	subscribe: 'Notify me',
+	subscribedMsg: 'Saved! See you in Part 2',
+	invalidMsg: 'Hmm, check that email again',
+	errMsg: 'Hiccup on our side, try again shortly',
+	noteIdle: 'Three big providers, one shared foundation',
+	notePicked: 'Your track is still under construction, hang tight'
 };

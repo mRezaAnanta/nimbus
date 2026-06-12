@@ -7,7 +7,7 @@ export const monitoring: Lesson = {
 	id: 'monitoring',
 	mood: 'thinking',
 	moods: ['calm', 'thinking', 'idea', 'happy'],
-	reactionMood: { 'alarm-set': 'calm', 'alarm-fired': 'surprised' },
+	reactionMood: { alarm: 'excited' },
 	stage: MonitoringStage,
 	text: { id, en }
 };

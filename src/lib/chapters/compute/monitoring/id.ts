@@ -1,27 +1,26 @@
 import type { MonitoringText } from '../types';
 
 export const id: MonitoringText = {
-	title: 'Memantau sistem',
+	title: 'Monitoring',
 	intro: [
 		'Pikirkan dashboard mobil. Ada speedometer, suhu mesin, sisa bensin. Tanpa itu kamu menyetir buta dan baru sadar mesin overheat setelah ngebul.',
-		'Server juga begitu. <b>Metrik</b> adalah angka kesehatannya, misalnya pemakaian CPU, jumlah trafik, dan jumlah error. <b>Dashboard</b> menampilkan semua angka itu dalam satu layar supaya kamu bisa melihat sekilas.',
-		'Tapi kamu tidak mungkin menatap dashboard sepanjang hari. Di situ <b>alarm</b> masuk. Kamu pasang batas, misalnya CPU di atas 80 persen, dan begitu metrik melewati batas itu, alarm berbunyi dan memberi tahu kamu, jauh sebelum pengunjung merasakan situsnya lambat.',
-		'Ayo coba. Gauge ini bergerak sesuai kondisi nyata server. Geser batas alarm CPU, lalu tunggu sebentar sampai CPU melonjak dan alarmnya berbunyi.'
+		'Server juga begitu. <b>Metrik</b> adalah angka kesehatannya, pemakaian CPU, jumlah trafik, jumlah error, dan <b>dashboard</b> menampilkan semuanya dalam satu layar.',
+		'Tapi kamu tidak mungkin melototin dashboard seharian. Makanya ada <b>alarm</b>. Kamu pasang batas, dan begitu terlewati, kamulah yang dicari duluan, jauh sebelum pengunjung merasa ada yang aneh.',
+		'Coba bikin trafik melonjak, lalu lihat siapa yang berteriak duluan.'
 	],
 	reactions: {
-		'alarm-set': 'Mantap, alarm sudah terpasang. Sekarang sistem yang mengawasi CPU untukmu. Tunggu sebentar, biasanya trafik naik dan CPU ikut melonjak.',
-		'alarm-fired':
-			'Itu dia. CPU melewati batasmu dan alarm langsung berbunyi. Kamu tahu duluan dan sempat bertindak, sebelum satu pun pengunjung merasakan masalahnya. Itulah gunanya memantau.'
+		alarm:
+			'Itu dia. CPU tembus batas dan alarm langsung mengabarimu, padahal pengunjung belum merasakan apa apa. Kamu dapat waktu untuk bertindak sebelum semuanya kacau. Itulah gunanya monitoring.'
 	},
 	cpuLabel: 'CPU',
 	trafficLabel: 'Trafik',
 	errorsLabel: 'Error',
-	thresholdLabel: 'Batas alarm CPU: {n} persen',
-	setAlarm: 'Pasang alarm',
-	alarmArmed: 'Alarm aktif di {n} persen',
-	alarmFiring: 'Alarm berbunyi',
-	allCalm: 'Semua aman',
-	siteUp: 'Sehat',
-	siteWarn: 'Perlu perhatian',
-	hint: 'Geser batasnya, lalu pasang alarm'
+	ruleLabel: 'Kalau CPU lewat 80%, bunyikan alarm',
+	surge: 'Bikin trafik melonjak',
+	again: 'Tenangkan lagi',
+	alarmTag: 'ALARM',
+	notifText: 'CPU 92%, cek servermu!',
+	statusOk: 'Semua tenang',
+	noteIdle: 'Tiga angka kesehatan servermu, semuanya hijau',
+	noteAlarm: 'Alarm menyala sebelum pengunjung sadar'
 };

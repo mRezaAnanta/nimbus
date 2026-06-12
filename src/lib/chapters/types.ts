@@ -202,6 +202,8 @@ export interface ChapterSummary {
 export type Chapter = {
 	id: string;
 	number: number;
+	/** A gateway chapter (like the provider picker) renders without the "Bab N" prefix. */
+	unnumbered?: boolean;
 	title: { id: string; en: string };
 	lessons: Lesson[];
 	summary: { id: ChapterSummary; en: ChapterSummary };

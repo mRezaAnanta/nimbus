@@ -1,15 +1,16 @@
 import type { LessonText } from '../types';
 
 export interface CapstoneText extends LessonText {
-	/** Each capability the learner bolts onto the toy app, with the chapter it came from. */
-	caps: { key: string; name: string; recall: string }[];
-	addHint: string;
-	readiness: string;
-	runTest: string;
-	testing: string;
-	online: string;
-	appName: string;
-	appWeak: string;
-	appReady: string;
-	testSteps: string[];
+	providers: { key: string; name: string; sub: string }[];
+	comingSoon: string;
+	pickedTag: string;
+	newsTitle: string;
+	newsSub: string;
+	emailPh: string;
+	subscribe: string;
+	subscribedMsg: string;
+	invalidMsg: string;
+	errMsg: string;
+	noteIdle: string;
+	notePicked: string;
 }

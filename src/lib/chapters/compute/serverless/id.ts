@@ -1,28 +1,32 @@
 import type { ServerlessText } from '../types';
 
 export const id: ServerlessText = {
-	title: 'Apa itu serverless?',
+	title: 'Serverless',
 	intro: [
-		'Server biasa menyala terus, 24 jam. Masalahnya, dia tetap memakan biaya walau lagi sepi tanpa satu pengunjung pun. Kamu bayar waktu menganggurnya.',
-		'Ada cara lain. Kamu cukup menulis sebuah <b>fungsi</b>, dan platform yang menjalankannya saat ada permintaan. Tidak ada trafik, tidak ada yang jalan, dan biayanya nol. Ini namanya <b>serverless</b>, dan kamu bayar per panggilan.',
-		'Bayangkan lampu dengan sensor gerak. Dia mati selama tidak ada orang. Begitu ada yang lewat, langsung menyala, lalu padam lagi sendiri. Tidak ada listrik terbuang buat ruangan kosong.',
-		'Coba sendiri. Di kiri ada server yang selalu menyala, biayanya jalan terus. Di kanan serverless. Kirim beberapa permintaan dan perhatikan kapan biayanya bergerak.'
+		'Kadang kamu cuma butuh sepotong kode yang jalan sesekali, kirim email OTP, resize foto, terima webhook pembayaran. Kalau pakai server biasa, dia menyala 24 jam dan meterannya jalan terus, padahal kerjanya cuma sesekali.',
+		'Arsitektur <b>serverless</b> membereskan itu. Ikuti alurnya. Permintaan datang ke gerbang penyedia, penyedia menyalakan sebuah sandbox kecil dalam sekejap, fungsimu jalan di dalamnya, selesai, kotaknya langsung dimatikan. Sepi berarti benar benar nol.',
+		'Sandbox itu bukan sihir. AWS Lambda menyalakan micro VM bernama <b>Firecracker</b>, Google Cloud memakai <b>gVisor</b>. Dua duanya menyala dalam sepersekian detik, makanya penyedia berani mulai dari nol.',
+		'Coba kirim permintaan dari HP dan lihat fungsinya bangun, kerja, lalu tidur lagi. Ini baru kulit luarnya saja, nanti ada bab sendiri yang menyelam jauh lebih dalam ke dunia serverless.'
 	],
 	reactions: {
-		idle: 'Lihat server yang selalu menyala itu. Tanpa satu pun pengunjung, biayanya tetap naik. Sekarang coba kirim permintaan ke sisi serverless.',
-		invoke: 'Nah, permintaan datang, fungsi langsung menyala, mengerjakan tugasnya, lalu turun lagi ke nol. Biaya cuma bergerak saat benar-benar dipanggil. Sepi berarti gratis.'
+		invoked:
+			'Lihat, fungsinya bangun cuma karena dipanggil, kerja sebentar, selesai. Tidak ada server yang kamu urus, dan meterannya cuma menghitung panggilan.',
+		zero: 'Dan begitu sepi, dia tidur lagi ke nol. Tidak ada tagihan diam diam yang jalan semalaman. Itulah daya tarik serverless.'
 	},
-	alwaysOnTitle: 'Server selalu menyala',
-	alwaysOnSub: 'menyala 24 jam, walau sepi',
-	serverlessTitle: 'Serverless',
-	serverlessSub: 'jalan saat dipanggil, lalu turun ke nol',
-	sendRequest: 'Kirim permintaan',
-	idleLabel: 'Menganggur',
-	runningLabel: 'Jalan',
-	zeroLabel: 'Nol, tidur',
-	costLabel: 'Biaya',
-	tickHint: 'Biaya idle terus berjalan',
-	invokeHint: 'Biaya cuma saat dipanggil',
-	functionLabel: 'Fungsimu',
-	requestLabel: 'permintaan'
+	fnLabel: 'fungsi kirimOTP',
+	sleepTag: 'tidur, nol biaya',
+	wakeTag: 'bangun',
+	runTag: 'kerja',
+	send: 'Panggil fungsinya',
+	callsLabel: 'Terpanggil {n}×, bayar per panggilan',
+	userLabel: 'HP pengguna',
+	reqTag: 'permintaan',
+	resTag: 'OTP terkirim',
+	alwaysName: 'Server biasa',
+	alwaysTag: 'menagih 24 jam, kerja sesekali',
+	archSteps: ['Permintaan datang', 'Gerbang penyedia', 'Sandbox menyala', 'Fungsimu jalan', 'Langsung dimatikan'],
+	behindItems: ['Firecracker, micro VM punya AWS', 'gVisor, sandbox punya Google'],
+	noteIdle: 'Fungsinya tidur, tidak menagih sepeser pun',
+	noteRun: 'Bangun sekejap, kerja, lalu pamit',
+	noteZero: 'Balik tidur ke nol lagi'
 };

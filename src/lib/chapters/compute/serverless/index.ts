@@ -6,8 +6,8 @@ import { en } from './en';
 export const serverless: Lesson = {
 	id: 'serverless',
 	mood: 'thinking',
-	moods: ['calm', 'thinking', 'idea', 'happy'],
-	reactionMood: { invoke: 'excited', idle: 'worried' },
+	moods: ['thinking', 'idea', 'calm', 'happy'],
+	reactionMood: { invoked: 'excited', zero: 'happy' },
 	stage: ServerlessStage,
 	text: { id, en }
 };

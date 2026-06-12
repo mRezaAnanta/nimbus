@@ -20,7 +20,7 @@ export const compute: Chapter = {
 				'Cloud itu <b>bayar sesuai pakai</b>, jadi <b>right sizing</b> menghemat uang, sementara resource nganggur membuang uang'
 			],
 			nextNote:
-				'Berikutnya: <b>Proyek Akhir</b>. Semua konsep dari bab 1 sampai 6 kita rakit jadi satu arsitektur utuh.',
+				'Berikutnya, <b>pilih provider</b>-mu. AWS, Google Cloud, atau Azure, jalur Bagian 2 yang sedang dibangun.',
 			restart: 'Ulangi dari awal'
 		},
 		en: {
@@ -33,7 +33,7 @@ export const compute: Chapter = {
 				'The cloud is <b>pay as you go</b>, so <b>right sizing</b> saves money while idle resources waste it'
 			],
 			nextNote:
-				'Next up: <b>Final Project</b>. Everything from chapters 1 to 6 gets assembled into one complete architecture.',
+				'Next up, <b>pick your provider</b>. AWS, Google Cloud, or Azure, the Part 2 tracks now being built.',
 			restart: 'Start over'
 		}
 	}
