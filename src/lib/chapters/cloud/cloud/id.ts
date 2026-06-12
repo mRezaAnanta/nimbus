@@ -3,7 +3,7 @@ import type { CloudText } from '../../types';
 export const id: CloudText = {
 	title: 'Apa itu cloud?',
 	intro: [
-		'Server tadi harus ditaruh di suatu tempat. Ada dua cara, yaitu kelola sendiri (disebut <b>on-premise</b>) atau sewa di <b>cloud</b>.',
+		'Laptopmu gugur jadi server publik, dan tunneling cuma pintu pinjaman. Situs beneran butuh rumah yang serius. Ada dua cara, yaitu kelola sendiri (disebut <b>on-premise</b>) atau sewa di <b>cloud</b>.',
 		'Banyak orang ngira cloud itu sesuatu yang ajaib di langit. Padahal cloud ya... <b>server biasa juga</b>. Bedanya, dia bukan di rumahmu, melainkan di gedung <i>data center</i> milik perusahaan besar, dan kamu tinggal sewa tanpa pernah melihat mesinnya.',
 		'Biar kerasa bedanya, coba klik kedua pilihan di atas, server di rumahmu dan server di cloud.'
 	],

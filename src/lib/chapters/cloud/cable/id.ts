@@ -3,7 +3,7 @@ import type { CableText } from '../../types';
 export const id: CableText = {
 	title: 'Lewat mana data jalan?',
 	intro: [
-		'Tadi kita tahu jarak bikin latensi. Tapi sebenarnya, lewat apa sih data kamu jalan dari HP ke server di negara lain?',
+		'Data center tempat servermu disewa bisa ada di negara lain, bahkan benua lain. Lewat apa sih data menyeberang sejauh itu?',
 		'Banyak yang ngira lewat satelit di langit. Padahal hampir semua, sekitar 99%, jalan lewat <b>kabel serat optik di dasar laut</b>. Datanya dikirim sebagai kilatan cahaya lewat kaca setipis rambut.',
 		'Garis-garis tipis di peta ini kabel laut sungguhan yang aktif sekarang.',
 		'Tiap kabel naik ke darat di titik yang disebut <b>landing station</b> (titik-titik kecil itu). Dari situ data masuk ke jaringan darat, lalu sampai ke data center.',

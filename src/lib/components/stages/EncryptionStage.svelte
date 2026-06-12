@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import type { LessonText } from '$lib/chapters/types';
-	import type { EncryptionText } from '$lib/chapters/security/types';
+	import type { EncryptionText } from '$lib/chapters/networking/types';
 
 	let {
 		text,

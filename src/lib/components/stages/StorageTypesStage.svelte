@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { LessonText } from '$lib/chapters/types';
-	import type { StorageTypesText } from '$lib/chapters/storage/types';
+	import type { StorageTypesText } from '$lib/chapters/resilience/types';
 
 	let {
 		text,

@@ -1,21 +1,5 @@
 import type { LessonText } from '../types';
 
-export interface VirtualMachineText extends LessonText {
-	hostLabel: string;
-	hostSub: string;
-	cpuLabel: string;
-	ramLabel: string;
-	freeLabel: string;
-	usedLabel: string;
-	addVm: string;
-	vmName: string; // template with {n}
-	osLabel: string;
-	runningLabel: string;
-	slowLabel: string;
-	overHint: string;
-	fitHint: string;
-}
-
 export interface ContainerText extends LessonText {
 	buildLabel: string;
 	buildHint: string;
@@ -50,4 +34,34 @@ export interface ServerlessText extends LessonText {
 	invokeHint: string;
 	functionLabel: string;
 	requestLabel: string;
+}
+
+export interface MonitoringText extends LessonText {
+	cpuLabel: string;
+	trafficLabel: string;
+	errorsLabel: string;
+	thresholdLabel: string; // template with {n}
+	setAlarm: string;
+	alarmArmed: string; // template with {n}
+	alarmFiring: string;
+	allCalm: string;
+	siteUp: string;
+	siteWarn: string;
+	hint: string;
+}
+
+export interface CostText extends LessonText {
+	billLabel: string;
+	perMonth: string;
+	idleLabel: string;
+	idleSub: string;
+	bigLabel: string;
+	bigSub: string;
+	rightLabel: string;
+	rightSub: string;
+	turnOff: string;
+	downsize: string;
+	usageLabel: string; // template with {n}
+	tooSmall: string;
+	hint: string;
 }

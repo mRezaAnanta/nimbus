@@ -1,0 +1,29 @@
+import type { VirtualMachineText } from '../../types';
+
+export const id: VirtualMachineText = {
+	title: 'Apa itu virtual machine?',
+	intro: [
+		'Lihat laptop ini. Di dalamnya cuma ada satu mesin, CPU, RAM, dan disk. Dan biasanya satu mesin cuma menjalankan satu sistem untuk satu pemakai.',
+		'Padahal mesin yang kuat sering banget nganggur, tenaganya kepakai sedikit doang. Triknya, satu mesin bisa dibelah jadi beberapa komputer virtual. Tiap potongan namanya <b>virtual machine</b> (VM).',
+		'Tiap VM punya sistem operasi sendiri dan merasa seperti komputer utuh, padahal semuanya berbagi satu hardware. Mirip gedung apartemen, satu bangunan, banyak unit, tiap penghuni punya pintu sendiri. Simpan baik baik konsep ini, sebentar lagi dia jadi kunci.',
+		'Coba sendiri. Belah layarnya, tambah VM satu per satu sampai penuh, dan perhatikan jatah CPU dan RAM ikut dibagi.'
+	],
+	reactions: {
+		first:
+			'Lihat, VM 1 langsung dapat jatahnya sendiri, 2 vCPU dan 4 GB, lengkap dengan sistem operasinya sendiri. Dia merasa jadi komputer utuh, padahal cuma sepotong.',
+		more: 'Tambah terus. Tiap VM dapat potongan tenaga yang sama dan saling tidak bisa mengintip, persis unit apartemen yang bertetangga.',
+		full: 'Penuh. Satu mesin fisik sekarang berisi 4 komputer yang berdiri sendiri sendiri, dan tenaga yang tadinya nganggur kepakai semua. Trik inilah yang dipakai di mana mana.'
+	},
+	hostLabel: 'Satu mesin fisik',
+	hostCpu: '8 vCPU',
+	hostRam: '16 GB RAM',
+	singleLabel: 'Satu sistem',
+	singleSub: 'semua tenaga buat satu pemakai',
+	addVm: 'Tambah VM',
+	vmName: 'VM {n}',
+	vmSub: 'OS sendiri',
+	perVm: 'Tiap VM 2 vCPU, 4 GB',
+	usedLabel: 'Tenaga kepakai {n}%',
+	fullLabel: '4 komputer dalam 1 mesin',
+	prompt: 'Slot masih kosong, belah terus mesinnya'
+};

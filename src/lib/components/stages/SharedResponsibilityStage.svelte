@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { LessonText } from '$lib/chapters/types';
-	import type { SharedResponsibilityText } from '$lib/chapters/security/types';
+	import type { SharedResponsibilityText } from '$lib/chapters/networking/types';
 
 	let {
 		text,

@@ -3,7 +3,7 @@ import type { CableText } from '../../types';
 export const en: CableText = {
 	title: 'How does data travel?',
 	intro: [
-		'We saw that distance creates latency. But what does your data actually travel through to reach a server in another country?',
+		'The data center holding your rented server can be in another country, even another continent. What does data actually cross to get that far?',
 		'Many people think it goes through satellites in the sky. In reality almost all of it, around 99%, travels through <b>fiber optic cables on the seabed</b>. The data is sent as pulses of light through glass as thin as a hair.',
 		'The thin lines on this map are real undersea cables that are live right now.',
 		'Each cable comes ashore at a spot called a <b>landing station</b> (those little dots). From there the data enters the land network, then reaches the data center.',

@@ -3,7 +3,7 @@ import { build } from './build';
 
 export const capstone: Chapter = {
 	id: 'capstone',
-	number: 9,
+	number: 7,
 	title: { id: 'Proyek Akhir', en: 'Final Project' },
 	lessons: [build],
 	summary: {

@@ -6,8 +6,8 @@ import { en } from './en';
 export const virtualMachine: Lesson = {
 	id: 'virtual-machine',
 	mood: 'thinking',
-	moods: ['calm', 'thinking', 'idea', 'happy'],
-	reactionMood: { created: 'happy', overcommit: 'worried' },
+	moods: ['calm', 'idea', 'thinking', 'happy'],
+	reactionMood: { first: 'excited', more: 'happy', full: 'excited' },
 	stage: VirtualMachineStage,
 	text: { id, en }
 };

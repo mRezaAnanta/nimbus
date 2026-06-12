@@ -7,12 +7,12 @@ import { cdn } from './cdn';
 
 export const traffic: Chapter = {
 	id: 'traffic',
-	number: 3,
+	number: 4,
 	title: { id: 'Lalu Lintas', en: 'Traffic' },
 	lessons: [reverseProxy, loadBalancer, scaling, autoScaling, cdn],
 	summary: {
 		id: {
-			title: 'Bab 3 selesai',
+			title: 'Bab 4 selesai',
 			sub: 'Kamu sudah paham cara melayani banyak pengunjung:',
 			items: [
 				'Satu <b>reverse proxy</b> jadi pintu depan, mengantar tiap permintaan ke server yang tepat dan menyembunyikan server di belakang',
@@ -22,11 +22,11 @@ export const traffic: Chapter = {
 				'<b>Caching dan CDN</b> menaruh salinan dekat pengunjung supaya cepat dan tidak perlu perjalanan jauh'
 			],
 			nextNote:
-				'Berikutnya: <b>Komputasi</b>. Kita kupas mesin yang menjalankan semuanya, mulai dari virtual machine, container, sampai serverless.',
+				'Berikutnya: <b>Jaringan & Keamanan</b>. Gimana nama nimbus.com berubah jadi alamat, jaringan privat, firewall, sampai kunci dan identitas.',
 			restart: 'Ulangi dari awal'
 		},
 		en: {
-			title: 'Chapter 3 complete',
+			title: 'Chapter 4 complete',
 			sub: 'You now know how to serve many visitors:',
 			items: [
 				'A single <b>reverse proxy</b> is the front door, walking each request to the right server and hiding the servers behind it',
@@ -36,7 +36,7 @@ export const traffic: Chapter = {
 				'<b>Caching and a CDN</b> keep copies close to visitors so they load fast without a long trip'
 			],
 			nextNote:
-				'Next up: <b>Compute</b>. We will dig into the machines that run all of this, from virtual machines to containers to serverless.',
+				'Next up: <b>Networking & Security</b>. How the name nimbus.com turns into an address, private networks, firewalls, keys, and identity.',
 			restart: 'Start over'
 		}
 	}

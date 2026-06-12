@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { LessonText } from '$lib/chapters/types';
-	import type { CostText } from '$lib/chapters/operations/types';
+	import type { CostText } from '$lib/chapters/compute/types';
 
 	let {
 		text,

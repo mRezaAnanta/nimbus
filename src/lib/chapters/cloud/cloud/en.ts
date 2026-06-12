@@ -3,7 +3,7 @@ import type { CloudText } from '../../types';
 export const en: CloudText = {
 	title: 'What is the cloud?',
 	intro: [
-		'That server has to live somewhere. There are two ways, run it yourself (called <b>on-premise</b>) or rent it in the <b>cloud</b>.',
+		'Your laptop failed as a public server, and tunneling is only a borrowed door. A real site needs a serious home. There are two ways, run it yourself (called <b>on-premise</b>) or rent it in the <b>cloud</b>.',
 		'Many people think the cloud is something magical in the sky. But the cloud is... <b>just servers too</b>. The difference is they live in a company’s <i>data center</i>, not your house, and you simply rent them without ever seeing the machines.',
 		'To feel the difference, click both options above, the server at your home and the server in the cloud.'
 	],

@@ -19,12 +19,12 @@ export const en: CapstoneText = {
 			'Look at that. Visitors flood in, one AZ dies, an attack arrives, and your store stays ONLINE. You just designed a real system. Part 1 complete.'
 	},
 	caps: [
-		{ key: 'multiaz', name: 'Spread across several AZs', recall: 'Chapter 2, Resilience' },
-		{ key: 'traffic', name: 'Load balancer and auto scaling', recall: 'Chapter 3, Traffic' },
-		{ key: 'cdn', name: 'CDN and cache', recall: 'Chapter 3, Traffic' },
-		{ key: 'data', name: 'Database with a replica and backup', recall: 'Chapter 5, Storage' },
-		{ key: 'security', name: 'Private subnet, firewall, encryption', recall: 'Chapters 6 and 7' },
-		{ key: 'monitoring', name: 'Monitoring and alarms', recall: 'Chapter 8, Operations' }
+		{ key: 'multiaz', name: 'Spread across several AZs', recall: 'Chapter 3, Resilience & Data' },
+		{ key: 'traffic', name: 'Load balancer and auto scaling', recall: 'Chapter 4, Traffic' },
+		{ key: 'cdn', name: 'CDN and cache', recall: 'Chapter 4, Traffic' },
+		{ key: 'data', name: 'Database with a replica and backup', recall: 'Chapter 3, Resilience & Data' },
+		{ key: 'security', name: 'Private subnet, firewall, encryption', recall: 'Chapter 5, Networking & Security' },
+		{ key: 'monitoring', name: 'Monitoring and alarms', recall: 'Chapter 6, Compute & Operations' }
 	],
 	addHint: 'Click each capability to bolt it onto your store',
 	readiness: 'Readiness',

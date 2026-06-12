@@ -1,36 +1,39 @@
 import type { Chapter } from '../types';
-import { virtualMachine } from './virtual-machine';
 import { container } from './container';
 import { serverless } from './serverless';
+import { monitoring } from './monitoring';
+import { cost } from './cost';
 
 export const compute: Chapter = {
 	id: 'compute',
-	number: 4,
-	title: { id: 'Komputasi', en: 'Compute' },
-	lessons: [virtualMachine, container, serverless],
+	number: 6,
+	title: { id: 'Komputasi & Operasi', en: 'Compute & Operations' },
+	lessons: [container, serverless, monitoring, cost],
 	summary: {
 		id: {
-			title: 'Bab 4 selesai',
-			sub: 'Kamu sekarang paham cara menjalankan aplikasi di cloud:',
+			title: 'Bab 6 selesai',
+			sub: 'Kamu sudah paham cara menjalankan dan mengelola aplikasi:',
 			items: [
-				'Sebuah <b>virtual machine</b> adalah komputer virtual utuh dengan OS sendiri yang berbagi satu hardware',
 				'Sebuah <b>container</b> adalah paket ringan dan portabel yang jalan sama persis di mana saja',
-				'<b>Serverless</b> menjalankan fungsimu saat dipanggil dan turun ke nol saat sepi, jadi kamu bayar per panggilan'
+				'<b>Serverless</b> menjalankan fungsimu saat dipanggil dan turun ke nol saat sepi, jadi kamu bayar per panggilan',
+				'Pantau lewat <b>metrik</b>, <b>dashboard</b>, dan <b>alarm</b>, supaya kamu tahu masalah sebelum pengunjung merasakannya',
+				'Cloud itu <b>bayar sesuai pakai</b>, jadi <b>right sizing</b> menghemat uang, sementara resource nganggur membuang uang'
 			],
 			nextNote:
-				'Berikutnya: <b>Penyimpanan</b>. Kita bahas cara menyimpan data, mulai dari jenis penyimpanan dan database sampai replikasi dan backup.',
+				'Berikutnya: <b>Proyek Akhir</b>. Semua konsep dari bab 1 sampai 6 kita rakit jadi satu arsitektur utuh.',
 			restart: 'Ulangi dari awal'
 		},
 		en: {
-			title: 'Chapter 4 complete',
-			sub: 'You now understand how to run apps in the cloud:',
+			title: 'Chapter 6 complete',
+			sub: 'You now know how to run and operate an app:',
 			items: [
-				'A <b>virtual machine</b> is a full virtual computer with its own OS that shares one set of hardware',
 				'A <b>container</b> is a light, portable package that runs the same anywhere',
-				'<b>Serverless</b> runs your function on demand and scales to zero when idle, so you pay per call'
+				'<b>Serverless</b> runs your function on demand and scales to zero when idle, so you pay per call',
+				'Watch through <b>metrics</b>, <b>dashboards</b>, and <b>alarms</b>, so you know about trouble before visitors feel it',
+				'The cloud is <b>pay as you go</b>, so <b>right sizing</b> saves money while idle resources waste it'
 			],
 			nextNote:
-				'Next up: <b>Storage</b>. We will see how to keep data, from storage types and databases to replication and backups.',
+				'Next up: <b>Final Project</b>. Everything from chapters 1 to 6 gets assembled into one complete architecture.',
 			restart: 'Start over'
 		}
 	}

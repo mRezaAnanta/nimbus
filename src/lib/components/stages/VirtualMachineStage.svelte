@@ -1,210 +1,506 @@
 <script lang="ts">
-	import type { LessonText } from '$lib/chapters/types';
-	import type { VirtualMachineText } from '$lib/chapters/compute/types';
+	import { onDestroy } from 'svelte';
+	import type { LessonText, VirtualMachineText } from '$lib/chapters/types';
 
 	let {
 		text,
 		oncomplete,
-		onstate
+		onstate,
+		beat = 0,
+		onshow
 	}: {
 		text: LessonText;
 		oncomplete?: () => void;
 		onstate?: (s: string) => void;
+		beat?: number;
+		onshow?: (v: boolean) => void;
 	} = $props();
 	const tx = $derived(text as VirtualMachineText);
 
-	// The physical host has a fixed pool of CPU and RAM. Each VM claims a slice.
-	const CPU_TOTAL = 8; // cores
-	const RAM_TOTAL = 16; // GB
+	const lastBeat = $derived(beat >= tx.intro.length - 1);
+	// the laptop narrates from the first beat, so keep the stage undimmed
+	$effect(() => {
+		void beat;
+		onshow?.(true);
+	});
 
-	type VM = { id: number; cpu: number; ram: number };
-	let vms = $state<VM[]>([]);
-	let nextId = 1;
-	let fired = false;
+	// the lid opens by itself shortly after the lesson starts
+	let open = $state(false);
+	let timers: ReturnType<typeof setTimeout>[] = [];
+	$effect(() => {
+		timers.push(setTimeout(() => (open = true), 750));
+	});
 
-	const cpuUsed = $derived(vms.reduce((s, v) => s + v.cpu, 0));
-	const ramUsed = $derived(vms.reduce((s, v) => s + v.ram, 0));
-	const cpuFree = $derived(CPU_TOTAL - cpuUsed);
-	const ramFree = $derived(RAM_TOTAL - ramUsed);
-	// Over-allocation: more promised than the host actually has, so VMs contend.
-	const over = $derived(cpuUsed > CPU_TOTAL || ramUsed > RAM_TOTAL);
-
-	const cpuPct = $derived(Math.min(100, (cpuUsed / CPU_TOTAL) * 100));
-	const ramPct = $derived(Math.min(100, (ramUsed / RAM_TOTAL) * 100));
+	const COLORS = ['#2e6fe0', '#3a9c64', '#dd9e36', '#7c6fd0'];
+	let vms = $state(0);
+	let done = false;
 
 	function addVm() {
-		if (vms.length >= 4) return;
-		vms = [...vms, { id: nextId++, cpu: 2, ram: 4 }];
-		settle();
-	}
-
-	function setCpu(id: number, v: number) {
-		vms = vms.map((vm) => (vm.id === id ? { ...vm, cpu: v } : vm));
-		settle();
-	}
-	function setRam(id: number, v: number) {
-		vms = vms.map((vm) => (vm.id === id ? { ...vm, ram: v } : vm));
-		settle();
-	}
-	function remove(id: number) {
-		vms = vms.filter((vm) => vm.id !== id);
-		settle();
-	}
-
-	// React to the current allocation after any change.
-	function settle() {
-		if (cpuUsed > CPU_TOTAL || ramUsed > RAM_TOTAL) {
-			onstate?.('overcommit');
-			return;
-		}
-		if (vms.length >= 1) onstate?.('created');
-		// Goal: a couple of VMs that comfortably fit within the host.
-		if (!fired && vms.length >= 2 && cpuUsed <= CPU_TOTAL && ramUsed <= RAM_TOTAL) {
-			fired = true;
+		if (vms >= 4) return;
+		vms += 1;
+		onstate?.(vms === 1 ? 'first' : vms === 4 ? 'full' : 'more');
+		if (vms === 4 && !done) {
+			done = true;
 			oncomplete?.();
 		}
 	}
+
+	const used = $derived(vms === 0 ? 15 : vms * 25);
+	const caption = $derived(vms === 4 ? tx.fullLabel : vms > 0 ? tx.prompt : '');
+
+	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full items-start justify-center">
-	<div class="border-line bg-card w-full max-w-xl rounded-2xl border p-4 md:p-5">
-		<!-- host header -->
-		<div class="mb-3 flex items-center justify-between gap-3">
-			<div class="flex items-center gap-2">
-				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-					<rect x="3" y="4" width="18" height="6" rx="1.5" stroke="#16212b" stroke-width="1.7" />
-					<rect x="3" y="14" width="18" height="6" rx="1.5" stroke="#16212b" stroke-width="1.7" />
-					<circle cx="6.5" cy="7" r="1" fill="#3a9c64" />
-					<circle cx="6.5" cy="17" r="1" fill="#3a9c64" />
-				</svg>
-				<div>
-					<p class="text-ink text-sm font-semibold">{tx.hostLabel}</p>
-					<p class="text-faint text-[11px]">{tx.hostSub}</p>
-				</div>
-			</div>
-			<button
-				type="button"
-				onclick={addVm}
-				disabled={vms.length >= 4}
-				class="bg-ink shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold text-white transition-all enabled:hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-40"
-			>
-				{tx.addVm}
-			</button>
-		</div>
-
-		<!-- capacity meters -->
-		<div class="mb-4 grid grid-cols-2 gap-3">
-			{#each [{ label: tx.cpuLabel, pct: cpuPct, used: cpuUsed, total: CPU_TOTAL, unit: '' }, { label: tx.ramLabel, pct: ramPct, used: ramUsed, total: RAM_TOTAL, unit: ' GB' }] as m (m.label)}
-				<div>
-					<div class="mb-1 flex items-center justify-between text-[11px] font-semibold">
-						<span class="text-muted">{m.label}</span>
-						<span class={over ? 'text-danger' : 'text-faint'}>{m.used}{m.unit} / {m.total}{m.unit}</span>
-					</div>
-					<div class="bg-line h-2.5 overflow-hidden rounded-full">
-						<div
-							class="h-full rounded-full transition-all duration-300 {over ? 'bg-danger' : 'bg-grass'}"
-							style="width:{m.pct}%;"
-						></div>
-					</div>
-				</div>
-			{/each}
-		</div>
-
-		<!-- VMs -->
-		{#if vms.length === 0}
-			<p class="text-faint py-6 text-center text-xs">{tx.fitHint}</p>
-		{:else}
-			<div class="space-y-2.5">
-				{#each vms as vm, i (vm.id)}
-					<div
-						class="rounded-xl border p-3 transition-colors {over
-							? 'border-danger bg-danger-soft'
-							: 'border-line bg-paper'}"
-					>
-						<div class="mb-2 flex items-center justify-between">
-							<div class="flex items-center gap-2">
-								<span class="text-ink text-sm font-semibold">{tx.vmName.replace('{n}', String(i + 1))}</span>
-								<span class="text-faint text-[10px]">{tx.osLabel}</span>
-								<span
-									class="rounded-full px-2 py-0.5 text-[10px] font-semibold {over
-										? 'bg-danger-soft text-danger'
-										: 'bg-grass-soft text-grass'}"
-								>
-									{over ? tx.slowLabel : tx.runningLabel}
-								</span>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+	<!-- the laptop, lid swinging open, screen splitting into VMs -->
+	<div class="stagebox">
+		<div class="lap">
+			<div class="lid" class:open>
+				<div class="lidback"></div>
+				<div class="screen">
+					{#if vms === 0}
+						<div class="single">
+							<div class="shead"><span class="sled"></span><span class="stab"></span></div>
+							<div class="sbody">
+								<div class="bar title"></div>
+								<div class="bar w85"></div>
+								<div class="bar w70"></div>
 							</div>
-							<button
-								type="button"
-								onclick={() => remove(vm.id)}
-								class="text-faint hover:text-danger text-base leading-none transition-colors"
-								aria-label="remove">×</button
-							>
+							<div class="scap">
+								<b>{tx.singleLabel}</b>
+								<span>{tx.singleSub}</span>
+							</div>
 						</div>
-						<div class="grid grid-cols-2 gap-3">
-							<label class="block">
-								<span class="text-faint text-[10px] font-semibold">{tx.cpuLabel}: {vm.cpu}</span>
-								<input
-									type="range"
-									min="1"
-									max="8"
-									value={vm.cpu}
-									oninput={(e) => setCpu(vm.id, +e.currentTarget.value)}
-									class="vm-range mt-1 w-full"
-								/>
-							</label>
-							<label class="block">
-								<span class="text-faint text-[10px] font-semibold">{tx.ramLabel}: {vm.ram} GB</span>
-								<input
-									type="range"
-									min="2"
-									max="16"
-									step="2"
-									value={vm.ram}
-									oninput={(e) => setRam(vm.id, +e.currentTarget.value)}
-									class="vm-range mt-1 w-full"
-								/>
-							</label>
+					{:else}
+						<div class="grid4">
+							{#each [0, 1, 2, 3] as i (i)}
+								{#if i < vms}
+									<div class="vm" style="--a:{COLORS[i]}">
+										<div class="vhead"><span class="vled"></span><span class="vtab"></span></div>
+										<div class="vbar w80"></div>
+										<div class="vbar w60"></div>
+										<div class="vfoot">
+											<b>{tx.vmName.replace('{n}', String(i + 1))}</b>
+											<span>{tx.vmSub}</span>
+										</div>
+									</div>
+								{:else}
+									<div class="slot">+</div>
+								{/if}
+							{/each}
 						</div>
-					</div>
-				{/each}
+					{/if}
+				</div>
 			</div>
-		{/if}
+			<div class="deck"><span class="pad"></span></div>
+		</div>
+	</div>
 
-		<!-- footer hint -->
-		{#if over}
-			<p class="text-danger mt-3 text-center text-xs font-semibold">{tx.overHint}</p>
-		{:else if vms.length > 0}
-			<p class="text-faint mt-3 text-center text-[11px]">
-				{tx.freeLabel}: {cpuFree} {tx.cpuLabel}, {ramFree} GB {tx.ramLabel}
-			</p>
+	<!-- the one machine underneath it all -->
+	<div class="chips">
+		<span class="chip dark">{tx.hostLabel}</span>
+		<span class="chip">{tx.hostCpu}</span>
+		<span class="chip">{tx.hostRam}</span>
+		{#if vms > 0}
+			{#key vms}<span class="chip per">{tx.perVm}</span>{/key}
 		{/if}
 	</div>
+
+	<!-- how much of the machine is actually working -->
+	<div class="gauge">
+		<span class="gtrack"><i style="width:{used}%"></i></span>
+		<span class="gnum">{tx.usedLabel.replace('{n}', String(used))}</span>
+	</div>
+
+	<p class="cap" class:full={vms === 4}>{caption}</p>
+
+	{#if vms < 4}
+		<button type="button" class="cta" class:waiting={!lastBeat} onclick={addVm} disabled={!lastBeat || !open}>
+			{tx.addVm}
+		</button>
+	{/if}
 </div>
 
 <style>
-	.vm-range {
-		appearance: none;
+	.stagebox {
+		perspective: 900px;
+	}
+	.lap {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	.lid {
+		position: relative;
+		width: 252px;
+		height: 168px;
+		transform-origin: bottom center;
+		transform: rotateX(-84deg);
+		transition: transform 1s cubic-bezier(0.32, 0.9, 0.35, 1);
+		transform-style: preserve-3d;
+	}
+	.lid.open {
+		transform: rotateX(0deg);
+	}
+	.lidback {
+		position: absolute;
+		inset: 0;
+		border-radius: 14px 14px 0 0;
+		background: #fff;
+		border: 1px solid #e8e2d8;
+		transform: translateZ(-1px);
+	}
+	.screen {
+		position: absolute;
+		inset: 0;
+		border-radius: 14px 14px 0 0;
+		background: #fff;
+		border: 1px solid #e8e2d8;
+		border-bottom: none;
+		padding: 8px 8px 6px;
+		box-shadow: 0 12px 30px rgba(22, 40, 60, 0.1);
+		backface-visibility: hidden;
+	}
+	.deck {
+		display: flex;
+		align-items: flex-start;
+		justify-content: center;
+		width: 292px;
+		height: 11px;
+		border-radius: 2px 2px 12px 12px;
+		background: #fff;
+		border: 1px solid #e8e2d8;
+		box-shadow: 0 8px 18px rgba(22, 40, 60, 0.09);
+	}
+	.pad {
+		width: 52px;
 		height: 4px;
-		border-radius: 999px;
+		border-radius: 0 0 5px 5px;
 		background: #e8e2d8;
-		outline: none;
 	}
-	.vm-range::-webkit-slider-thumb {
-		appearance: none;
-		width: 14px;
-		height: 14px;
-		border-radius: 50%;
-		background: #2e6fe0;
-		cursor: pointer;
-		border: 2px solid #fff;
-		box-shadow: 0 1px 3px rgba(22, 40, 60, 0.25);
+
+	/* one lonely system filling the whole screen */
+	.single {
+		position: relative;
+		display: flex;
+		height: 100%;
+		flex-direction: column;
+		border-radius: 9px;
+		background: #f7f6f2;
+		overflow: hidden;
 	}
-	.vm-range::-moz-range-thumb {
-		width: 14px;
-		height: 14px;
+	.shead {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		padding: 6px 9px;
+		background: #fff;
+		border-bottom: 1px solid #efeae1;
+	}
+	.sled {
+		width: 7px;
+		height: 7px;
 		border-radius: 50%;
+		background: #3a9c64;
+	}
+	.stab {
+		width: 64px;
+		height: 8px;
+		border-radius: 4px;
+		background: #e8e2d8;
+	}
+	.sbody {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		justify-content: center;
+		gap: 8px;
+		padding: 10px 14px 30px;
+	}
+	.bar {
+		height: 9px;
+		border-radius: 5px;
+		background: #e3ddd3;
+	}
+	.bar.title {
+		width: 55%;
+		height: 10px;
+		background: #c9d6ea;
+	}
+	.bar.w85 {
+		width: 85%;
+	}
+	.bar.w70 {
+		width: 70%;
+	}
+	.scap {
+		position: absolute;
+		bottom: 8px;
+		left: 0;
+		right: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		line-height: 1.2;
+	}
+	.scap b {
+		font-size: 11px;
+		font-weight: 800;
+		color: #16212b;
+	}
+	.scap span {
+		font-size: 9px;
+		color: #8a949d;
+	}
+
+	/* the screen split into four VMs, two up two down */
+	.grid4 {
+		display: grid;
+		height: 100%;
+		grid-template-columns: 1fr 1fr;
+		grid-template-rows: 1fr 1fr;
+		gap: 6px;
+	}
+	.vm {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		border-radius: 9px;
+		border: 1.5px solid var(--a);
+		background: color-mix(in srgb, var(--a) 7%, #fff);
+		padding: 5px 7px;
+		animation: vmpop 0.35s ease;
+	}
+	@keyframes vmpop {
+		from {
+			transform: scale(0.6);
+			opacity: 0;
+		}
+		to {
+			transform: scale(1);
+			opacity: 1;
+		}
+	}
+	.vhead {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+	}
+	.vled {
+		width: 5px;
+		height: 5px;
+		border-radius: 50%;
+		background: var(--a);
+	}
+	.vtab {
+		width: 26px;
+		height: 5px;
+		border-radius: 3px;
+		background: color-mix(in srgb, var(--a) 25%, #fff);
+	}
+	.vbar {
+		height: 4px;
+		border-radius: 2px;
+		background: color-mix(in srgb, var(--a) 18%, #fff);
+	}
+	.vbar.w80 {
+		width: 80%;
+	}
+	.vbar.w60 {
+		width: 60%;
+	}
+	.vfoot {
+		margin-top: auto;
+		display: flex;
+		align-items: baseline;
+		gap: 4px;
+		line-height: 1;
+	}
+	.vfoot b {
+		font-size: 9.5px;
+		font-weight: 800;
+		color: var(--a);
+	}
+	.vfoot span {
+		font-size: 7.5px;
+		color: #8a949d;
+	}
+	.slot {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 9px;
+		border: 1.5px dashed #e0d9cd;
+		color: #cfc7b8;
+		font-size: 17px;
+		font-weight: 700;
+	}
+
+	.chips {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 5px;
+	}
+	.chip {
+		border-radius: 999px;
+		border: 1px solid #e8e2d8;
+		background: #fff;
+		padding: 2px 10px;
+		font-size: 10px;
+		font-weight: 700;
+		color: #5e6b76;
+		font-variant-numeric: tabular-nums;
+	}
+	.chip.dark {
+		background: #16212b;
+		border-color: #16212b;
+		color: #fff;
+	}
+	.chip.per {
+		border-color: #cdddf6;
+		background: #eaf1fc;
+		color: #2e6fe0;
+		animation: vmpop 0.3s ease;
+	}
+
+	.gauge {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+	.gtrack {
+		position: relative;
+		width: 150px;
+		height: 8px;
+		border-radius: 999px;
+		background: #f1ede5;
+		overflow: hidden;
+	}
+	.gtrack i {
+		position: absolute;
+		inset: 0 auto 0 0;
+		border-radius: 999px;
 		background: #2e6fe0;
-		cursor: pointer;
-		border: 2px solid #fff;
+		transition: width 0.5s ease;
+	}
+	.gnum {
+		font-size: 10.5px;
+		font-weight: 700;
+		color: #5e6b76;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.cap {
+		min-height: 1.4em;
+		font-size: 12px;
+		font-weight: 600;
+		color: #8a949d;
+		text-align: center;
+	}
+	.cap.full {
+		color: #2f7d54;
+	}
+
+	.cta {
+		border-radius: 12px;
+		background: #16212b;
+		padding: 12px 24px;
+		font-size: 14px;
+		font-weight: 600;
+		color: #fff;
+		box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
+		animation: invite 2s ease-in-out infinite;
+		transition:
+			filter 0.2s ease,
+			transform 0.15s ease,
+			opacity 0.2s ease;
+	}
+	.cta:enabled:hover {
+		filter: brightness(1.18);
+	}
+	.cta:active {
+		transform: translateY(1px);
+	}
+	.cta:disabled {
+		opacity: 0.5;
+		animation: none;
+	}
+	.cta.waiting {
+		opacity: 0.35;
+	}
+	@keyframes invite {
+		0%,
+		100% {
+			box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
+		}
+		50% {
+			box-shadow:
+				0 8px 20px rgba(22, 40, 60, 0.16),
+				0 0 0 6px rgba(22, 40, 60, 0.08);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.cta,
+		.vm {
+			animation-duration: 0.01s;
+		}
+		.lid {
+			transition-duration: 0.01s;
+		}
+	}
+	@media (min-width: 768px) {
+		.lid {
+			width: 330px;
+			height: 212px;
+		}
+		.deck {
+			width: 380px;
+			height: 13px;
+		}
+		.pad {
+			width: 66px;
+		}
+		.scap b {
+			font-size: 13px;
+		}
+		.scap span {
+			font-size: 11px;
+		}
+		.vfoot b {
+			font-size: 12px;
+		}
+		.vfoot span {
+			font-size: 9.5px;
+		}
+		.vbar {
+			height: 5px;
+		}
+		.vled {
+			width: 6px;
+			height: 6px;
+		}
+		.vtab {
+			width: 34px;
+			height: 6px;
+		}
+		.chip {
+			font-size: 12px;
+			padding: 3px 12px;
+		}
+		.gtrack {
+			width: 210px;
+		}
+		.gnum {
+			font-size: 12.5px;
+		}
+		.cap {
+			font-size: 14px;
+		}
+		.cta {
+			font-size: 15px;
+			padding: 13px 28px;
+		}
 	}
 </style>

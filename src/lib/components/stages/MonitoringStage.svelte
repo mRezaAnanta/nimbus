@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import type { LessonText } from '$lib/chapters/types';
-	import type { MonitoringText } from '$lib/chapters/operations/types';
+	import type { MonitoringText } from '$lib/chapters/compute/types';
 
 	let {
 		text,

@@ -1,26 +1,14 @@
 import type { Chapter } from './types';
 import { foundations } from './foundations';
+import { cloudChapter } from './cloud';
 import { resilience } from './resilience';
 import { traffic } from './traffic';
-import { compute } from './compute';
-import { storage } from './storage';
 import { networking } from './networking';
-import { security } from './security';
-import { operations } from './operations';
+import { compute } from './compute';
 import { capstone } from './capstone';
 
 /** All chapters, in order. Add a new chapter by importing it and appending here. */
-export const chapters: Chapter[] = [
-	foundations,
-	resilience,
-	traffic,
-	compute,
-	storage,
-	networking,
-	security,
-	operations,
-	capstone
-];
+export const chapters: Chapter[] = [foundations, cloudChapter, resilience, traffic, networking, compute, capstone];
 
 export function getChapter(id?: string): Chapter | undefined {
 	return chapters.find((c) => c.id === id);

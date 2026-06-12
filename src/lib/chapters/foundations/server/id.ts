@@ -1,16 +1,18 @@
 import type { ServerText } from '../../types';
 
 export const id: ServerText = {
-	title: 'Apa itu server?',
+	title: 'Apa itu client dan server?',
 	intro: [
-		'Setiap kali kamu membuka sebuah situs, ada satu komputer di suatu tempat yang mengirim halaman itu ke layarmu.',
-		'Komputer itu namanya <b>server</b>. Bedanya dengan laptopmu, dia menyala 24 jam dan tugasnya cuma satu, melayani permintaan pengunjung.',
-		'Biar kebayang, coba sendiri, klik <b>Buka website</b> di sebelah, lalu perhatikan apa yang dilakukan server.'
+		'Setiap kali kamu membuka sebuah situs, sebenarnya ada dua pihak yang lagi ngobrol. Yang satu <b>meminta</b>, yang satu <b>melayani</b>.',
+		'Pihak yang meminta namanya <b>client</b>. Itu HP atau laptopmu, lewat browser yang lagi kamu pakai sekarang. Tugasnya minta halaman, lalu menampilkannya ke layarmu.',
+		'Pihak yang melayani namanya <b>server</b>. Komputer di suatu tempat yang menyala 24 jam, kerjanya menunggu permintaan datang lalu menjawabnya.',
+		'Biar kebayang, coba sendiri. Klik <b>Buka website</b>, lalu perhatikan obrolan client dan server di atas.'
 	],
 	reactions: {
-		served: 'Nah, itu yang barusan terjadi. HP-mu <b>minta</b> halaman, server <b>mengirimnya</b> balik. Sesederhana itu inti kerja sebuah server.'
+		served:
+			'Nah, itu dia. Client <b>minta</b> halaman, server <b>mengirimnya</b> balik. Obrolan sesederhana itu terjadi tiap kali kamu buka situs apa pun.'
 	},
-	you: 'Kamu',
+	you: 'Kamu, si client',
 	server: 'Server',
 	open: 'Buka website',
 	request: 'minta halaman',

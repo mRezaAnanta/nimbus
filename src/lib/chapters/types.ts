@@ -107,6 +107,78 @@ export interface FailoverText extends LessonText {
 	regions: Record<string, string>;
 }
 
+export interface RequestJourneyText extends LessonText {
+	openSite: string;
+	again: string;
+	/** Station labels along the path. */
+	stations: { phone: string; router: string; isp: string; net: string; server: string };
+	/** What is happening at each step. Keys match stations plus 'back' for the return leg. */
+	notes: Record<string, string>;
+	requestTag: string;
+	responseTag: string;
+	idleNote: string;
+}
+
+export interface LaptopServerText extends LessonText {
+	laptopLabel: string;
+	friendLabel: string;
+	worldLabel: string;
+	houseLabel: string;
+	lanLabel: string;
+	ipLabel: string;
+	tryLan: string;
+	goPublic: string;
+	probIp: string;
+	probSleep: string;
+	probSlow: string;
+	recover: string;
+	statusLocal: string;
+	statusOk: string;
+	statusLost: string;
+	statusDown: string;
+	statusSlow: string;
+	noteIdle: string;
+	noteLan: string;
+	notePublic: string;
+	noteIp: string;
+	noteSleep: string;
+	noteSlow: string;
+}
+
+export interface TunnelingText extends LessonText {
+	laptopLabel: string;
+	localChip: string;
+	relayLabel: string;
+	relaySub: string;
+	friendLabel: string;
+	publicUrl: string;
+	startTunnel: string;
+	visit: string;
+	closeLaptop: string;
+	reset: string;
+	tunnelOff: string;
+	tunnelOn: string;
+	noteIdle: string;
+	noteOn: string;
+	noteVisit: string;
+	noteClosed: string;
+}
+
+export interface VirtualMachineText extends LessonText {
+	hostLabel: string;
+	hostCpu: string;
+	hostRam: string;
+	singleLabel: string;
+	singleSub: string;
+	addVm: string;
+	vmName: string; // template with {n}
+	vmSub: string;
+	perVm: string;
+	usedLabel: string; // template with {n}
+	fullLabel: string;
+	prompt: string;
+}
+
 export type Lesson = {
 	id: string;
 	mood: Mood;

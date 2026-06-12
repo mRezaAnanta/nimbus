@@ -3,7 +3,7 @@ import type { CdnText } from '../types';
 export const id: CdnText = {
 	title: 'Caching dan CDN',
 	intro: [
-		'Ingat pelajaran latensi di bab pertama? Makin jauh server, makin lama data sampai. Server asal nimbus.com cuma ada di satu tempat, di Amerika, padahal pengunjungmu ada di mana mana.',
+		'Ingat pelajaran latensi di bab Cloud? Makin jauh server, makin lama data sampai. Server asal nimbus.com cuma ada di satu tempat, di Amerika, padahal pengunjungmu ada di mana mana.',
 		'Padahal banyak isi situs itu itu saja, gambar, logo, video yang sama untuk semua orang. Daripada tiap orang ambil jauh jauh ke Amerika, simpan salinannya dekat pengunjung. Itu namanya <b>caching</b>. Pertama kali sebuah titik ditanya dia ambil dulu dari server asal, setelah itu salinannya nempel di situ.',
 		'<b>CDN</b> (Content Delivery Network) adalah jaringan titik penyimpan salinan yang tersebar di ratusan kota di seluruh dunia. Pengunjung otomatis dilayani titik terdekat, kamu nggak perlu milih kota satu satu.',
 		'Sebarannya tergantung penyedia. Cloudflare ada di 300 lebih kota, CloudFront punya AWS 600 lebih titik, penyedia lain beda lagi. Kota besar hampir pasti kebagian, daerah terpencil dilayani titik terdekat yang agak jauh. Dan ada harganya, CDN itu layanan berbayar, jadi tagihanmu nambah.',

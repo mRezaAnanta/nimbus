@@ -3,7 +3,7 @@ import type { RegionText } from '../../types';
 export const en: RegionText = {
 	title: 'What is a Region?',
 	intro: [
-		"Let's say you have lots of users in <b>Argentina</b>. Your server has to sit in one of the cloud provider's data center locations. From here on we use <b>AWS</b> (Amazon Web Services) as our example, one of the biggest cloud providers.",
+		"Remember that user in <b>Argentina</b>? Say most of your users live there. Your cloud server has to sit in one of the provider's data center locations. From here on we use <b>AWS</b> (Amazon Web Services) as our example, one of the biggest cloud providers.",
 		'The catch is, Argentina has no data center of its own yet. But there is one on the same continent, and that choice of location decides how fast the site feels for your users.',
 		'But why would distance change the speed? The key is <b>latency</b>. Think back to playing an online game, you usually have to choose a server first, Asia, America, or Europe. The farther the server, the longer the data takes to travel back and forth, and the game (or website) starts to feel laggy.',
 		'That round-trip time of data between your users and the server is what we call <b>latency</b>. It is measured in milliseconds (ms), and the smaller the number, the faster.',
