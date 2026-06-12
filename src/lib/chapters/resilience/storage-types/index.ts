@@ -5,9 +5,9 @@ import { en } from './en';
 
 export const storageTypes: Lesson = {
 	id: 'storage-types',
-	mood: 'thinking',
-	moods: ['calm', 'thinking', 'idea', 'happy'],
-	reactionMood: { correct: 'happy', wrong: 'worried' },
+	mood: 'calm',
+	moods: ['calm', 'idea', 'thinking', 'happy'],
+	reactionMood: { object: 'idea', block: 'thinking', file: 'happy' },
 	stage: StorageTypesStage,
 	text: { id, en }
 };

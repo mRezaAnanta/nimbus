@@ -3,28 +3,35 @@ import type { StorageTypesText } from '../types';
 export const id: StorageTypesText = {
 	title: 'Tiga bentuk penyimpanan',
 	intro: [
-		'Sekarang kita simpan data. Di cloud ada tiga bentuk penyimpanan, dan masing-masing cocok untuk hal yang berbeda.',
-		'<b>Object storage</b> menyimpan file utuh, masing-masing diberi sebuah kunci, dan kapasitasnya seolah tanpa batas. Pas untuk foto, video, dan cadangan. <b>Block storage</b> adalah disk mentah yang dipasang ke satu mesin, cocok untuk database atau sistem operasi.',
-		'<b>File storage</b> adalah folder bersama yang bisa dipasang banyak mesin sekaligus, jadi semuanya melihat berkas yang sama.',
-		'Coba cocokkan. Pilih satu kebutuhan, lalu taruh di jenis penyimpanan yang paling pas.'
+		'Sekarang kita simpan data. Di cloud ada tiga bentuk penyimpanan, dan masing masing punya cara kerja serta jagoannya sendiri.',
+		'<b>Object storage</b> itu seperti ember raksasa. File dilempar masuk utuh utuh, tiap file dapat sebuah kunci untuk mengambilnya lagi, dan embernya seolah tidak pernah penuh.',
+		'<b>Block storage</b> itu disk mentah yang ditempel ke satu mesin, dipotong potong jadi blok kecil yang cepat banget dibaca tulis. <b>File storage</b> itu folder bersama, satu lemari berkas yang dibuka banyak mesin sekaligus.',
+		'Coba buka satu satu di bawah. Lihat cara masing masing menyimpan, dan kapan kamu memakainya.'
 	],
 	reactions: {
-		correct: 'Pas. Itu memang rumahnya yang paling tepat.',
-		wrong: 'Belum cocok. Pikirkan lagi: file utuh, satu disk untuk satu mesin, atau folder yang dipakai bersama?'
+		object:
+			'Itu object storage. File masuk utuh utuh ke ember, tiap file dipanggil lewat kuncinya. Foto, video, arsip, lempar saja ke sini, kapasitasnya nyaris tanpa batas.',
+		block:
+			'Itu block storage. Disk mentah yang nempel ke satu mesin dan dibaca tulis super cepat. Di sinilah sistem operasi dan database menaruh datanya.',
+		file: 'Itu file storage. Satu folder yang sama dibuka banyak mesin sekaligus, semuanya melihat berkas yang sama. Pas buat kerja bareng.'
 	},
-	objectTitle: 'Object storage',
-	objectSub: 'File utuh disimpan lewat kunci, kapasitas seolah tanpa batas',
-	blockTitle: 'Block storage',
-	blockSub: 'Disk mentah untuk satu mesin',
-	fileTitle: 'File storage',
-	fileSub: 'Folder bersama yang dipasang banyak mesin',
-	prompt: 'Pilih satu kebutuhan di atas, lalu klik jenis penyimpanan yang pas.',
-	done: 'Semua sudah cocok.',
-	cases: {
-		photos: 'Foto pengguna',
-		backups: 'Cadangan harian',
-		dbDisk: 'Disk database',
-		osDisk: 'Disk sistem operasi',
-		shared: 'Folder dokumen tim bersama'
-	}
+	objectTitle: 'Object',
+	objectSub: 'ember file berkunci',
+	objectNote: 'Tiap file utuh disimpan dengan sebuah kunci',
+	objectWhen: ['Foto & video pengguna', 'File unduhan', 'Arsip lama'],
+	objectFiles: ['foto.jpg', 'video.mp4', 'arsip.zip'],
+	blockTitle: 'Block',
+	blockSub: 'disk satu mesin',
+	blockNote: 'Disk dipotong jadi blok, nempel ke satu mesin',
+	blockWhen: ['Disk utama server', 'Tempat database jalan'],
+	blockMachine: 'Server',
+	fileTitle: 'File',
+	fileSub: 'folder bersama',
+	fileNote: 'Satu folder dibuka banyak mesin sekaligus',
+	fileWhen: ['Dokumen tim', 'Banyak server baca berkas sama'],
+	fileMachines: ['Mesin 1', 'Mesin 2', 'Mesin 3'],
+	fileDocs: ['laporan.doc', 'data.csv'],
+	whenTitle: 'Kapan dipakai',
+	seenAll: 'Ketiganya sudah kamu kenal',
+	hint: 'Masih ada bentuk yang belum kamu buka'
 };

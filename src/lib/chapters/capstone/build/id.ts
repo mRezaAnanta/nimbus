@@ -11,7 +11,7 @@ export const id: CapstoneText = {
 		multiaz: 'Server-mu sekarang tersebar di beberapa AZ. Satu data center tumbang, yang lain tetap melayani.',
 		traffic: 'Load balancer membagi trafik rata, dan auto scaling menambah server sendiri pas ramai.',
 		cdn: 'Salinan halaman ada di banyak kota. Pengunjung jauh pun ditolong cache terdekat, jadi cepat.',
-		data: 'Datamu punya replika yang siap ambil alih, plus backup kalau ada yang tidak sengaja terhapus.',
+		data: 'Datamu tersimpan di penyimpanan dan database yang tepat untuk bentuknya.',
 		security: 'Database disembunyikan di subnet privat, firewall menutup pintu yang tidak perlu, dan datanya diacak dengan enkripsi.',
 		monitoring: 'Sekarang kamu bisa melihat kesehatan sistem dan dapat alarm sebelum pengunjung sadar ada masalah.',
 		tested:
@@ -21,7 +21,7 @@ export const id: CapstoneText = {
 		{ key: 'multiaz', name: 'Sebar ke beberapa AZ', recall: 'Bab 3, Ketahanan & Data' },
 		{ key: 'traffic', name: 'Load balancer dan auto scaling', recall: 'Bab 4, Lalu Lintas' },
 		{ key: 'cdn', name: 'CDN dan cache', recall: 'Bab 4, Lalu Lintas' },
-		{ key: 'data', name: 'Database dengan replika dan backup', recall: 'Bab 3, Ketahanan & Data' },
+		{ key: 'data', name: 'Penyimpanan dan database yang pas', recall: 'Bab 3, Ketahanan & Data' },
 		{ key: 'security', name: 'Subnet privat, firewall, enkripsi', recall: 'Bab 5, Jaringan & Keamanan' },
 		{ key: 'monitoring', name: 'Monitoring dan alarm', recall: 'Bab 6, Komputasi & Operasi' }
 	],

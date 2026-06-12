@@ -6,8 +6,8 @@ import { en } from './en';
 export const database: Lesson = {
 	id: 'database',
 	mood: 'thinking',
-	moods: ['calm', 'thinking', 'idea', 'happy'],
-	reactionMood: { sql: 'happy', nosql: 'happy', wrong: 'worried' },
+	moods: ['thinking', 'calm', 'idea', 'happy'],
+	reactionMood: { sql: 'idea', nosql: 'excited' },
 	stage: DatabaseStage,
 	text: { id, en }
 };

@@ -3,38 +3,41 @@ import type { DatabaseText } from '../types';
 export const en: DatabaseText = {
 	title: 'SQL or NoSQL?',
 	intro: [
-		'Data you use often usually lives in a database. There are two big families, and they store data in different ways.',
-		'<b>SQL</b> is relational: data sits in neat tables of rows and columns, with a strict schema and relationships between tables. Strong for transactions that must always stay consistent, like a bank transfer.',
-		'<b>NoSQL</b> stores documents or key value pairs: the shape is flexible and it scales out across many machines. Strong for huge, simple, and varied data, like a social feed.',
-		'See the tidy table on the left and the flexible document on the right. Now as each use case appears, pick the one that fits.'
+		'Data you use often usually lives in a database. There are two big families, and they store data in very different ways.',
+		'<b>SQL</b> arranges data into tables of rows and columns. The rules are strict, every row must follow the same columns, and tables can link to each other. That strictness is exactly what lets it guarantee transactions stay consistent.',
+		'<b>NoSQL</b> stores free-form documents. One document may carry different fields than its neighbor, and the collection stretches easily across many machines when the data explodes.',
+		'Add to both of them. Feel the difference between the strict table and the flexible documents, then see when each one is used.'
 	],
 	reactions: {
-		sql: 'Right. A transaction that must stay consistent needs the strict schema and guarantees of SQL.',
-		nosql: 'Right. Data that is huge, varied, and must scale out wide is NoSQL territory.',
-		wrong: 'Hmm, not quite. Ask yourself: does this need strict consistency, or does it need to scale out with a free shape?'
+		sql: 'See, the new row must follow the existing columns, id, name, balance, nothing missing and nothing extra. That strictness is why money never goes missing halfway.',
+		nosql:
+			'See, the new document has a different shape and still gets accepted. That freedom is what makes NoSQL great for wildly varied data that needs to stretch across many machines.'
 	},
-	sqlTitle: 'SQL (relational)',
-	sqlSub: 'Tables, strict schema, relationships, strong for transactions',
-	nosqlTitle: 'NoSQL (document)',
-	nosqlSub: 'Free shape, scales out across machines, strong at scale',
-	pickSql: 'SQL',
-	pickNosql: 'NoSQL',
-	prompt: 'Pick the one that fits this use case.',
-	done: 'Done, you have got the difference.',
+	sqlTitle: 'SQL',
+	sqlSub: 'strict tables that link together',
+	nosqlTitle: 'NoSQL',
+	nosqlSub: 'free documents that stretch easily',
 	tableName: 'accounts',
 	columns: ['id', 'name', 'balance'],
 	rows: [
 		['1', 'Adi', '120000'],
 		['2', 'Bima', '85000']
 	],
-	docLabel: 'post.json',
-	cases: {
-		transfer: 'A bank transfer that must always stay consistent: money cannot vanish or double as it moves between accounts.',
-		feed: 'A social feed of millions of very different posts, that must stay fast even when a flood of users hits it.'
-	},
-	why: {
-		sql: 'A transfer needs a strict schema and transaction guarantees so the balance is always correct. That is the strength of SQL.',
-		nosql: 'A huge, varied feed is happiest as flexible documents that scale out wide. That is the strength of NoSQL.',
-		wrong: 'Not the best fit for this case. Try picking again.'
-	}
+	extraRows: [
+		['3', 'Sari', '40000'],
+		['4', 'Tono', '67000']
+	],
+	addRow: 'Add a row',
+	schemaNote: 'new rows must follow the same columns',
+	docs: [
+		{ name: 'post_1', fields: ['author', 'text', 'likes'] },
+		{ name: 'post_2', fields: ['author', 'video', 'length'] },
+		{ name: 'post_3', fields: ['author', 'poll', 'options', 'ends'] }
+	],
+	addDoc: 'Add a document',
+	freeNote: 'every document may have its own shape',
+	whenTitle: 'When to use it',
+	sqlWhen: ['Money & transactions', 'Online stores', 'Data that links together'],
+	nosqlWhen: ['Social media feeds', 'Catalogs of varied shapes', 'Huge data'],
+	done: 'You have felt both of them'
 };

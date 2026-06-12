@@ -11,7 +11,7 @@ export const en: CapstoneText = {
 		multiaz: 'Your servers are now spread across several AZs. One data center falls, the others keep serving.',
 		traffic: 'The load balancer splits traffic evenly, and auto scaling adds servers on its own when it gets busy.',
 		cdn: 'Copies of your pages sit in many cities, so even far away visitors are served by a nearby cache, fast.',
-		data: 'Your data has a replica ready to take over, plus a backup in case something gets deleted by accident.',
+		data: 'Your data lives in the storage and database that fit its shape.',
 		security:
 			'The database is hidden in a private subnet, the firewall closes the doors you do not need, and the data is scrambled with encryption.',
 		monitoring: 'Now you can see the health of the system and get an alarm before visitors ever notice a problem.',
@@ -22,7 +22,7 @@ export const en: CapstoneText = {
 		{ key: 'multiaz', name: 'Spread across several AZs', recall: 'Chapter 3, Resilience & Data' },
 		{ key: 'traffic', name: 'Load balancer and auto scaling', recall: 'Chapter 4, Traffic' },
 		{ key: 'cdn', name: 'CDN and cache', recall: 'Chapter 4, Traffic' },
-		{ key: 'data', name: 'Database with a replica and backup', recall: 'Chapter 3, Resilience & Data' },
+		{ key: 'data', name: 'The right storage and database', recall: 'Chapter 3, Resilience & Data' },
 		{ key: 'security', name: 'Private subnet, firewall, encryption', recall: 'Chapter 5, Networking & Security' },
 		{ key: 'monitoring', name: 'Monitoring and alarms', recall: 'Chapter 6, Compute & Operations' }
 	],

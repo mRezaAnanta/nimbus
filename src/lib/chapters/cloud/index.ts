@@ -18,7 +18,7 @@ export const cloudChapter: Chapter = {
 				'<b>Region</b> adalah memilih lokasi data center terdekat supaya <b>latensinya</b> kecil'
 			],
 			nextNote:
-				'Berikutnya: <b>Ketahanan & Data</b>. Gedung data center bisa tumbang, jadi kita belajar menyebar server, failover, lalu cara menyimpan data sampai replikasi dan backup.',
+				'Berikutnya: <b>Ketahanan & Data</b>. Gedung data center bisa tumbang, jadi kita belajar menyebar server, failover, lalu cara menyimpan data dan memilih database.',
 			restart: 'Ulangi dari awal'
 		},
 		en: {
@@ -30,7 +30,7 @@ export const cloudChapter: Chapter = {
 				'<b>Region</b> is choosing the nearest data center location to keep <b>latency</b> low'
 			],
 			nextNote:
-				'Next up: <b>Resilience & Data</b>. Data center buildings can fail, so we learn to spread servers, fail over, then keep data safe all the way to replication and backups.',
+				'Next up: <b>Resilience & Data</b>. Data center buildings can fail, so we learn to spread servers, fail over, then store data and pick the right database.',
 			restart: 'Start over'
 		}
 	}

@@ -3,14 +3,23 @@ import type { LessonText } from '../types';
 export interface StorageTypesText extends LessonText {
 	objectTitle: string;
 	objectSub: string;
+	objectNote: string;
+	objectWhen: string[];
+	objectFiles: string[];
 	blockTitle: string;
 	blockSub: string;
+	blockNote: string;
+	blockWhen: string[];
+	blockMachine: string;
 	fileTitle: string;
 	fileSub: string;
-	prompt: string;
-	done: string;
-	/** Use cases the learner drags into a storage type. key -> label. */
-	cases: Record<string, string>;
+	fileNote: string;
+	fileWhen: string[];
+	fileMachines: string[];
+	fileDocs: string[];
+	whenTitle: string;
+	seenAll: string;
+	hint: string;
 }
 
 export interface DatabaseText extends LessonText {
@@ -18,34 +27,18 @@ export interface DatabaseText extends LessonText {
 	sqlSub: string;
 	nosqlTitle: string;
 	nosqlSub: string;
-	pickSql: string;
-	pickNosql: string;
-	prompt: string;
-	done: string;
 	tableName: string;
 	columns: string[];
 	rows: string[][];
-	docLabel: string;
-	/** Use cases shown one at a time. key -> question. */
-	cases: Record<string, string>;
-	/** Why a given answer fits the current case. */
-	why: Record<string, string>;
-}
-
-export interface ReplicationText extends LessonText {
-	primaryLabel: string;
-	replicaLabel: string;
-	serving: string;
-	standbyState: string;
-	lostLabel: string;
-	emptyLabel: string;
-	addReplica: string;
-	takeBackup: string;
-	failButton: string;
-	deleteButton: string;
-	restoreButton: string;
-	backupLabel: string;
-	zones: Record<string, string>;
-	prompt: string;
+	extraRows: string[][];
+	addRow: string;
+	schemaNote: string;
+	/** Each doc is a name plus its own field labels, shapes differ on purpose. */
+	docs: { name: string; fields: string[] }[];
+	addDoc: string;
+	freeNote: string;
+	whenTitle: string;
+	sqlWhen: string[];
+	nosqlWhen: string[];
 	done: string;
 }
