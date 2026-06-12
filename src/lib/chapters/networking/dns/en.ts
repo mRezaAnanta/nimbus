@@ -3,28 +3,25 @@ import type { DnsText } from '../types';
 export const en: DnsText = {
 	title: 'IP and DNS',
 	intro: [
-		'Every server on the internet has an <b>IP address</b>, a string of numbers that says where it is, like a house number. For example 93.184.216.34. Your browser needs this number to connect.',
-		'The trouble is, numbers are hard for people to remember. So we use friendly names like nimbus.com instead. But computers still need the number.',
-		'This is where <b>DNS</b> comes in. DNS is the internet phonebook: you give it a name and it hands back the IP address. Once the IP is known, your browser can connect to the right server.',
-		'Try it. Pick a domain, watch DNS turn its name into an IP, then let the browser connect to that address.'
+		'Every server on the internet has an <b>IP address</b>, a string of numbers marking its location, like a house number. The browser needs those numbers to connect.',
+		'The catch is that humans are terrible at memorizing numbers. So we use friendly names like nimbus.com. But computers still need the numbers.',
+		'That is where <b>DNS</b> comes in. It is the phone book of the internet. You say a name, it answers with the IP address, and only then can the browser reach the right server.',
+		'Try it. Pick a name below, then watch DNS find the number and your phone connect.'
 	],
 	reactions: {
-		resolved: 'There, DNS just translated that name into an IP address. Now the browser knows which number to connect to.',
-		connected: 'Nice. The browser connected to that IP address and the page loaded. That is the journey from name to IP to connection.'
+		resolved:
+			'That fast. You only said a name, DNS replied with the IP address, and your phone instantly knew where to connect. This happens silently every time you open any site.'
 	},
-	prompt: 'Pick a domain',
-	resolveLabel: 'Look up IP (DNS)',
-	connectLabel: 'Connect browser',
-	resolverTitle: 'DNS resolver',
-	resolving: 'Looking up',
-	resolved: 'Found',
-	connecting: 'Connecting',
-	connected: 'Connected',
-	ipLabel: 'IP address',
-	again: 'Try another domain',
-	domains: {
-		'nimbus.com': '93.184.216.34',
-		'coffee-shop.com': '203.0.113.52',
-		'cloud-class.com': '198.51.100.27'
-	}
+	youLabel: 'Your phone',
+	bookTitle: 'DNS',
+	bookSub: 'the internet phone book',
+	serverLabel: 'Server',
+	domains: [
+		{ host: 'nimbus.com', ip: '76.76.21.21' },
+		{ host: 'kopi.com', ip: '104.18.36.92' },
+		{ host: 'warta.com', ip: '151.101.1.67' }
+	],
+	idleNote: 'Pick a site name below',
+	lookupNote: 'DNS looks the name up in the book',
+	connectNote: 'Found it, {ip}. Your phone connects there'
 };

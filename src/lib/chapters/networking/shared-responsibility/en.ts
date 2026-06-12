@@ -3,29 +3,22 @@ import type { SharedResponsibilityText } from '../types';
 export const en: SharedResponsibilityText = {
 	title: 'Shared Responsibility',
 	intro: [
-		'Using the cloud does not make security entirely the provider job. There is a clear split, called the <b>shared responsibility model</b>.',
-		'The provider secures <b>the cloud itself</b>: the physical data center buildings, the hardware, the virtualization layer (the hypervisor), and the global network. This part is out of your reach, and it is not your job.',
-		'You secure <b>what you put in the cloud</b>: your data, who has access, your configuration, and your passwords. In fact, most breaches come from the customer side, not the provider, often from sloppy configuration or weak passwords.',
-		'Try it. Sort each item into the right bucket: Provider or You.'
+		'One of the most common cloud misunderstandings, "it is in the cloud, so it must be secure". Not necessarily.',
+		'Security in the cloud is split in two, called <b>shared responsibility</b>. The cloud provider guards <b>the building</b>, the physical data center, the hardware, and the network.',
+		'You guard <b>what is inside</b>, your data, who gets access, the keys, and your own configuration. Most cloud breaches happen because of a customer misconfiguration, not because the provider got cracked.',
+		'See the split below, two sides, each with their share.'
 	],
 	reactions: {
-		correct: 'Exactly. You know who owns that piece.',
-		wrong: 'Hmm, think again. Ask yourself: is this part of the cloud itself (the provider job) or something you put on top of it (your job)?'
+		shown:
+			'Clear, right? The building and machines belong to the provider, the contents and keys belong to you. If your data leaks because access was left unlocked, that is not the cloud’s fault.'
 	},
-	providerLabel: 'Provider',
-	providerSub: 'Secures the cloud',
-	youLabel: 'You',
-	youSub: 'Secure your stuff',
-	prompt: 'Pick an item, then tap the bucket you think is responsible',
-	done: 'All correct. That is how responsibility splits.',
-	items: {
-		datacenter: 'Physical data center security',
-		hardware: 'Server hardware',
-		hypervisor: 'The hypervisor',
-		network: 'The global network',
-		iam: 'Access permissions (IAM)',
-		passwords: 'Your passwords',
-		appPatch: 'Patching your app',
-		dataConfig: 'Your data configuration'
-	}
+	providerTitle: 'Cloud provider',
+	providerSub: 'guards the building',
+	youTitle: 'You',
+	youSub: 'guard what is inside',
+	providerItems: ['The data center building', 'Hardware & machines', 'Network & power'],
+	youItems: ['Your data', 'Who gets access', 'Keys & configuration'],
+	reveal: 'Show the split',
+	noteIdle: 'Two parties, two shares of the duty',
+	noteDone: 'The building is theirs, the contents are yours'
 };

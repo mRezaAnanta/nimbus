@@ -3,39 +3,30 @@ import type { IamText } from '../types';
 export const id: IamText = {
 	title: 'Identitas dan Akses',
 	intro: [
-		'Bayangkan kantor besar. Di pintu masuk, satpam ngecek kartu identitasmu untuk memastikan kamu memang kamu. Itu namanya <b>autentikasi</b>: membuktikan siapa dirimu, biasanya lewat password atau kode.',
-		'Tapi kartu yang sama belum tentu buka semua pintu. Punyamu mungkin cuma bisa buka ruang kerjamu, bukan ruang server. Pintu mana yang boleh kamu buka itu namanya <b>otorisasi</b>: apa saja yang boleh kamu lakukan.',
-		'Aturan emasnya: <b>least privilege</b>, kasih tiap identitas akses seperlunya saja. Kalau semua orang dikasih akses admin penuh, satu password bocor bisa bikin seluruh sistem jebol.',
-		'Coba sendiri. Atur izin untuk user ini, lalu uji beberapa aksi. Yang diizinkan akan berhasil, sisanya ditolak.'
+		'Bukan cuma tamu dari luar yang perlu diatur. Orang dalam pun tidak boleh bisa menyentuh segalanya.',
+		'Di kantor, tiap karyawan pegang <b>kartu akses</b>. Kartu itu menjawab dua hal, kamu siapa (<b>autentikasi</b>) dan kamu boleh apa (<b>otorisasi</b>).',
+		'Aturan emasnya namanya <b>least privilege</b>, kasih akses seperlunya saja. Anak magang tidak butuh kunci ruang server, dan kalau kartunya dicuri, pencurinya juga cuma bisa sedikit.',
+		'Coba sendiri. Pasangkan dua kartu berbeda ke Budi si anak magang, dan lihat pintu mana saja yang terbuka.'
 	],
 	reactions: {
-		denied: 'Nah, aksi itu ditolak karena kamu tidak memberi izinnya. User cuma bisa melakukan hal yang sudah kamu pilih. Itulah otorisasi yang bekerja.',
-		allowed: 'Berhasil, karena izin ini memang kamu berikan. Sekarang coba aksi yang tidak kamu izinkan dan lihat bedanya.',
-		leastpriv:
-			'Mantap. Kamu memberi akses seperlunya saja, baca file tapi tidak boleh hapus database. Itulah least privilege. Kalau password user ini bocor, kerusakannya tetap terbatas.'
+		admin:
+			'Dengan kartu admin semua pintu terbuka, termasuk yang tidak pernah dia butuhkan. Sekarang bayangkan kartunya jatuh ke orang jahat. Ngeri kan? Coba kartu satunya.',
+		scoped:
+			'Nah, kartu magang cuma membuka pintu yang memang dia perlukan. Kalau hilang pun kerusakannya kecil. Inilah least privilege, akses secukupnya saja.'
 	},
-	userLabel: 'Nadia',
-	userSub: 'Anggota tim',
-	badgeLabel: 'Kartu akses',
-	adminLabel: 'Admin penuh',
-	adminHint: 'Bisa apa saja (berisiko)',
-	scopedLabel: 'Izin terbatas',
-	scopedHint: 'Pilih sendiri tiap izin',
-	permsTitle: 'Beri izin',
-	tryTitle: 'Coba aksi',
-	allowedTag: 'Diizinkan',
-	deniedTag: 'Ditolak',
-	resetLabel: 'Atur ulang',
-	perms: {
-		readFile: 'Baca file',
-		writeFile: 'Ubah file',
-		deleteDb: 'Hapus database',
-		manageUsers: 'Kelola user'
-	},
-	actions: {
-		readFile: 'Buka file laporan',
-		writeFile: 'Simpan perubahan file',
-		deleteDb: 'Hapus database',
-		manageUsers: 'Tambah user baru'
-	}
+	personLabel: 'Budi, anak magang',
+	badgeAdmin: 'Kartu admin',
+	badgeAdminSub: 'semua pintu terbuka',
+	badgeScoped: 'Kartu magang',
+	badgeScopedSub: 'seperlunya saja',
+	doors: [
+		{ key: 'read', label: 'Lihat laporan', scoped: true },
+		{ key: 'db', label: 'Hapus database', scoped: false },
+		{ key: 'server', label: 'Atur server', scoped: false }
+	],
+	openTag: 'terbuka',
+	shutTag: 'terkunci',
+	noteIdle: 'Pilih kartu untuk Budi',
+	noteAdmin: 'Semua terbuka, termasuk yang tidak dia butuhkan',
+	noteScoped: 'Cuma yang perlu yang terbuka'
 };

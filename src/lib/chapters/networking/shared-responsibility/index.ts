@@ -6,8 +6,8 @@ import { en } from './en';
 export const sharedResponsibility: Lesson = {
 	id: 'shared-responsibility',
 	mood: 'thinking',
-	moods: ['calm', 'thinking', 'idea', 'happy'],
-	reactionMood: { correct: 'happy', wrong: 'worried' },
+	moods: ['thinking', 'calm', 'idea', 'happy'],
+	reactionMood: { shown: 'happy' },
 	stage: SharedResponsibilityStage,
 	text: { id, en }
 };

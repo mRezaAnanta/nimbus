@@ -3,28 +3,27 @@ import type { EncryptionText } from '../types';
 export const id: EncryptionText = {
 	title: 'Enkripsi',
 	intro: [
-		'Setiap pesan yang kamu kirim lewat internet melewati banyak jaringan dan komputer sebelum sampai. Di sepanjang jalan itu, ada saja yang bisa diam diam mengintip.',
-		'<b>Enkripsi</b> mengacak datamu jadi kode yang tidak terbaca. Hanya yang punya <b>kunci</b> yang bisa membukanya kembali. Bagi pengintip, isinya cuma huruf acak tanpa arti.',
-		'Datamu perlu dilindungi di dua tempat: saat <b>berjalan</b> di jaringan (inilah gunanya HTTPS, si gembok kecil di address bar) dan saat <b>disimpan</b> di disk (supaya kalau filenya dicuri, isinya tetap aman).',
-		'Coba sendiri. Kirim pesan ini dengan enkripsi mati dulu, lihat reaksi si pengintip. Lalu nyalakan enkripsi dan kirim lagi.'
+		'Data yang jalan lewat internet itu melewati banyak tangan, router rumah, ISP, kabel antar negara. Di sepanjang jalan itu bisa saja ada yang menguping.',
+		'<b>Enkripsi</b> mengacak pesanmu jadi huruf acak yang cuma bisa dibaca pemegang <b>kunci</b>. Penguping tetap bisa melihat lalu lintasnya, tapi isinya cuma acak acakan tak berarti.',
+		'Gembok kecil di browser artinya ini, sambunganmu memakai <b>HTTPS</b>, semua yang lewat dienkripsi. Data yang disimpan di disk pun bisa diacak juga, namanya enkripsi at rest.',
+		'Coba kirim PIN kartumu dua kali, sekali tanpa kunci, sekali terkunci, dan perhatikan si penyadap di tengah.'
 	],
 	reactions: {
-		plain: 'Aduh. Tanpa enkripsi, pesanmu lewat dalam bentuk teks polos, dan si pengintip langsung membacanya jelas jelas. Sekarang nyalakan enkripsi dan kirim lagi.',
+		plain:
+			'Bahaya. Tanpa enkripsi, penyadap di tengah jalan membaca PIN-mu bulat bulat. Begitulah nasib data telanjang di internet.',
 		encrypted:
-			'Nah, begini seharusnya. Pesanmu kini jadi kode acak, jadi si pengintip cuma lihat huruf ngawur. Hanya penerima yang punya kunci yang bisa membacanya.'
+			'Sekarang penyadapnya cuma kebagian huruf acak. Pesannya baru terbuka di tujuan, karena cuma server yang pegang kuncinya. Itulah kerja gembok kecil di browsermu.'
 	},
-	youLabel: 'Kamu',
-	recipientLabel: 'Penerima',
-	eavesdropperLabel: 'Pengintip',
-	messageLabel: 'Pesanmu',
-	encryptOff: 'Enkripsi mati',
-	encryptOn: 'Enkripsi nyala',
-	sendLabel: 'Kirim pesan',
-	plainTag: 'Teks polos, bisa dibaca',
-	scrambledTag: 'Teracak, aman',
-	keyLabel: 'Punya kunci',
-	noKeyLabel: 'Tanpa kunci',
-	inTransitNote: 'Saat berjalan: HTTPS',
-	atRestNote: 'Saat disimpan: terenkripsi di disk',
-	sample: 'Saldo rekening: 50 juta'
+	youLabel: 'HP kamu',
+	snooperLabel: 'Penyadap',
+	serverLabel: 'Server',
+	message: 'PIN 1234',
+	cipher: 'x7#q!9z@f2',
+	sendPlain: 'Kirim tanpa kunci',
+	sendLocked: 'Kirim terkunci',
+	readTag: 'kebaca!',
+	scrambledTag: 'cuma acak acakan',
+	noteIdle: 'Ada yang menguping di tengah jalan',
+	notePlain: 'Pesan telanjang, penyadap membacanya',
+	noteLocked: 'Teracak rapat, cuma server yang bisa membuka'
 };

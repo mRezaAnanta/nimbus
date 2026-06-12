@@ -1,31 +1,31 @@
 import type { FirewallText } from '../types';
 
 export const en: FirewallText = {
-	title: 'Firewall',
+	title: 'Firewalls',
 	intro: [
-		'Your server still needs a guard at the door. That is the <b>firewall</b>: it allows or denies incoming connections based on <b>port</b> (a numbered door) and <b>source</b> (which address the connection comes from).',
-		'The safe rule is simple: <b>deny everything by default</b>, then open only what you truly need. Like a bouncer with a guest list: not on the list, not coming in.',
-		'For example, web on port 443 is fine to open to the public. But SSH on port 22 from an unknown address, or a database on port 3306 from the open internet, is dangerous and should be denied.',
-		'Try it. A few connections are knocking. Set allow or deny for each rule, then run the test. Your goal: allow the web traffic, block the risky ones.'
+		'A door that opens to the internet gets visited by everyone, good guests and snoops alike. Someone has to screen them out front.',
+		'The <b>firewall</b> is that security guard. It stands in front of the server holding a guest list, checking every arrival before they may enter.',
+		'You write the rules, and the safest rules start from <b>deny everything</b>, then allow only what is needed. Say, guests coming to view the web page are welcomed, everyone else is turned away.',
+		'Try it. Send in a web guest, then send in a snoop, and watch the guard work.'
 	],
 	reactions: {
-		web: 'Good. Web traffic on port 443 is meant for the public, so this rule is fine to allow.',
-		ssh: 'Careful. SSH is admin access to your server. From an unknown address, it is safer to deny it.',
-		db: 'That is dangerous. A database must never be open to the public internet. Deny this one.',
-		secured: 'Nice. Web open, SSH and database denied. Deny everything first, open only what you need. That is a safe firewall.'
+		allow:
+			'The web guest is on the list, so the guard opens the door. Your visitors never feel the check, yet it always happens.',
+		deny: 'The snoop is not on the list and gets turned away at the door, before ever touching the server. That is a firewall, deny first, allow only what is needed.'
 	},
-	ruleHeader: 'Incoming connections',
-	allow: 'Allow',
-	deny: 'Deny',
-	testLabel: 'Run the test',
-	reset: 'Reset',
-	succeeded: 'Connected',
-	failed: 'Blocked',
-	sourceLabel: 'Source',
-	portLabel: 'Port',
-	connections: {
-		web: { name: 'Web traffic', source: 'internet (public)' },
-		ssh: { name: 'SSH (admin access)', source: 'unknown address' },
-		db: { name: 'Database', source: 'open internet' }
-	}
+	guardLabel: 'Firewall',
+	guardSub: 'the guard at the door',
+	serverLabel: 'Server',
+	rulesTitle: 'Guest list',
+	ruleAllow: 'Web guests, welcome in',
+	ruleDeny: 'Everyone else, turn away',
+	guestWeb: 'Web guest',
+	guestBad: 'Snoop',
+	sendWeb: 'Send a web guest',
+	sendBad: 'Send a snoop',
+	allowedTag: 'in',
+	deniedTag: 'denied',
+	noteIdle: 'The guard stands ready with the list',
+	noteAllow: 'On the list, shown right in',
+	noteDeny: 'Not on the list, stops right here'
 };

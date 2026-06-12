@@ -6,8 +6,8 @@ import { en } from './en';
 export const iam: Lesson = {
 	id: 'iam',
 	mood: 'thinking',
-	moods: ['calm', 'thinking', 'idea', 'happy'],
-	reactionMood: { denied: 'worried', allowed: 'happy', leastpriv: 'excited' },
+	moods: ['calm', 'idea', 'thinking', 'happy'],
+	reactionMood: { admin: 'worried', scoped: 'excited' },
 	stage: IamStage,
 	text: { id, en }
 };

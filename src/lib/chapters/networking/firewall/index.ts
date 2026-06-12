@@ -6,8 +6,8 @@ import { en } from './en';
 export const firewall: Lesson = {
 	id: 'firewall',
 	mood: 'thinking',
-	moods: ['calm', 'thinking', 'idea', 'happy'],
-	reactionMood: { web: 'happy', ssh: 'thinking', db: 'worried', secured: 'excited' },
+	moods: ['worried', 'idea', 'thinking', 'happy'],
+	reactionMood: { allow: 'happy', deny: 'excited' },
 	stage: FirewallStage,
 	text: { id, en }
 };

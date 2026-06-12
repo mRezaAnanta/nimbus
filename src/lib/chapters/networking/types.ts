@@ -1,93 +1,88 @@
 import type { LessonText } from '../types';
 
 export interface DnsText extends LessonText {
-	prompt: string;
-	resolveLabel: string;
-	connectLabel: string;
-	resolverTitle: string;
-	resolving: string;
-	resolved: string;
-	connecting: string;
-	connected: string;
-	ipLabel: string;
-	again: string;
-	domains: Record<string, string>;
+	youLabel: string;
+	bookTitle: string;
+	bookSub: string;
+	serverLabel: string;
+	domains: { host: string; ip: string }[];
+	idleNote: string;
+	lookupNote: string;
+	connectNote: string; // template with {ip}
 }
 
 export interface NetworkText extends LessonText {
 	vpcLabel: string;
+	vpcSub: string;
+	internetLabel: string;
 	publicLabel: string;
 	publicSub: string;
 	privateLabel: string;
 	privateSub: string;
 	webLabel: string;
 	dbLabel: string;
-	placeWeb: string;
-	placeDb: string;
-	testLabel: string;
-	reachable: string;
-	blocked: string;
-	exposedNote: string;
-	securedNote: string;
-	reset: string;
+	visitSite: string;
+	attackDb: string;
+	noteIdle: string;
+	noteWeb: string;
+	noteBlocked: string;
 }
 
 export interface FirewallText extends LessonText {
-	ruleHeader: string;
-	allow: string;
-	deny: string;
-	testLabel: string;
-	reset: string;
-	succeeded: string;
-	failed: string;
-	sourceLabel: string;
-	portLabel: string;
-	connections: Record<string, { name: string; source: string }>;
+	guardLabel: string;
+	guardSub: string;
+	serverLabel: string;
+	rulesTitle: string;
+	ruleAllow: string;
+	ruleDeny: string;
+	guestWeb: string;
+	guestBad: string;
+	sendWeb: string;
+	sendBad: string;
+	allowedTag: string;
+	deniedTag: string;
+	noteIdle: string;
+	noteAllow: string;
+	noteDeny: string;
 }
 
 export interface IamText extends LessonText {
-	userLabel: string;
-	userSub: string;
-	badgeLabel: string;
-	adminLabel: string;
-	adminHint: string;
-	scopedLabel: string;
-	scopedHint: string;
-	permsTitle: string;
-	tryTitle: string;
-	allowedTag: string;
-	deniedTag: string;
-	resetLabel: string;
-	/** Permissions the learner can grant. key -> label. */
-	perms: Record<string, string>;
-	/** Actions the learner can attempt. key -> label. */
-	actions: Record<string, string>;
+	personLabel: string;
+	badgeAdmin: string;
+	badgeAdminSub: string;
+	badgeScoped: string;
+	badgeScopedSub: string;
+	doors: { key: string; label: string; scoped: boolean }[];
+	openTag: string;
+	shutTag: string;
+	noteIdle: string;
+	noteAdmin: string;
+	noteScoped: string;
 }
 
 export interface EncryptionText extends LessonText {
 	youLabel: string;
-	recipientLabel: string;
-	eavesdropperLabel: string;
-	messageLabel: string;
-	encryptOff: string;
-	encryptOn: string;
-	sendLabel: string;
-	plainTag: string;
+	snooperLabel: string;
+	serverLabel: string;
+	message: string;
+	cipher: string;
+	sendPlain: string;
+	sendLocked: string;
+	readTag: string;
 	scrambledTag: string;
-	keyLabel: string;
-	noKeyLabel: string;
-	inTransitNote: string;
-	atRestNote: string;
-	sample: string;
+	noteIdle: string;
+	notePlain: string;
+	noteLocked: string;
 }
 
 export interface SharedResponsibilityText extends LessonText {
-	providerLabel: string;
+	providerTitle: string;
 	providerSub: string;
-	youLabel: string;
+	youTitle: string;
 	youSub: string;
-	prompt: string;
-	done: string;
-	/** Items the learner sorts into a bucket. key -> label. */
-	items: Record<string, string>;
+	providerItems: string[];
+	youItems: string[];
+	reveal: string;
+	noteIdle: string;
+	noteDone: string;
 }

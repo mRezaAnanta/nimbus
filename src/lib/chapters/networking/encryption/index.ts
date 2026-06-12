@@ -6,7 +6,7 @@ import { en } from './en';
 export const encryption: Lesson = {
 	id: 'encryption',
 	mood: 'thinking',
-	moods: ['calm', 'thinking', 'idea', 'happy'],
+	moods: ['worried', 'idea', 'calm', 'happy'],
 	reactionMood: { plain: 'worried', encrypted: 'excited' },
 	stage: EncryptionStage,
 	text: { id, en }

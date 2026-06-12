@@ -6,8 +6,8 @@ import { en } from './en';
 export const vpc: Lesson = {
 	id: 'vpc',
 	mood: 'thinking',
-	moods: ['calm', 'thinking', 'idea', 'happy'],
-	reactionMood: { exposed: 'worried', secured: 'excited' },
+	moods: ['calm', 'idea', 'thinking', 'happy'],
+	reactionMood: { web: 'happy', blocked: 'excited' },
 	stage: NetworkStage,
 	text: { id, en }
 };

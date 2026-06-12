@@ -3,28 +3,28 @@ import type { NetworkText } from '../types';
 export const en: NetworkText = {
 	title: 'Private networks and subnets',
 	intro: [
-		'In the cloud you get your own private network, fenced off from everyone else. It is called a <b>VPC</b>, a Virtual Private Cloud. Picture a building that belongs only to you.',
-		'The building is split into floors called <b>subnets</b>. A <b>public subnet</b> can be reached from the internet, like a lobby open to visitors. That suits a web server.',
-		'A <b>private subnet</b> can only be reached from inside, like a staff only floor. That suits a database, since its contents should not be open to just anyone.',
-		'Set it up yourself. Place the web server and the database in the subnets you think fit, then press test from the internet to see what is reachable.'
+		'Your cloud servers live inside a <b>VPC</b>, a private network of your own. Picture a fenced house where you decide the rooms and the doors.',
+		'The rooms inside are called <b>subnets</b>. The one facing the street is the <b>public subnet</b>, its door opens to the internet, and this is where the web server greets visitors.',
+		'The one at the back is the <b>private subnet</b>, with no door to the street at all. The database lives here, and only the web server may talk to it from inside.',
+		'See for yourself. Send a visitor to your site, then try poking the database straight from the internet.'
 	],
 	reactions: {
-		exposed: 'Careful, your database is in the public subnet, so anyone on the internet can reach it. That is exposed. Move the database into the private subnet.',
-		secured: 'That fits. Web server public so visitors can open your site, database private so it stays hidden from the internet. Only internal paths can touch it.'
+		web: 'The visitor came through the front door, was served by the web server in the public subnet, and the web server fetched the data from the database in the back. The guest never touched the database.',
+		blocked:
+			'Flatly rejected. The private subnet has no door to the internet, so a snoop cannot touch your database even knowing its address. That is why you separate the rooms.'
 	},
-	vpcLabel: 'VPC (your private network)',
+	vpcLabel: 'VPC',
+	vpcSub: 'your private network',
+	internetLabel: 'Internet',
 	publicLabel: 'Public subnet',
-	publicSub: 'lobby, open from the internet',
+	publicSub: 'its door faces the internet',
 	privateLabel: 'Private subnet',
-	privateSub: 'staff floor, internal only',
+	privateSub: 'no door out',
 	webLabel: 'Web server',
 	dbLabel: 'Database',
-	placeWeb: 'Place the web server here',
-	placeDb: 'Place the database here',
-	testLabel: 'Test from the internet',
-	reachable: 'Reachable',
-	blocked: 'Protected',
-	exposedNote: 'Database open to the internet',
-	securedNote: 'Secure setup',
-	reset: 'Reset'
+	visitSite: 'Visit the site',
+	attackDb: 'Poke the database from outside',
+	noteIdle: 'Two rooms, only one has a door',
+	noteWeb: 'Guests served up front, data fetched from the back',
+	noteBlocked: 'No door, no way in'
 };

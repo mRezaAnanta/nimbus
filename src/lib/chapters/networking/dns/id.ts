@@ -3,28 +3,25 @@ import type { DnsText } from '../types';
 export const id: DnsText = {
 	title: 'IP dan DNS',
 	intro: [
-		'Setiap server di internet punya <b>alamat IP</b>, yaitu deretan angka yang menunjukkan lokasinya, mirip nomor rumah. Contohnya 93.184.216.34. Browser butuh angka ini untuk menyambung.',
+		'Setiap server di internet punya <b>alamat IP</b>, deretan angka yang menunjukkan lokasinya, mirip nomor rumah. Browser butuh angka ini untuk menyambung.',
 		'Masalahnya, manusia susah menghafal angka. Jadi kita pakai nama yang gampang diingat seperti nimbus.com. Tapi komputer tetap butuh angkanya.',
-		'Di sinilah <b>DNS</b> bekerja. DNS itu buku telepon internet: kamu kasih sebuah nama, dia balikin alamat IP-nya. Begitu IP ketemu, browser baru bisa menyambung ke server yang tepat.',
-		'Coba sendiri. Pilih sebuah domain, lihat DNS mengubah namanya jadi IP, lalu browser menyambung ke alamat itu.'
+		'Di sinilah <b>DNS</b> bekerja. Dia buku telepon internet. Kamu sebut sebuah nama, dia balas dengan alamat IP-nya, dan barulah browser bisa menyambung ke server yang benar.',
+		'Coba sendiri. Pilih sebuah nama di bawah, lalu lihat DNS menemukan angkanya dan HP-mu tersambung.'
 	],
 	reactions: {
-		resolved: 'Nah, DNS tadi menerjemahkan nama itu jadi sebuah alamat IP. Sekarang browser sudah tahu ke angka mana harus menyambung.',
-		connected: 'Mantap. Browser menyambung ke alamat IP itu dan halamannya kebuka. Itulah perjalanan dari nama ke IP ke koneksi.'
+		resolved:
+			'Secepat itu. Kamu cuma menyebut nama, DNS membalas dengan alamat IP-nya, dan HP-mu langsung tahu harus menyambung ke mana. Ini terjadi diam diam tiap kali kamu buka situs apa pun.'
 	},
-	prompt: 'Pilih sebuah domain',
-	resolveLabel: 'Cari IP (DNS)',
-	connectLabel: 'Sambungkan browser',
-	resolverTitle: 'Resolver DNS',
-	resolving: 'Mencari',
-	resolved: 'Ketemu',
-	connecting: 'Menyambung',
-	connected: 'Tersambung',
-	ipLabel: 'Alamat IP',
-	again: 'Coba domain lain',
-	domains: {
-		'nimbus.com': '93.184.216.34',
-		'toko-kopi.id': '203.0.113.52',
-		'kelas-awan.com': '198.51.100.27'
-	}
+	youLabel: 'HP kamu',
+	bookTitle: 'DNS',
+	bookSub: 'buku telepon internet',
+	serverLabel: 'Server',
+	domains: [
+		{ host: 'nimbus.com', ip: '76.76.21.21' },
+		{ host: 'kopi.com', ip: '104.18.36.92' },
+		{ host: 'warta.com', ip: '151.101.1.67' }
+	],
+	idleNote: 'Pilih nama situs di bawah',
+	lookupNote: 'DNS mencari namanya di buku',
+	connectNote: 'Ketemu, {ip}. HP-mu menyambung ke sana'
 };

@@ -3,39 +3,30 @@ import type { IamText } from '../types';
 export const en: IamText = {
 	title: 'Identity and Access',
 	intro: [
-		'Picture a big office. At the entrance, a guard checks your ID to confirm you really are you. That is <b>authentication</b>: proving who you are, usually with a password or a code.',
-		'But the same card does not open every door. Yours might open your workspace, not the server room. Which doors you may open is <b>authorization</b>: what you are allowed to do.',
-		'The golden rule is <b>least privilege</b>: give each identity only the access it actually needs. If everyone gets full admin, one leaked password can break the whole system.',
-		'Try it. Set this user up with some permissions, then test a few actions. The allowed ones succeed, the rest are denied.'
+		'Outside guests are not the only ones who need rules. People on the inside should not be able to touch everything either.',
+		'At an office, every employee carries an <b>access card</b>. The card answers two things, who you are (<b>authentication</b>) and what you may do (<b>authorization</b>).',
+		'The golden rule is called <b>least privilege</b>, grant only the access that is needed. An intern does not need the server room key, and if the card gets stolen, the thief can do very little too.',
+		'Try it. Hand Budi the intern two different cards, and watch which doors open.'
 	],
 	reactions: {
-		denied: 'Right, that action was denied because you never granted the permission. The user can only do what you picked. That is authorization at work.',
-		allowed: 'It worked, because you did grant this permission. Now try an action you did not allow and watch the difference.',
-		leastpriv:
-			'Nice. You gave only what is needed, read files but no deleting the database. That is least privilege. If this user password leaks, the damage stays limited.'
+		admin:
+			'With the admin card every door opens, including ones he never needs. Now imagine that card falling into the wrong hands. Scary, right? Try the other card.',
+		scoped:
+			'There, the intern card only opens the doors he actually needs. Even if it gets lost, the damage stays small. That is least privilege, just enough access.'
 	},
-	userLabel: 'Nadia',
-	userSub: 'Team member',
-	badgeLabel: 'Access badge',
-	adminLabel: 'Full admin',
-	adminHint: 'Can do anything (risky)',
-	scopedLabel: 'Scoped access',
-	scopedHint: 'Pick each permission',
-	permsTitle: 'Grant permissions',
-	tryTitle: 'Try an action',
-	allowedTag: 'Allowed',
-	deniedTag: 'Denied',
-	resetLabel: 'Reset',
-	perms: {
-		readFile: 'Read files',
-		writeFile: 'Edit files',
-		deleteDb: 'Delete database',
-		manageUsers: 'Manage users'
-	},
-	actions: {
-		readFile: 'Open the report file',
-		writeFile: 'Save a file change',
-		deleteDb: 'Delete the database',
-		manageUsers: 'Add a new user'
-	}
+	personLabel: 'Budi the intern',
+	badgeAdmin: 'Admin card',
+	badgeAdminSub: 'every door opens',
+	badgeScoped: 'Intern card',
+	badgeScopedSub: 'only what is needed',
+	doors: [
+		{ key: 'read', label: 'View reports', scoped: true },
+		{ key: 'db', label: 'Delete the database', scoped: false },
+		{ key: 'server', label: 'Manage servers', scoped: false }
+	],
+	openTag: 'open',
+	shutTag: 'locked',
+	noteIdle: 'Pick a card for Budi',
+	noteAdmin: 'Everything opens, even what he never needs',
+	noteScoped: 'Only the needed doors open'
 };

@@ -4,170 +4,394 @@
 	import type { LessonText } from '$lib/chapters/types';
 	import type { DnsText } from '$lib/chapters/networking/types';
 
-	let {
-		text,
-		oncomplete,
-		onstate
-	}: {
-		text: LessonText;
-		oncomplete?: () => void;
-		onstate?: (s: string) => void;
-	} = $props();
+	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
+		$props();
 	const tx = $derived(text as DnsText);
 
-	const names = $derived(Object.keys(tx.domains));
-
-	type Phase = 'idle' | 'resolving' | 'resolved' | 'connecting' | 'connected';
-	let selected = $state<string | null>(null);
-	let phase = $state<Phase>('idle');
+	let picked = $state<number | null>(null);
+	let phase = $state<'idle' | 'lookup' | 'connect'>('idle');
+	let browser = $state<'idle' | 'loading' | 'loaded'>('idle');
 	let done = false;
 	let timers: ReturnType<typeof setTimeout>[] = [];
 
-	const ip = $derived(selected ? tx.domains[selected] : '');
-	const browserPhase = $derived<'idle' | 'loading' | 'loaded'>(
-		phase === 'connecting' ? 'loading' : phase === 'connected' ? 'loaded' : 'idle'
+	function pick(i: number) {
+		picked = i;
+		phase = 'lookup';
+		browser = 'loading';
+		timers.forEach(clearTimeout);
+		timers = [];
+		timers.push(
+			setTimeout(() => {
+				phase = 'connect';
+				timers.push(
+					setTimeout(() => {
+						browser = 'loaded';
+						onstate?.('resolved');
+						if (!done) {
+							done = true;
+							oncomplete?.();
+						}
+					}, 900)
+				);
+			}, 900)
+		);
+	}
+
+	const note = $derived(
+		phase === 'idle'
+			? tx.idleNote
+			: phase === 'lookup'
+				? tx.lookupNote
+				: tx.connectNote.replace('{ip}', picked === null ? '' : tx.domains[picked].ip)
 	);
-
-	function pick(name: string) {
-		if (phase === 'resolving' || phase === 'connecting') return;
-		selected = name;
-		phase = 'idle';
-	}
-
-	function resolve() {
-		if (!selected || phase !== 'idle') return;
-		phase = 'resolving';
-		timers.push(
-			setTimeout(() => {
-				phase = 'resolved';
-				onstate?.('resolved');
-			}, 1100)
-		);
-	}
-
-	function connect() {
-		if (phase !== 'resolved') return;
-		phase = 'connecting';
-		timers.push(
-			setTimeout(() => {
-				phase = 'connected';
-				onstate?.('connected');
-				if (!done) {
-					done = true;
-					oncomplete?.();
-				}
-			}, 1100)
-		);
-	}
-
-	function reset() {
-		phase = 'idle';
-	}
 
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-5">
-	<!-- domain chips -->
-	<div class="flex flex-wrap items-center justify-center gap-2">
-		<span class="text-faint mr-1 text-xs font-semibold">{tx.prompt}:</span>
-		{#each names as name (name)}
-			<button
-				type="button"
-				onclick={() => pick(name)}
-				class="rounded-full border px-3 py-1.5 text-xs font-semibold transition-all {selected === name
-					? 'border-brand bg-brand-soft text-brand'
-					: 'border-line bg-card text-muted hover:border-brand'}"
-			>
-				{name}
-			</button>
-		{/each}
-	</div>
-
-	<!-- the pipeline: name -> resolver -> ip -> browser -->
-	<div class="flex w-full max-w-2xl flex-col items-center gap-4 md:flex-row md:items-stretch md:justify-center">
-		<!-- name card -->
-		<div class="border-line bg-card flex w-[170px] flex-col items-center justify-center gap-1 rounded-2xl border p-4">
-			<span class="text-faint text-[10px] font-semibold tracking-widest uppercase">name</span>
-			<span class="text-ink font-display text-base font-medium">{selected ?? '...'}</span>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+	<div class="scene">
+		<!-- your phone asking by name -->
+		<div class="actor">
+			<div class="shrink"><Browser phase={browser} /></div>
+			<span class="alabel">{tx.youLabel}</span>
 		</div>
 
-		<!-- resolver -->
-		<div
-			class="flex w-[190px] flex-col items-center justify-center gap-2 rounded-2xl border p-4 transition-colors {phase ===
-				'resolving'
-				? 'border-brand bg-brand-soft'
-				: phase === 'resolved' || phase === 'connecting' || phase === 'connected'
-					? 'border-grass bg-grass-soft'
-					: 'border-line bg-card'}"
-		>
-			<span class="text-faint text-[10px] font-semibold tracking-widest uppercase">{tx.resolverTitle}</span>
-			{#if phase === 'idle'}
-				<span class="text-faint text-xs">{tx.resolving} ...</span>
-			{:else if phase === 'resolving'}
-				<span class="text-brand flex items-center gap-2 text-xs font-semibold">
-					<span class="dot"></span>{tx.resolving} {selected}
-				</span>
-			{:else}
-				<span class="text-faint text-[10px]">{tx.ipLabel}</span>
-				<span class="text-grass font-display text-lg font-semibold tabular-nums">{ip}</span>
+		<!-- left rail: the name goes to the book, the number comes back -->
+		<div class="rail">
+			{#if phase === 'lookup' && picked !== null}
+				<span class="chip ask">{tx.domains[picked].host}</span>
+			{/if}
+			{#if phase === 'connect' && picked !== null}
+				<span class="chip back">{tx.domains[picked].ip}</span>
 			{/if}
 		</div>
 
-		<!-- browser -->
-		<div class="flex shrink-0 scale-90 flex-col items-center md:scale-100">
-			<Browser phase={browserPhase} />
+		<!-- the phone book -->
+		<div class="book" class:busy={phase === 'lookup'}>
+			<div class="bhead">
+				<b>{tx.bookTitle}</b>
+				<span>{tx.bookSub}</span>
+			</div>
+			{#each tx.domains as d, i (d.host)}
+				<div class="brow" class:hot={picked === i && phase !== 'idle'}>
+					<span class="bhost">{d.host}</span>
+					<span class="bip">{d.ip}</span>
+				</div>
+			{/each}
+		</div>
+
+		<!-- right rail: with the number known, the phone reaches the server -->
+		<div class="rail right">
+			{#if phase === 'connect'}<span class="pkt"></span>{/if}
+		</div>
+
+		<div class="actor">
+			<div class="srv" class:on={browser === 'loaded'}>
+				<div class="slot"><span class="dot"></span></div>
+				<div class="slot"><span class="dot"></span></div>
+				<div class="slot"><span class="dot"></span></div>
+			</div>
+			<span class="alabel">{tx.serverLabel}</span>
 		</div>
 	</div>
 
-	<!-- actions -->
-	<div class="flex items-center gap-3">
-		{#if phase === 'connected'}
-			<span class="text-grass text-sm font-semibold">✓ {tx.connected}</span>
-			<button
-				type="button"
-				onclick={reset}
-				class="border-line text-muted hover:border-brand rounded-xl border px-4 py-2 text-sm font-semibold transition-all"
-			>
-				{tx.again}
-			</button>
-		{:else}
-			<button
-				type="button"
-				onclick={resolve}
-				disabled={!selected || phase !== 'idle'}
-				class="bg-ink rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition-all enabled:hover:brightness-125 disabled:opacity-40"
-			>
-				{tx.resolveLabel}
-			</button>
-			<button
-				type="button"
-				onclick={connect}
-				disabled={phase !== 'resolved'}
-				class="bg-brand rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition-all enabled:hover:brightness-110 disabled:opacity-40"
-			>
-				{tx.connectLabel}
-			</button>
-		{/if}
+	<p class="note">{note}</p>
+
+	<div class="acts">
+		{#each tx.domains as d, i (d.host)}
+			<button type="button" class="dom" class:on={picked === i} onclick={() => pick(i)}>{d.host}</button>
+		{/each}
 	</div>
 </div>
 
 <style>
-	.dot {
-		display: inline-block;
-		height: 8px;
-		width: 8px;
-		border-radius: 50%;
-		background: #2e6fe0;
-		animation: blink 0.8s ease-in-out infinite;
+	.scene {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 2px;
+		width: min(94vw, 380px);
 	}
-	@keyframes blink {
+	.actor {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 4px;
+	}
+	.alabel {
+		font-size: 10px;
+		font-weight: 600;
+		color: #5e6b76;
+		white-space: nowrap;
+	}
+	.shrink {
+		width: 98px;
+		height: 156px;
+		overflow: visible;
+	}
+	.shrink > :global(.phone) {
+		transform: scale(0.62);
+		transform-origin: top left;
+	}
+	.rail {
+		position: relative;
+		flex: 1;
+		min-width: 34px;
+		height: 2px;
+		margin-bottom: 26px;
+		border-radius: 2px;
+		background: #e8e2d8;
+	}
+	.chip {
+		position: absolute;
+		top: -11px;
+		left: 50%;
+		border-radius: 999px;
+		font-size: 8px;
+		font-weight: 800;
+		padding: 2px 7px;
+		white-space: nowrap;
+		color: #fff;
+	}
+	.chip.ask {
+		background: #16212b;
+		animation: goright 0.85s ease forwards;
+	}
+	.chip.back {
+		background: #3a9c64;
+		animation: goleft 0.85s ease forwards;
+	}
+	@keyframes goright {
+		from {
+			transform: translateX(-90%);
+			opacity: 0;
+		}
+		25% {
+			opacity: 1;
+		}
+		to {
+			transform: translateX(-10%);
+			opacity: 1;
+		}
+	}
+	@keyframes goleft {
+		from {
+			transform: translateX(-10%);
+			opacity: 0;
+		}
+		25% {
+			opacity: 1;
+		}
+		to {
+			transform: translateX(-90%);
+			opacity: 1;
+		}
+	}
+	.book {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		width: 142px;
+		border-radius: 13px;
+		border: 1.5px solid #cdddf6;
+		background: #fff;
+		padding: 8px;
+		box-shadow: 0 8px 20px rgba(46, 111, 224, 0.1);
+		margin-bottom: 26px;
+		transition: box-shadow 0.3s ease;
+	}
+	.book.busy {
+		box-shadow: 0 0 0 5px rgba(46, 111, 224, 0.14);
+	}
+	.bhead {
+		display: flex;
+		flex-direction: column;
+		line-height: 1.15;
+		margin-bottom: 2px;
+	}
+	.bhead b {
+		font-size: 11px;
+		font-weight: 800;
+		color: #2e6fe0;
+	}
+	.bhead span {
+		font-size: 7.5px;
+		color: #8a949d;
+	}
+	.brow {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 4px;
+		border-radius: 7px;
+		border: 1px solid #f1ede5;
+		background: #faf9f6;
+		padding: 3px 6px;
+		transition: all 0.25s ease;
+	}
+	.brow.hot {
+		border-color: #2e6fe0;
+		background: #eaf1fc;
+	}
+	.bhost {
+		font-size: 8px;
+		font-weight: 700;
+		color: #16212b;
+	}
+	.bip {
+		font-size: 7.5px;
+		font-weight: 700;
+		color: #8a949d;
+		font-variant-numeric: tabular-nums;
+	}
+	.brow.hot .bip {
+		color: #2e6fe0;
+	}
+	.pkt {
+		position: absolute;
+		top: 50%;
+		left: 0;
+		width: 9px;
+		height: 9px;
+		border-radius: 50%;
+		background: #3a9c64;
+		border: 2px solid #fff;
+		transform: translate(-50%, -50%);
+		animation: cross 0.8s ease forwards;
+		box-shadow: 0 2px 6px rgba(22, 40, 60, 0.2);
+	}
+	@keyframes cross {
+		to {
+			left: 100%;
+		}
+	}
+	.srv {
+		display: flex;
+		width: 64px;
+		flex-direction: column;
+		gap: 4px;
+		border-radius: 10px;
+		border: 1.5px solid #e8e2d8;
+		background: #fff;
+		padding: 7px;
+		box-shadow: 0 6px 14px rgba(22, 40, 60, 0.07);
+		transition: border-color 0.3s ease;
+	}
+	.srv.on {
+		border-color: #3a9c64;
+	}
+	.slot {
+		display: flex;
+		height: 9px;
+		align-items: center;
+		border-radius: 3px;
+		border: 1px solid #ece6dc;
+		background: #f4f1ea;
+		padding: 0 4px;
+	}
+	.dot {
+		width: 4px;
+		height: 4px;
+		border-radius: 50%;
+		background: #3a9c64;
+	}
+	.note {
+		min-height: 1.4em;
+		max-width: 320px;
+		text-align: center;
+		font-size: 12px;
+		font-weight: 600;
+		color: #6a7681;
+	}
+	.acts {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 8px;
+	}
+	.dom {
+		border-radius: 12px;
+		border: 1px solid #e8e2d8;
+		background: #fff;
+		padding: 10px 16px;
+		font-size: 13px;
+		font-weight: 700;
+		color: #16212b;
+		transition: all 0.2s ease;
+		animation: pulse 1.8s ease-in-out infinite;
+	}
+	.dom.on {
+		background: #16212b;
+		border-color: #16212b;
+		color: #fff;
+		animation: none;
+	}
+	.dom:hover:not(.on) {
+		border-color: #16212b;
+	}
+	@keyframes pulse {
 		0%,
 		100% {
-			opacity: 0.3;
+			box-shadow: 0 0 0 0 rgba(46, 111, 224, 0);
 		}
 		50% {
-			opacity: 1;
+			box-shadow: 0 0 0 4px rgba(46, 111, 224, 0.14);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.dom,
+		.chip,
+		.pkt {
+			animation-duration: 0.01s;
+		}
+	}
+	@media (min-width: 768px) {
+		.scene {
+			width: 560px;
+			gap: 6px;
+		}
+		.shrink {
+			width: 123px;
+			height: 195px;
+		}
+		.shrink > :global(.phone) {
+			transform: scale(0.78);
+		}
+		.book {
+			width: 180px;
+			padding: 10px;
+		}
+		.bhead b {
+			font-size: 13.5px;
+		}
+		.bhead span {
+			font-size: 9.5px;
+		}
+		.bhost {
+			font-size: 10px;
+		}
+		.bip {
+			font-size: 9.5px;
+		}
+		.chip {
+			font-size: 10px;
+		}
+		.srv {
+			width: 84px;
+		}
+		.slot {
+			height: 13px;
+		}
+		.alabel {
+			font-size: 12px;
+		}
+		.note {
+			font-size: 14px;
+			max-width: 460px;
+		}
+		.dom {
+			font-size: 14.5px;
+			padding: 11px 20px;
 		}
 	}
 </style>

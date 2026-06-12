@@ -3,28 +3,27 @@ import type { EncryptionText } from '../types';
 export const en: EncryptionText = {
 	title: 'Encryption',
 	intro: [
-		'Every message you send over the internet hops across many networks and machines before it arrives. All along that path, someone could quietly peek.',
-		'<b>Encryption</b> scrambles your data into unreadable code. Only someone holding the <b>key</b> can turn it back. To a snooper, it is just random characters with no meaning.',
-		'Your data needs protecting in two places: while it <b>travels</b> across the network (this is what HTTPS does, the little padlock in the address bar) and while it is <b>stored</b> on disk (so if the file is stolen, the contents stay safe).',
-		'Try it. Send this message with encryption off first and watch the eavesdropper. Then turn encryption on and send it again.'
+		'Data traveling the internet passes through many hands, your home router, the ISP, cables between countries. Anywhere along that road someone could be listening.',
+		'<b>Encryption</b> scrambles your message into random letters that only a <b>key</b> holder can read. An eavesdropper still sees the traffic, but the content is meaningless noise.',
+		'The little padlock in your browser means exactly this, your connection uses <b>HTTPS</b> and everything passing through is encrypted. Data sitting on disks can be scrambled too, that is encryption at rest.',
+		'Send your card PIN twice, once without a key, once locked, and watch the eavesdropper in the middle.'
 	],
 	reactions: {
-		plain: 'Ouch. With no encryption your message travels as plain text, and the eavesdropper reads it word for word. Now turn encryption on and send it again.',
+		plain:
+			'Dangerous. Without encryption, the eavesdropper in the middle reads your PIN in full. That is the fate of naked data on the internet.',
 		encrypted:
-			'There we go. Your message is now scrambled code, so the eavesdropper only sees gibberish. Only the recipient, who holds the key, can read it.'
+			'Now the eavesdropper only gets random letters. The message opens at its destination only, because only the server holds the key. That is the little padlock in your browser at work.'
 	},
-	youLabel: 'You',
-	recipientLabel: 'Recipient',
-	eavesdropperLabel: 'Eavesdropper',
-	messageLabel: 'Your message',
-	encryptOff: 'Encryption off',
-	encryptOn: 'Encryption on',
-	sendLabel: 'Send message',
-	plainTag: 'Plain text, readable',
-	scrambledTag: 'Scrambled, safe',
-	keyLabel: 'Has the key',
-	noKeyLabel: 'No key',
-	inTransitNote: 'In transit: HTTPS',
-	atRestNote: 'At rest: encrypted on disk',
-	sample: 'Account balance: 50,000 dollars'
+	youLabel: 'Your phone',
+	snooperLabel: 'Eavesdropper',
+	serverLabel: 'Server',
+	message: 'PIN 1234',
+	cipher: 'x7#q!9z@f2',
+	sendPlain: 'Send without a key',
+	sendLocked: 'Send locked',
+	readTag: 'read it!',
+	scrambledTag: 'just gibberish',
+	noteIdle: 'Someone is listening along the road',
+	notePlain: 'A naked message, the eavesdropper reads it',
+	noteLocked: 'Scrambled tight, only the server can open it'
 };

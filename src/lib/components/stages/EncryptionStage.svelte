@@ -1,219 +1,387 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
+	import { SvelteSet } from 'svelte/reactivity';
+	import Browser from '../Browser.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { EncryptionText } from '$lib/chapters/networking/types';
 
-	let {
-		text,
-		oncomplete,
-		onstate
-	}: {
-		text: LessonText;
-		oncomplete?: () => void;
-		onstate?: (s: string) => void;
-	} = $props();
+	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
+		$props();
 	const tx = $derived(text as EncryptionText);
 
-	let encrypted = $state(false);
-	// 'idle' = before send, 'flying' = packet on the wire, 'arrived' = at recipient
-	let phase = $state<'idle' | 'flying' | 'arrived'>('idle');
-	let sending = $state(false);
-	let sentEncrypted = $state(false); // did the last completed send use encryption
-	let fired = false;
+	let mode = $state<'' | 'plain' | 'locked'>('');
+	let stage2 = $state(false); // past the snooper
+	let landed = $state(false);
+	const tried = new SvelteSet<string>();
+	let done = false;
 	let timers: ReturnType<typeof setTimeout>[] = [];
 
-	// Deterministic "ciphertext" from the sample text, just for show.
-	const CIPHER = 'X9#fK2qL7%vmZ4tA';
-	// what the eavesdropper sees once a message is on the wire / delivered
-	const wireText = $derived(sentEncrypted ? CIPHER : tx.sample);
-	const recipientText = $derived(phase === 'idle' ? '' : tx.sample); // recipient always reads plaintext (has key)
-	const showWire = $derived(phase !== 'idle');
-
-	function send() {
-		if (sending) return;
-		sending = true;
-		sentEncrypted = encrypted;
-		phase = 'flying';
+	function send(m: 'plain' | 'locked') {
+		mode = m;
+		stage2 = false;
+		landed = false;
+		timers.forEach(clearTimeout);
+		timers = [];
+		timers.push(setTimeout(() => (stage2 = true), 1000));
 		timers.push(
 			setTimeout(() => {
-				phase = 'arrived';
-				sending = false;
-				if (sentEncrypted) {
-					onstate?.('encrypted');
-					if (!fired) {
-						fired = true;
-						oncomplete?.();
-					}
-				} else {
-					onstate?.('plain');
+				landed = true;
+				onstate?.(m === 'plain' ? 'plain' : 'encrypted');
+				tried.add(m);
+				if (tried.size === 2 && !done) {
+					done = true;
+					oncomplete?.();
 				}
-			}, 1500)
+			}, 2000)
 		);
 	}
+
+	const note = $derived(!mode || !landed ? (mode ? ' ' : tx.noteIdle) : mode === 'plain' ? tx.notePlain : tx.noteLocked);
 
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="mx-auto flex h-full w-full max-w-2xl flex-col gap-4">
-	<!-- the wire: you -> recipient, with an eavesdropper underneath -->
-	<div class="border-line bg-card relative rounded-2xl border p-4">
-		<div class="flex items-center justify-between gap-3">
-			<!-- you -->
-			<div class="flex shrink-0 flex-col items-center gap-1">
-				<div class="bg-brand-soft text-brand grid h-10 w-10 place-items-center rounded-full">
-					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-						<circle cx="12" cy="8" r="4" fill="currentColor" />
-						<path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="currentColor" />
-					</svg>
-				</div>
-				<span class="text-muted text-[11px] font-semibold">{tx.youLabel}</span>
-			</div>
-
-			<!-- connection -->
-			<div class="relative h-0.5 flex-1 self-center bg-line">
-				<div
-					class="packet {phase === 'flying' ? 'fly' : ''}"
-					style="opacity:{phase === 'idle' ? 0 : 1}; background:{sentEncrypted ? '#3a9c64' : '#d3584a'};"
-				>
-					{#if sentEncrypted}
-						<svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-							<rect x="5" y="11" width="14" height="9" rx="2" fill="#fff" />
-							<path d="M8 11V8a4 4 0 0 1 8 0v3" stroke="#fff" stroke-width="2" fill="none" />
-						</svg>
-					{:else}
-						<svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-							<rect x="4" y="6" width="16" height="12" rx="2" fill="#fff" />
-							<path d="M5 7l7 6 7-6" stroke="#d3584a" stroke-width="1.6" fill="none" />
-						</svg>
-					{/if}
-				</div>
-			</div>
-
-			<!-- recipient -->
-			<div class="flex shrink-0 flex-col items-center gap-1">
-				<div class="bg-grass-soft text-grass grid h-10 w-10 place-items-center rounded-full">
-					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-						<circle cx="12" cy="8" r="4" fill="currentColor" />
-						<path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="currentColor" />
-					</svg>
-				</div>
-				<span class="text-muted text-[11px] font-semibold">{tx.recipientLabel}</span>
-				<span class="text-grass text-[10px] font-semibold">{tx.keyLabel}</span>
-			</div>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+	<div class="scene">
+		<!-- you -->
+		<div class="actor">
+			<div class="shrink"><Browser phase={mode ? 'loaded' : 'idle'} /></div>
+			<span class="alabel">{tx.youLabel}</span>
 		</div>
 
-		<!-- recipient readout -->
-		<div class="mt-3 min-h-[34px]">
-			{#if phase === 'arrived'}
-				<div class="border-grass bg-grass-soft rounded-lg border px-3 py-2">
-					<p class="text-grass font-mono text-sm font-semibold">{recipientText}</p>
-				</div>
-			{/if}
-		</div>
-	</div>
-
-	<!-- eavesdropper -->
-	<div
-		class="rounded-2xl border p-4 transition-colors {showWire && !sentEncrypted
-			? 'border-danger bg-danger-soft'
-			: showWire && sentEncrypted
-				? 'border-grass bg-grass-soft'
-				: 'border-line bg-card'}"
-	>
-		<div class="flex items-center gap-3">
-			<div class="text-faint grid h-10 w-10 shrink-0 place-items-center rounded-full bg-paper">
-				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-					<path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" stroke="currentColor" stroke-width="1.8" fill="none" />
-					<circle cx="12" cy="12" r="3" fill="currentColor" />
+		<!-- the road, with someone listening in the middle -->
+		<div class="road">
+			<div class="wire"></div>
+			<div class="snoop" class:happy={mode === 'plain' && stage2} class:confused={mode === 'locked' && stage2}>
+				<svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+					<circle cx="12" cy="8" r="4" fill="#8a949d" />
+					<path d="M4 21a8 8 0 0 1 16 0Z" fill="#8a949d" />
 				</svg>
-			</div>
-			<div class="min-w-0 flex-1">
-				<p class="text-muted text-[11px] font-semibold">{tx.eavesdropperLabel}</p>
-				{#if showWire}
-					<p
-						class="truncate font-mono text-sm font-semibold {sentEncrypted ? 'text-grass' : 'text-danger'}"
-						style={sentEncrypted ? 'letter-spacing:0.04em;' : ''}
-					>
-						{wireText}
-					</p>
-				{:else}
-					<p class="text-faint font-mono text-sm">. . .</p>
+				<span class="slabel">{tx.snooperLabel}</span>
+				{#if stage2 && mode}
+					<span class="stag" class:bad={mode === 'plain'}>
+						{mode === 'plain' ? `${tx.message} ${tx.readTag}` : tx.scrambledTag}
+					</span>
 				{/if}
 			</div>
-			{#if showWire}
-				<span
-					class="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold {sentEncrypted
-						? 'bg-grass text-white'
-						: 'bg-danger text-white'}"
-				>
-					{sentEncrypted ? tx.scrambledTag : tx.plainTag}
-				</span>
+			{#if mode && !landed}
+				{#key mode + String(stage2)}
+					<div class="msg" class:half={stage2} class:lockedm={mode === 'locked'}>
+						{#if mode === 'locked'}
+							<svg width="8" height="8" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+								<rect x="5" y="10.5" width="14" height="9.5" rx="2.5" stroke="#fff" stroke-width="2.4" />
+								<path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" stroke="#fff" stroke-width="2.4" stroke-linecap="round" />
+							</svg>
+						{/if}
+						{mode === 'plain' ? tx.message : tx.cipher}
+					</div>
+				{/key}
 			{/if}
 		</div>
-	</div>
 
-	<!-- controls -->
-	<div class="flex flex-wrap items-center justify-between gap-3">
-		<div class="flex items-center gap-3">
-			<div class="text-faint text-[11px]">
-				<span class="text-muted font-semibold">{tx.messageLabel}:</span> {tx.sample}
+		<!-- the server holding the key -->
+		<div class="actor">
+			<div class="srv" class:got={landed}>
+				<div class="slot"><span class="dot"></span></div>
+				<div class="slot"><span class="dot"></span></div>
+				{#if landed}
+					<span class="opened" class:safe={mode === 'locked'}>{tx.message}</span>
+				{/if}
 			</div>
-		</div>
-		<div class="flex items-center gap-2">
-			<button
-				type="button"
-				onclick={() => (encrypted = !encrypted)}
-				disabled={sending}
-				class="flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all disabled:opacity-50 {encrypted
-					? 'border-grass bg-grass-soft text-grass'
-					: 'border-line bg-paper text-muted hover:border-grass'}"
-			>
-				<span class="relative inline-block h-3.5 w-6 rounded-full transition-colors {encrypted ? 'bg-grass' : 'bg-line'}">
-					<span class="absolute top-0.5 h-2.5 w-2.5 rounded-full bg-white transition-all {encrypted ? 'left-3' : 'left-0.5'}"></span>
-				</span>
-				{encrypted ? tx.encryptOn : tx.encryptOff}
-			</button>
-			<button
-				type="button"
-				onclick={send}
-				disabled={sending}
-				class="bg-ink shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold text-white transition-all hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-40"
-			>
-				{tx.sendLabel}
-			</button>
+			<span class="alabel">
+				<svg width="9" height="9" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="display:inline">
+					<circle cx="8" cy="8" r="4.5" stroke="#dd9e36" stroke-width="2.5" />
+					<path d="M11 11.5 20 20m-3.5.5V17" stroke="#dd9e36" stroke-width="2.5" stroke-linecap="round" />
+				</svg>
+				{tx.serverLabel}
+			</span>
 		</div>
 	</div>
 
-	<!-- in transit / at rest footnote -->
-	<div class="text-faint flex flex-wrap justify-center gap-x-5 gap-y-1 text-[11px]">
-		<span>{tx.inTransitNote}</span>
-		<span>{tx.atRestNote}</span>
+	<p class="note">{note}</p>
+
+	<div class="acts">
+		<button type="button" class="line" class:dim={tried.has('plain')} onclick={() => send('plain')} disabled={mode !== '' && !landed}>{tx.sendPlain}</button>
+		<button type="button" class="cta" class:dim={tried.has('locked')} onclick={() => send('locked')} disabled={mode !== '' && !landed}>{tx.sendLocked}</button>
 	</div>
 </div>
 
 <style>
-	.packet {
+	.scene {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		width: min(94vw, 380px);
+	}
+	.actor {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 4px;
+	}
+	.alabel {
+		display: inline-flex;
+		align-items: center;
+		gap: 3px;
+		font-size: 10px;
+		font-weight: 600;
+		color: #5e6b76;
+		white-space: nowrap;
+	}
+	.shrink {
+		width: 98px;
+		height: 156px;
+		overflow: visible;
+	}
+	.shrink > :global(.phone) {
+		transform: scale(0.62);
+		transform-origin: top left;
+	}
+	.road {
+		position: relative;
+		flex: 1;
+		height: 120px;
+		margin-bottom: 22px;
+	}
+	.wire {
 		position: absolute;
 		top: 50%;
 		left: 0;
-		display: grid;
-		place-items: center;
-		width: 22px;
-		height: 22px;
-		margin-top: -11px;
+		right: 0;
+		border-top: 2px dashed #e3ded5;
+	}
+	.snoop {
+		position: absolute;
+		top: calc(50% + 10px);
+		left: 50%;
+		transform: translateX(-50%);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1px;
+		line-height: 1;
+		transition: transform 0.2s ease;
+	}
+	.snoop.happy {
+		transform: translateX(-50%) scale(1.12);
+	}
+	.slabel {
+		font-size: 8.5px;
+		font-weight: 700;
+		color: #8a949d;
+		white-space: nowrap;
+	}
+	.stag {
 		border-radius: 999px;
-		box-shadow: 0 3px 8px rgba(22, 40, 60, 0.18);
-		transition: opacity 0.3s ease;
+		background: #eef0f2;
+		color: #5e6b76;
+		font-size: 8px;
+		font-weight: 800;
+		padding: 2px 7px;
+		white-space: nowrap;
+		animation: popin 0.25s ease;
 	}
-	.packet.fly {
-		animation: fly 1.5s ease forwards;
+	.stag.bad {
+		background: #d3584a;
+		color: #fff;
 	}
-	@keyframes fly {
-		0% {
-			left: 0;
+	@keyframes popin {
+		from {
+			transform: scale(0.5);
+			opacity: 0;
 		}
-		100% {
-			left: 100%;
+		to {
+			transform: scale(1);
+			opacity: 1;
+		}
+	}
+	.msg {
+		position: absolute;
+		top: calc(50% - 24px);
+		left: 0;
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		border-radius: 999px;
+		background: #fff;
+		border: 1.5px solid #d3584a;
+		color: #b8392c;
+		font-size: 9px;
+		font-weight: 800;
+		padding: 3px 9px;
+		white-space: nowrap;
+		animation: half1 1s linear forwards;
+		z-index: 2;
+	}
+	.msg.lockedm {
+		background: #16212b;
+		border-color: #16212b;
+		color: #fff;
+	}
+	.msg.half {
+		animation: half2 1s linear forwards;
+	}
+	@keyframes half1 {
+		from {
+			left: -2%;
+			opacity: 0;
+		}
+		20% {
+			opacity: 1;
+		}
+		to {
+			left: 38%;
+			opacity: 1;
+		}
+	}
+	@keyframes half2 {
+		from {
+			left: 38%;
+		}
+		to {
+			left: 86%;
+			opacity: 1;
+		}
+	}
+	.srv {
+		position: relative;
+		display: flex;
+		width: 70px;
+		flex-direction: column;
+		gap: 4px;
+		border-radius: 10px;
+		border: 1.5px solid #e8e2d8;
+		background: #fff;
+		padding: 7px;
+		box-shadow: 0 6px 14px rgba(22, 40, 60, 0.07);
+		transition: border-color 0.3s ease;
+	}
+	.srv.got {
+		border-color: #3a9c64;
+	}
+	.slot {
+		display: flex;
+		height: 9px;
+		align-items: center;
+		border-radius: 3px;
+		border: 1px solid #ece6dc;
+		background: #f4f1ea;
+		padding: 0 4px;
+	}
+	.dot {
+		width: 4px;
+		height: 4px;
+		border-radius: 50%;
+		background: #3a9c64;
+	}
+	.opened {
+		border-radius: 6px;
+		background: #f0f9f3;
+		border: 1px solid #cde6d7;
+		color: #2f7d54;
+		font-size: 8px;
+		font-weight: 800;
+		text-align: center;
+		padding: 2px 3px;
+		animation: popin 0.3s ease;
+	}
+	.note {
+		min-height: 1.4em;
+		max-width: 330px;
+		text-align: center;
+		font-size: 12px;
+		font-weight: 600;
+		color: #6a7681;
+	}
+	.acts {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 8px;
+	}
+	.cta {
+		border-radius: 12px;
+		background: #16212b;
+		color: #fff;
+		padding: 11px 18px;
+		font-size: 13px;
+		font-weight: 600;
+		box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
+		transition: filter 0.2s ease;
+	}
+	.cta:enabled:hover {
+		filter: brightness(1.18);
+	}
+	.line {
+		border-radius: 12px;
+		border: 1px solid #e8e2d8;
+		background: #fff;
+		color: #16212b;
+		padding: 10px 16px;
+		font-size: 13px;
+		font-weight: 600;
+		transition: border-color 0.2s ease;
+	}
+	.line:enabled:hover {
+		border-color: #16212b;
+	}
+	.cta:disabled,
+	.line:disabled {
+		opacity: 0.55;
+	}
+	.dim::after {
+		content: ' ✓';
+		color: #3a9c64;
+	}
+	.cta.dim::after {
+		color: #8fd6ae;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.msg,
+		.stag,
+		.opened {
+			animation-duration: 0.01s;
+		}
+	}
+	@media (min-width: 768px) {
+		.scene {
+			width: 560px;
+			gap: 10px;
+		}
+		.shrink {
+			width: 123px;
+			height: 195px;
+		}
+		.shrink > :global(.phone) {
+			transform: scale(0.78);
+		}
+		.msg {
+			font-size: 11px;
+		}
+		.stag {
+			font-size: 9.5px;
+		}
+		.slabel {
+			font-size: 10.5px;
+		}
+		.srv {
+			width: 92px;
+		}
+		.opened {
+			font-size: 10px;
+		}
+		.alabel {
+			font-size: 12px;
+		}
+		.note {
+			font-size: 14px;
+			max-width: 460px;
+		}
+		.cta,
+		.line {
+			font-size: 14px;
+			padding: 12px 22px;
 		}
 	}
 </style>

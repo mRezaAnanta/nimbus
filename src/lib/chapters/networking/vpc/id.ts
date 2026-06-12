@@ -3,28 +3,28 @@ import type { NetworkText } from '../types';
 export const id: NetworkText = {
 	title: 'Jaringan privat dan subnet',
 	intro: [
-		'Di cloud, kamu punya jaringan privat sendiri yang terpisah dari orang lain. Namanya <b>VPC</b>, Virtual Private Cloud. Anggap saja sebuah gedung yang khusus milikmu.',
-		'Gedung itu dibagi jadi beberapa lantai, namanya <b>subnet</b>. Ada <b>subnet publik</b> yang bisa dijangkau dari internet, seperti lobi yang terbuka untuk tamu. Cocok untuk web server.',
-		'Lalu ada <b>subnet privat</b> yang cuma bisa diakses dari dalam, seperti lantai khusus staf. Cocok untuk database, karena isinya tidak boleh dipegang sembarang orang.',
-		'Coba atur sendiri. Taruh web server dan database di subnet yang menurutmu tepat, lalu tekan tes dari internet untuk lihat apa yang bisa dijangkau.'
+		'Server servermu di cloud tinggal di sebuah <b>VPC</b>, jaringan privat milikmu sendiri. Bayangkan sebuah rumah dengan pagar, kamu yang menentukan ruangan dan pintunya.',
+		'Di dalamnya, ruangan ruangan itu namanya <b>subnet</b>. Yang menghadap jalan disebut <b>subnet publik</b>, pintunya terbuka ke internet, di sinilah web server menyambut pengunjung.',
+		'Yang di belakang disebut <b>subnet privat</b>, tidak punya pintu ke jalan sama sekali. Database ditaruh di sini, cuma boleh diajak bicara oleh web server dari dalam.',
+		'Lihat sendiri. Kirim pengunjung ke situsmu, lalu coba todong database-nya langsung dari internet.'
 	],
 	reactions: {
-		exposed: 'Hati-hati, database-mu ada di subnet publik, jadi siapa pun dari internet bisa menjangkaunya. Itu bocor. Pindahkan database ke subnet privat.',
-		secured: 'Pas. Web server publik supaya pengunjung bisa membuka situsmu, database privat supaya tersembunyi dari internet. Cuma jalur internal yang bisa menyentuhnya.'
+		web: 'Pengunjung masuk lewat pintu depan, dilayani web server di subnet publik, dan web server-lah yang mengambilkan data ke database di belakang. Tamu tidak pernah menyentuh database.',
+		blocked:
+			'Ditolak mentah mentah. Subnet privat tidak punya pintu ke internet, jadi orang iseng tidak bisa menyentuh database-mu walau tahu alamatnya. Itulah gunanya memisahkan ruangan.'
 	},
-	vpcLabel: 'VPC (jaringan privatmu)',
+	vpcLabel: 'VPC',
+	vpcSub: 'jaringan privatmu',
+	internetLabel: 'Internet',
 	publicLabel: 'Subnet publik',
-	publicSub: 'lobi, terbuka dari internet',
+	publicSub: 'pintunya ke internet',
 	privateLabel: 'Subnet privat',
-	privateSub: 'lantai staf, internal saja',
+	privateSub: 'tanpa pintu keluar',
 	webLabel: 'Web server',
 	dbLabel: 'Database',
-	placeWeb: 'Taruh web server di sini',
-	placeDb: 'Taruh database di sini',
-	testLabel: 'Tes dari internet',
-	reachable: 'Bisa dijangkau',
-	blocked: 'Terlindung',
-	exposedNote: 'Database terbuka ke internet',
-	securedNote: 'Setup aman',
-	reset: 'Atur ulang'
+	visitSite: 'Kunjungi situs',
+	attackDb: 'Todong database dari luar',
+	noteIdle: 'Dua ruangan, cuma satu yang punya pintu',
+	noteWeb: 'Tamu dilayani di depan, data diambilkan dari belakang',
+	noteBlocked: 'Tidak ada pintu, tidak ada jalan masuk'
 };

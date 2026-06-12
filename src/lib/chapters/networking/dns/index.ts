@@ -7,7 +7,7 @@ export const dns: Lesson = {
 	id: 'dns',
 	mood: 'calm',
 	moods: ['calm', 'thinking', 'idea', 'happy'],
-	reactionMood: { resolved: 'idea', connected: 'happy' },
+	reactionMood: { resolved: 'excited' },
 	stage: DnsStage,
 	text: { id, en }
 };

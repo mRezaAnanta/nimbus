@@ -1,198 +1,509 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
+	import { SvelteSet } from 'svelte/reactivity';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { NetworkText } from '$lib/chapters/networking/types';
 
-	let {
-		text,
-		oncomplete,
-		onstate
-	}: {
-		text: LessonText;
-		oncomplete?: () => void;
-		onstate?: (s: string) => void;
-	} = $props();
+	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
+		$props();
 	const tx = $derived(text as NetworkText);
 
-	type Zone = 'public' | 'private';
-	let web = $state<Zone>('public');
-	let db = $state<Zone>('public');
-	let tested = $state(false);
+	let flight = $state<'' | 'web' | 'attack'>('');
+	let webOk = $state(false);
+	let blocked = $state(false);
+	const tried = new SvelteSet<string>();
 	let done = false;
 	let timers: ReturnType<typeof setTimeout>[] = [];
 
-	// What a probe from the internet finds: only public-subnet resources answer.
-	const secure = $derived(web === 'public' && db === 'private');
-	const dbExposed = $derived(db === 'public');
-
-	function place(which: 'web' | 'db', zone: Zone) {
-		if (which === 'web') web = zone;
-		else db = zone;
-		tested = false;
-	}
-
-	function runTest() {
-		tested = true;
+	function run(kind: 'web' | 'attack') {
+		flight = kind;
+		webOk = false;
+		blocked = false;
+		timers.forEach(clearTimeout);
+		timers = [];
 		timers.push(
 			setTimeout(() => {
-				if (secure) {
-					onstate?.('secured');
-					if (!done) {
-						done = true;
-						oncomplete?.();
-					}
-				} else if (dbExposed) {
-					onstate?.('exposed');
+				if (kind === 'web') webOk = true;
+				else blocked = true;
+				flight = '';
+				onstate?.(kind === 'web' ? 'web' : 'blocked');
+				tried.add(kind);
+				if (tried.size === 2 && !done) {
+					done = true;
+					oncomplete?.();
 				}
-			}, 650)
+			}, 1100)
 		);
 	}
 
-	function reset() {
-		web = 'public';
-		db = 'public';
-		tested = false;
-	}
+	const note = $derived(blocked ? tx.noteBlocked : webOk ? tx.noteWeb : tx.noteIdle);
 
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
+{#snippet person(size: number, color: string)}
+	<svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+		<circle cx="12" cy="8" r="4" fill={color} />
+		<path d="M4 21a8 8 0 0 1 16 0Z" fill={color} />
+	</svg>
+{/snippet}
+
 <div class="flex h-full w-full flex-col items-center justify-center gap-4">
-	<!-- the VPC building -->
-	<div class="border-line bg-card w-full max-w-2xl rounded-2xl border p-4">
-		<p class="text-faint mb-3 text-[11px] font-semibold tracking-widest uppercase">{tx.vpcLabel}</p>
-		<div class="flex flex-col gap-3 md:flex-row">
-			<!-- public subnet -->
-			<div
-				class="flex-1 rounded-xl border p-3 transition-colors {tested && dbExposed
-					? 'border-danger bg-danger-soft'
-					: 'border-brand bg-brand-soft'}"
-			>
-				<div class="flex items-center justify-between">
-					<span class="text-brand text-xs font-bold">{tx.publicLabel}</span>
-					<span class="text-faint text-[10px]">{tx.publicSub}</span>
-				</div>
-				<div class="mt-3 flex min-h-[52px] flex-wrap items-center gap-2">
-					{#if web === 'public'}
-						<span class="chip web">{tx.webLabel}</span>
-					{/if}
-					{#if db === 'public'}
-						<span class="chip db" class:danger={tested}>{tx.dbLabel}</span>
-					{/if}
-				</div>
-			</div>
+	<div class="scene">
+		<!-- the internet outside the fence -->
+		<div class="net">
+			{@render person(14, '#dd9e36')}
+			<span>{tx.internetLabel}</span>
+		</div>
 
-			<!-- private subnet -->
-			<div class="border-line bg-paper flex-1 rounded-xl border p-3">
-				<div class="flex items-center justify-between">
-					<span class="text-ink text-xs font-bold">{tx.privateLabel}</span>
-					<span class="text-faint text-[10px]">{tx.privateSub}</span>
+		<!-- two travel lanes, each aligned over its room -->
+		<div class="lanes">
+			<div class="lane">
+				{#if flight === 'web'}<span class="trav">{@render person(13, '#dd9e36')}</span>{/if}
+			</div>
+			<div class="lane">
+				{#if flight === 'attack'}<span class="trav">{@render person(13, '#d3584a')}</span>{/if}
+				{#if blocked}<span class="deny">×</span>{/if}
+			</div>
+		</div>
+
+		<!-- the fenced VPC with its two rooms -->
+		<div class="vpc">
+			<div class="vhead">
+				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+					<rect x="3.5" y="3.5" width="17" height="17" rx="3.5" stroke="#5e6b76" stroke-width="2" stroke-dasharray="3.5 3" />
+				</svg>
+				<b>{tx.vpcLabel}</b>
+				<span>{tx.vpcSub}</span>
+			</div>
+			<div class="rooms">
+				<div class="room pub" class:hot={webOk || flight === 'web'}>
+					<span class="gate"></span>
+					<div class="rhead">
+						<b>{tx.publicLabel}</b>
+						<span>{tx.publicSub}</span>
+					</div>
+					<div class="box">
+						<div class="slot"><span class="dot" style="background:#2e6fe0"></span><span class="bar"></span></div>
+						<div class="slot"><span class="dot" style="background:#2e6fe0"></span><span class="bar"></span></div>
+						<div class="slot"><span class="dot" style="background:#2e6fe0"></span><span class="bar"></span></div>
+					</div>
+					<span class="blabel">{tx.webLabel}</span>
 				</div>
-				<div class="mt-3 flex min-h-[52px] flex-wrap items-center gap-2">
-					{#if web === 'private'}
-						<span class="chip web">{tx.webLabel}</span>
-					{/if}
-					{#if db === 'private'}
-						<span class="chip db">{tx.dbLabel}</span>
-					{/if}
+
+				<div class="bridge" class:hot={webOk}>
+					<span class="bdot"></span><span class="bdot"></span><span class="bdot"></span>
+				</div>
+
+				<div class="room priv" class:shield={blocked}>
+					<span class="lockchip">
+						<svg width="9" height="9" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+							<rect x="5" y="10.5" width="14" height="9.5" rx="2.5" stroke="#fff" stroke-width="2.6" />
+							<path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" stroke="#fff" stroke-width="2.6" stroke-linecap="round" />
+						</svg>
+					</span>
+					<div class="rhead">
+						<b>{tx.privateLabel}</b>
+						<span>{tx.privateSub}</span>
+					</div>
+					<div class="box db">
+						<svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+							<ellipse cx="12" cy="5.5" rx="8" ry="3" stroke="#3a9c64" stroke-width="1.8" />
+							<path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" stroke="#3a9c64" stroke-width="1.8" />
+						</svg>
+					</div>
+					<span class="blabel">{tx.dbLabel}</span>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<!-- placement controls -->
-	<div class="flex w-full max-w-2xl flex-col gap-2 sm:flex-row">
-		<div class="border-line bg-card flex flex-1 items-center justify-between gap-2 rounded-xl border px-3 py-2">
-			<span class="text-muted text-xs font-semibold">{tx.webLabel}</span>
-			<div class="flex gap-1">
-				<button type="button" onclick={() => place('web', 'public')} class="seg" class:on={web === 'public'}>
-					{tx.publicLabel}
-				</button>
-				<button type="button" onclick={() => place('web', 'private')} class="seg" class:on={web === 'private'}>
-					{tx.privateLabel}
-				</button>
-			</div>
-		</div>
-		<div class="border-line bg-card flex flex-1 items-center justify-between gap-2 rounded-xl border px-3 py-2">
-			<span class="text-muted text-xs font-semibold">{tx.dbLabel}</span>
-			<div class="flex gap-1">
-				<button type="button" onclick={() => place('db', 'public')} class="seg" class:on={db === 'public'}>
-					{tx.publicLabel}
-				</button>
-				<button type="button" onclick={() => place('db', 'private')} class="seg" class:on={db === 'private'}>
-					{tx.privateLabel}
-				</button>
-			</div>
-		</div>
-	</div>
+	<p class="note">{note}</p>
 
-	<!-- test + verdict -->
-	<div class="flex items-center gap-3">
-		<button
-			type="button"
-			onclick={runTest}
-			class="bg-ink rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-125"
-		>
-			{tx.testLabel}
-		</button>
-		{#if tested}
-			<button
-				type="button"
-				onclick={reset}
-				class="border-line text-muted hover:border-brand rounded-xl border px-4 py-2 text-sm font-semibold transition-all"
-			>
-				{tx.reset}
-			</button>
-		{/if}
+	<div class="acts">
+		<button type="button" class="cta" class:dim={tried.has('web')} onclick={() => run('web')} disabled={flight !== ''}>{tx.visitSite}</button>
+		<button type="button" class="line" class:dim={tried.has('attack')} onclick={() => run('attack')} disabled={flight !== ''}>{tx.attackDb}</button>
 	</div>
-
-	{#if tested}
-		<p
-			class="text-sm font-semibold {secure ? 'text-grass' : dbExposed ? 'text-danger' : 'text-amber'}"
-		>
-			{#if secure}✓ {tx.securedNote}{:else if dbExposed}! {tx.exposedNote}{/if}
-		</p>
-	{/if}
 </div>
 
 <style>
-	.chip {
-		display: inline-flex;
+	.scene {
+		display: flex;
+		flex-direction: column;
 		align-items: center;
-		border-radius: 8px;
-		padding: 6px 10px;
-		font-size: 12px;
-		font-weight: 600;
-		border: 1px solid transparent;
+		width: min(94vw, 364px);
 	}
-	.chip.web {
-		background: #fff;
-		border-color: #c9d6ea;
-		color: #2e6fe0;
+	.net {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		border-radius: 999px;
+		border: 1px solid #ecd9b6;
+		background: #fbf1de;
+		color: #8a6a25;
+		font-size: 11px;
+		font-weight: 700;
+		padding: 4px 13px;
 	}
-	.chip.db {
+	/* the lanes mirror the rooms grid so each line lands on its room */
+	.lanes {
+		display: grid;
+		width: 100%;
+		grid-template-columns: 1fr 1fr;
+		gap: 18px;
+		height: 42px;
+		padding: 0 14px;
+		box-sizing: border-box;
+	}
+	.lane {
+		position: relative;
+	}
+	.lane::before {
+		content: '';
+		position: absolute;
+		top: 3px;
+		bottom: 0;
+		left: 50%;
+		border-left: 2px dashed #dcd6cb;
+		transform: translateX(-50%);
+	}
+	.trav {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		line-height: 0;
+		z-index: 2;
+		animation: descend 1.05s ease-in forwards;
+	}
+	@keyframes descend {
+		from {
+			top: -6px;
+			opacity: 0;
+		}
+		20% {
+			opacity: 1;
+		}
+		to {
+			top: 34px;
+			opacity: 1;
+		}
+	}
+	.deny {
+		position: absolute;
+		bottom: -9px;
+		left: 50%;
+		transform: translate(-50%, 0);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 22px;
+		height: 22px;
+		border-radius: 50%;
+		background: #d3584a;
+		border: 2px solid #fff;
+		color: #fff;
+		font-size: 14px;
+		font-weight: 800;
+		z-index: 3;
+		box-shadow: 0 4px 10px rgba(211, 88, 74, 0.4);
+		animation: popin 0.25s ease;
+	}
+	@keyframes popin {
+		from {
+			transform: translate(-50%, 0) scale(0.4);
+			opacity: 0;
+		}
+		to {
+			transform: translate(-50%, 0) scale(1);
+			opacity: 1;
+		}
+	}
+
+	.vpc {
+		width: 100%;
+		border-radius: 20px;
+		border: 1.5px dashed #b9c6d6;
 		background: #fff;
-		border-color: #e8e2d8;
+		padding: 12px 14px 16px;
+		box-shadow: 0 12px 30px rgba(22, 40, 60, 0.07);
+	}
+	.vhead {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		margin-bottom: 10px;
+	}
+	.vhead b {
+		font-size: 12.5px;
+		font-weight: 800;
 		color: #16212b;
 	}
-	.chip.db.danger {
-		background: #fbe9e6;
-		border-color: #d3584a;
-		color: #d3584a;
+	.vhead span {
+		font-size: 9.5px;
+		color: #8a949d;
 	}
-	.seg {
-		border-radius: 999px;
-		padding: 4px 10px;
-		font-size: 11px;
-		font-weight: 600;
+	.rooms {
+		display: grid;
+		grid-template-columns: 1fr 14px 1fr;
+		align-items: stretch;
+	}
+	.room {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 7px;
+		border-radius: 14px;
+		border: 1.5px solid #cdddf6;
+		background: #f4f8fe;
+		padding: 13px 10px 11px;
+		transition: box-shadow 0.3s ease;
+	}
+	.room.pub.hot {
+		box-shadow: 0 0 0 4px rgba(46, 111, 224, 0.13);
+	}
+	.room.priv {
+		border-color: #cde6d7;
+		background: #f0f9f3;
+	}
+	.room.priv.shield {
+		box-shadow: 0 0 0 4px rgba(211, 88, 74, 0.16);
+	}
+	/* the public room has an actual gate arch on its roof */
+	.gate {
+		position: absolute;
+		top: -9px;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 30px;
+		height: 11px;
+		border: 2.5px solid #2e6fe0;
+		border-bottom: none;
+		border-radius: 9px 9px 0 0;
+		background: #fff;
+	}
+	.lockchip {
+		position: absolute;
+		top: -9px;
+		left: 50%;
+		transform: translateX(-50%);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 18px;
+		height: 18px;
+		border-radius: 50%;
+		background: #8a949d;
+		border: 2px solid #fff;
+	}
+	.rhead {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		line-height: 1.2;
+		text-align: center;
+	}
+	.rhead b {
+		font-size: 10.5px;
+		font-weight: 800;
+		color: #16212b;
+	}
+	.rhead span {
+		font-size: 8px;
+		color: #8a949d;
+	}
+	.box {
+		display: flex;
+		width: 66px;
+		flex-direction: column;
+		gap: 4px;
+		border-radius: 10px;
+		border: 1.5px solid #cdddf6;
+		background: #fff;
+		padding: 7px;
+		align-items: center;
+		justify-content: center;
+		min-height: 46px;
+		box-shadow: 0 5px 12px rgba(22, 40, 60, 0.06);
+	}
+	.box.db {
+		border-color: #cde6d7;
+	}
+	.slot {
+		display: flex;
+		width: 100%;
+		height: 9px;
+		align-items: center;
+		gap: 3px;
+		border-radius: 3px;
+		border: 1px solid #ece6dc;
+		background: #f4f1ea;
+		padding: 0 4px;
+	}
+	.dot {
+		flex: none;
+		width: 4px;
+		height: 4px;
+		border-radius: 50%;
+	}
+	.bar {
+		flex: 1;
+		height: 2.5px;
+		border-radius: 2px;
+		background: #e3ddd3;
+	}
+	.blabel {
+		font-size: 9px;
+		font-weight: 700;
 		color: #5e6b76;
-		background: #faf9f6;
-		border: 1px solid #e8e2d8;
-		transition: all 0.15s;
 	}
-	.seg.on {
+	/* the only path to the database runs inside, room to room */
+	.bridge {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 3px;
+		align-self: center;
+	}
+	.bdot {
+		width: 4px;
+		height: 4px;
+		border-radius: 50%;
+		background: #dcd6cb;
+		transition: background 0.3s ease;
+	}
+	.bridge.hot .bdot {
+		background: #3a9c64;
+		animation: bblink 0.6s ease-in-out 3;
+	}
+	.bridge.hot .bdot:nth-child(2) {
+		animation-delay: 0.15s;
+	}
+	.bridge.hot .bdot:nth-child(3) {
+		animation-delay: 0.3s;
+	}
+	@keyframes bblink {
+		50% {
+			opacity: 0.25;
+		}
+	}
+
+	.note {
+		min-height: 1.4em;
+		max-width: 340px;
+		text-align: center;
+		font-size: 12px;
+		font-weight: 600;
+		color: #6a7681;
+		margin-top: 2px;
+	}
+	.acts {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 8px;
+	}
+	.cta {
+		border-radius: 12px;
 		background: #16212b;
 		color: #fff;
+		padding: 11px 18px;
+		font-size: 13px;
+		font-weight: 600;
+		box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
+		transition: filter 0.2s ease;
+	}
+	.cta:enabled:hover {
+		filter: brightness(1.18);
+	}
+	.line {
+		border-radius: 12px;
+		border: 1px solid #e8e2d8;
+		background: #fff;
+		color: #16212b;
+		padding: 10px 16px;
+		font-size: 13px;
+		font-weight: 600;
+		transition: border-color 0.2s ease;
+	}
+	.line:enabled:hover {
 		border-color: #16212b;
+	}
+	.cta:disabled,
+	.line:disabled {
+		opacity: 0.55;
+	}
+	.dim::after {
+		content: ' ✓';
+		color: #3a9c64;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.trav,
+		.deny,
+		.bridge.hot .bdot {
+			animation-duration: 0.01s;
+		}
+	}
+	@media (min-width: 768px) {
+		.scene {
+			width: 520px;
+		}
+		.net {
+			font-size: 13px;
+			padding: 5px 16px;
+		}
+		.lanes {
+			height: 52px;
+			gap: 26px;
+			padding: 0 18px;
+		}
+		.vpc {
+			padding: 16px 18px 20px;
+		}
+		.vhead b {
+			font-size: 15px;
+		}
+		.vhead span {
+			font-size: 11.5px;
+		}
+		.rooms {
+			grid-template-columns: 1fr 22px 1fr;
+		}
+		.room {
+			padding: 17px 14px 14px;
+			gap: 9px;
+		}
+		.rhead b {
+			font-size: 13px;
+		}
+		.rhead span {
+			font-size: 10px;
+		}
+		.box {
+			width: 84px;
+			min-height: 58px;
+		}
+		.slot {
+			height: 11px;
+		}
+		.blabel {
+			font-size: 11px;
+		}
+		.gate {
+			width: 38px;
+			height: 13px;
+		}
+		.note {
+			font-size: 14px;
+			max-width: 460px;
+		}
+		.cta,
+		.line {
+			font-size: 14px;
+			padding: 12px 22px;
+		}
 	}
 </style>
