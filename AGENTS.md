@@ -129,7 +129,15 @@ outline (`outline: none`).
 ## Design rules (non-negotiable)
 
 - **No dashes anywhere.** That means no dashed lines/borders, and no em dash or middle-dot
-  separators in copy. Write like a human: use commas, full sentences, colons, or parentheses.
+  separators in copy. **No colons in copy either** (rewrite as full sentences). Write like a
+  human: use commas, full sentences, or parentheses. Avoid assistant or "AI guide" phrasing;
+  Nim talks like a friendly character, not a product.
+- **Example domain is always `nimbus.com`** (the learner's own site). Never use placeholder
+  domains like example.com, situsku.com, or mysite.com. Reuse it for every sample address.
+- **Reuse the Foundation actors.** Stages should be built from the recognisable, labelled
+  objects Chapters 1 and 2 use (the phone/browser for "you", the server rack for a server),
+  not abstract dots or pills. Lay stages out vertically and centred so they fit a phone with no
+  horizontal overflow, and keep the action (buttons) up top, clear of Nim in the corner.
 - Minimalist, clean, calm. **Not "AI-looking"**: no purple gradients, no emoji spam.
 - Full-screen and responsive (mobile stacks: title, then stage, then Nim).
 - **Nim is a separate character** at bottom-left with a **cloud-shaped speech bubble**.

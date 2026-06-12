@@ -14,9 +14,9 @@ const ui = {
 		showNim: 'Tampilkan Nim',
 		chapter: 'Bab',
 		welcome: [
-			'Halo! Aku <b>Nim</b>, si awan pemandu. Aku bakal nemenin kamu belajar <b>cloud</b> dari benar-benar nol.',
-			'Di sini kamu nggak cuma baca teori. Tiap konsep langsung kamu coba sendiri, dan aku jelaskan pelan-pelan sambil jalan.',
-			'Pelan tapi padat: server, cloud, region, dan seterusnya. Yuk, kita mulai dari yang paling dasar.'
+			'Halo! Aku <b>Nim</b>. Mulai sekarang aku yang nemenin kamu belajar <b>cloud</b> dari nol banget, jadi santai aja ya.',
+			'Di sini kamu nggak cuma baca teori. Tiap konsep langsung kamu coba sendiri, dan aku akan jelaskan pelan-pelan sambil kita jalan.',
+			'Kita nggak buru-buru, tapi juga nggak bertele-tele. Kita bahas server dulu, lalu cloud, region, dan seterusnya. Yuk, mulai dari yang paling dasar.'
 		]
 	},
 	en: {
@@ -29,9 +29,9 @@ const ui = {
 		showNim: 'Show Nim',
 		chapter: 'Chapter',
 		welcome: [
-			"Hi! I'm <b>Nim</b>, your cloud guide. I'll help you learn <b>cloud</b> from absolute zero.",
-			"Here you don't just read theory. You try each concept yourself, and I explain it step by step as we go.",
-			'Slow but compact: servers, cloud, regions, and beyond. Let me start with the basics.'
+			"Hi! I'm <b>Nim</b>. From here on I'll keep you company while you learn <b>cloud</b> from the very start, so take it easy.",
+			"Here you don't just read theory. You try each concept yourself, and I'll explain everything slowly as we go.",
+			"We won't rush, but we won't pad it out either. We'll cover servers first, then cloud, regions, and onward. Let's begin with the basics."
 		]
 	}
 };

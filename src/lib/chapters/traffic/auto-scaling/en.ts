@@ -3,24 +3,32 @@ import type { AutoScalingText } from '../types';
 export const en: AutoScalingText = {
 	title: 'Auto scaling',
 	intro: [
-		'Horizontal scaling is great, but how many servers should you keep? Too few and you choke when it gets busy. Too many all the time and you pay a lot while nights sit quiet.',
-		'Traffic rises and falls through the day. Quiet at midnight, busy at midday. It is wasteful to keep the same server count no matter what.',
-		'<b>Auto scaling</b> adds and removes servers automatically as demand changes. Busy, it adds servers on its own. Quiet, it removes them on its own. You only pay for what actually runs.',
-		'Press play and watch a full day spin by. See the server count follow the traffic curve up and down, with the cost meter moving right alongside it.'
+		'In the last lesson you were the one pressing Add when the servers drowned. The problem is that traffic can spike at 2 am while you are asleep. You cannot stay up all night babysitting servers.',
+		'<b>Auto scaling</b> is a robot that stays up for you. It watches one number, usually <b>CPU</b>, how hard your machines are thinking. It can also watch RAM or the number of requests.',
+		'You just hand it a rule. Say if CPU goes past 70 percent, add one machine. If it drops below 30 percent, remove one. New machines automatically get their share of traffic from the load balancer you met earlier.',
+		'Watch it. The traffic below rises and falls on its own, just like real visitors. You can also nudge it with the plus and minus buttons, then watch who does the work.'
 	],
 	reactions: {
 		'scaled-up':
-			'See, traffic peaks around midday and servers add themselves until they are full. Nothing gets overwhelmed, and cost only rises when it is needed.',
+			'Visitors are pouring in and CPU crossed 70 percent. The rule lit up, and machines were added on their own until the load was healthy again.',
 		'scaled-down':
-			'Night falls, traffic drops, and servers are removed automatically again. Cost falls with it. You only pay for what is running.'
+			'Quiet again, CPU sank below 30 percent, and the machines were sent home one by one. The cost dropped with them. You only pay for what actually runs.'
 	},
-	play: 'Play one day',
-	running: 'Running...',
-	again: 'Play again',
-	serversLabel: 'Servers: {n}',
-	costLabel: 'Cost',
-	trafficLabel: '24 hour traffic',
-	night: 'night, quiet',
-	midday: 'midday, busy',
-	payNote: 'Servers follow traffic automatically, so you pay only for what you use.'
+	trafficLabel: 'visitors',
+	plusLabel: 'Add visitors',
+	minusLabel: 'Remove visitors',
+	balancerLabel: 'Load balancer',
+	ruleTitle: 'The robot follows',
+	cpuLabel: 'CPU',
+	condUp: 'Above 70%',
+	actUp: 'Add a machine',
+	condDown: 'Below 30%',
+	actDown: 'Remove one',
+	addEvent: '+1 machine',
+	removeEvent: '-1 machine',
+	costLabel: 'Cost ${n} per hour',
+	promptRaise: 'The traffic is alive, rising and falling by itself. Wait and see, or nudge it with plus and minus.',
+	promptWatch: 'CPU crossed the line. The robot is adding machines by itself, just sit back.',
+	promptDrop: 'The load is healthy again. When the traffic dips later, machines will be removed on their own too.',
+	promptDone: 'Up by itself when busy, down by itself when quiet. You pay for what you use.'
 };

@@ -3,27 +3,28 @@ import type { ReverseProxyText } from '../types';
 export const en: ReverseProxyText = {
 	title: 'Reverse proxy',
 	intro: [
-		'A site is rarely just one server. Usually one server holds the web pages, another runs the app, and another serves files like images. Three different addresses, and it gets messy if every visitor has to know all of them.',
-		'So we put one front door in front: a <b>reverse proxy</b>. Every request comes in through it. It looks at where the request is headed, then forwards it to the right server behind.',
-		'Think of it as a receptionist. Every guest is greeted at the front desk, then walked to the correct room. Guests never see the back offices, and they only know one address: the receptionist.',
-		'Try sending a few requests with different paths. Watch the proxy walk each one to the right server, while the real server addresses stay hidden behind it.'
+		'A site is rarely just one server. Usually one server holds the pages, another holds the data, and another holds the images. Three different servers, and it gets messy if every visitor has to remember all of them.',
+		'So we put one receiver out front, called a <b>reverse proxy</b>. Every request comes in through it, then it forwards each one to the right server behind.',
+		'Think of it as a receptionist. Every guest is greeted at the front desk, then walked to the correct room. Guests never see the back offices, and they only know one address, <b>nimbus.com</b>.',
+		'Try it yourself. Ask for a page, some data, or an image through <b>nimbus.com</b>, and watch the proxy walk each request to the right server while the real server addresses stay hidden.'
 	],
 	reactions: {
-		web: 'The request to <b>/</b> is walked to the web server. Visitors only know one address, the proxy handles the rest. Try another path.',
-		api: 'The request to <b>/api</b> is forwarded to the app server. Different server, same front door.',
+		web: 'The request to <b>/</b> goes to the page server, and you get the web page back. One address out front, the proxy handles the rest. Try another path.',
+		api: 'The request to <b>/api</b> is forwarded to the data server, and what comes back is data (JSON). Different server, same front address.',
 		static:
-			'The request to <b>/images</b> goes to the file server. Three different destinations, one shared front door.'
+			'The request to <b>/images</b> goes to the image server, and what comes back is an image. Three different destinations, one shared address.'
 	},
+	promptLabel: 'Tap to request something from nimbus.com',
+	youLabel: 'You',
 	proxyLabel: 'Reverse proxy',
-	proxySub: 'public front door',
-	publicAddr: 'mysite.com',
-	hiddenLabel: 'hidden address',
-	send: 'Send',
+	proxySub: 'takes every request',
+	publicAddr: 'nimbus.com',
+	idleHint: 'Tap one of the buttons above',
+	hiddenLabel: 'hidden',
 	routes: [
-		{ path: '/', label: 'Web server', backend: 'web' },
-		{ path: '/api', label: 'App server', backend: 'api' },
-		{ path: '/images', label: 'File server', backend: 'static' }
+		{ path: '/', label: 'Page server', backend: 'web', btn: 'Page', kind: 'page' },
+		{ path: '/api', label: 'Data server', backend: 'api', btn: 'Data', kind: 'json' },
+		{ path: '/images', label: 'Image server', backend: 'static', btn: 'Image', kind: 'image' }
 	],
-	backends: { web: 'Web server', api: 'App server', static: 'File server' },
 	routedNote: 'Routed to {n} different servers'
 };

@@ -34,10 +34,11 @@
 	const final = $derived(isLastLesson && isLastBeat);
 	const canBack = $derived(beat > 0 || data.index > 0);
 	const message = $derived(reaction ?? text.intro[Math.min(beat, text.intro.length - 1)]);
-	// "Your turn": on the last beat, once Nim has said its piece and is waiting for you to act
-	// (no reaction showing yet), Nim steps out so the whole stage is free to play with. A tap
-	// brings the bubble back, and any reaction or completion pops it back on its own.
-	const aside = $derived(isLastBeat && !completed && reaction === null);
+	// "Your turn": on the last beat, before the step is finished, the stage is what matters, so
+	// Nim steps out (on phones, after a brief moderator-style peek). This also covers reactions:
+	// each one pops in, is readable, then tucks away so a stage you play with repeatedly stays
+	// clear. Once the step is complete, Nim stays put with the wrap-up and the Next button.
+	const aside = $derived(isLastBeat && !completed);
 	// Stage stays locked + dimmed while Nim is still narrating; it unlocks on the last beat,
 	// the one that invites interaction, or earlier if the stage asks to be shown (an intro).
 	const stageActive = $derived(isLastBeat || shown);

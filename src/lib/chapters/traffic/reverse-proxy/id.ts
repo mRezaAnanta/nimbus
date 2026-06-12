@@ -3,27 +3,28 @@ import type { ReverseProxyText } from '../types';
 export const id: ReverseProxyText = {
 	title: 'Reverse proxy',
 	intro: [
-		'Sebuah situs jarang cuma satu server. Biasanya ada server khusus halaman web, server lain buat aplikasi, dan server lagi buat file seperti gambar. Tiga alamat berbeda, ribet kalau pengunjung harus tahu semuanya.',
-		'Jadi kita pasang satu pintu depan: <b>reverse proxy</b>. Semua permintaan masuk lewat dia. Dia yang lihat tujuannya, lalu meneruskan ke server yang tepat di belakang.',
-		'Anggap dia resepsionis. Setiap tamu disambut di meja depan, lalu diantar ke ruangan yang benar. Tamu tidak pernah lihat kantor di belakang, dan cuma kenal satu alamat: alamat resepsionis.',
-		'Coba kirim beberapa permintaan dengan jalur berbeda. Lihat proxy mengantar tiap permintaan ke server yang tepat, sementara alamat asli server tetap tersembunyi.'
+		'Situs jarang cuma satu server. Biasanya ada satu server buat halaman, satu lagi buat data, dan satu lagi buat gambar. Tiga server berbeda, ribet kalau pengunjung harus hafal semuanya.',
+		'Makanya kita pasang satu penerima di depan, namanya <b>reverse proxy</b>. Semua permintaan masuk lewat dia, lalu dia yang meneruskan ke server yang tepat di belakang.',
+		'Anggap dia resepsionis. Tiap tamu disambut di meja depan, lalu diantar ke ruangan yang benar. Tamu nggak pernah lihat kantor di belakang, dan cuma kenal satu alamat, yaitu <b>nimbus.com</b>.',
+		'Coba sendiri. Minta halaman, data, atau gambar lewat <b>nimbus.com</b>, lalu lihat proxy mengantar tiap permintaan ke server yang tepat sementara alamat asli server tetap tersembunyi.'
 	],
 	reactions: {
-		web: 'Permintaan ke <b>/</b> diantar ke server halaman web. Pengunjung cuma tahu satu alamat, sisanya proxy yang urus. Coba jalur lain.',
-		api: 'Permintaan ke <b>/api</b> diteruskan ke server aplikasi. Server beda, alamat tetap sama di depan.',
+		web: 'Permintaan ke <b>/</b> diantar ke server halaman, dan kamu dapat halaman webnya. Satu alamat di depan, sisanya proxy yang urus. Coba jalur lain.',
+		api: 'Permintaan ke <b>/api</b> diteruskan ke server data, dan yang balik adalah data (JSON). Server beda, alamat depan tetap sama.',
 		static:
-			'Permintaan ke <b>/gambar</b> diantar ke server file. Tiga tujuan berbeda, satu pintu depan yang sama.'
+			'Permintaan ke <b>/gambar</b> diantar ke server gambar, dan yang balik adalah gambar. Tiga tujuan berbeda, satu alamat yang sama.'
 	},
+	promptLabel: 'Ketuk untuk minta sesuatu lewat nimbus.com',
+	youLabel: 'Kamu',
 	proxyLabel: 'Reverse proxy',
-	proxySub: 'pintu depan publik',
-	publicAddr: 'situsku.com',
-	hiddenLabel: 'alamat tersembunyi',
-	send: 'Kirim',
+	proxySub: 'nerima semua permintaan',
+	publicAddr: 'nimbus.com',
+	idleHint: 'Ketuk salah satu tombol di atas',
+	hiddenLabel: 'tersembunyi',
 	routes: [
-		{ path: '/', label: 'Server web', backend: 'web' },
-		{ path: '/api', label: 'Server aplikasi', backend: 'api' },
-		{ path: '/gambar', label: 'Server file', backend: 'static' }
+		{ path: '/', label: 'Server halaman', backend: 'web', btn: 'Halaman', kind: 'page' },
+		{ path: '/api', label: 'Server data', backend: 'api', btn: 'Data', kind: 'json' },
+		{ path: '/gambar', label: 'Server gambar', backend: 'static', btn: 'Gambar', kind: 'image' }
 	],
-	backends: { web: 'Server web', api: 'Server aplikasi', static: 'Server file' },
 	routedNote: 'Diantar ke {n} server berbeda'
 };

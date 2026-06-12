@@ -3,24 +3,32 @@ import type { AutoScalingText } from '../types';
 export const id: AutoScalingText = {
 	title: 'Auto scaling',
 	intro: [
-		'Scaling horizontal keren, tapi berapa server yang harus kamu siapkan? Kalau sedikit, kewalahan pas ramai. Kalau banyak terus, kamu bayar mahal padahal malam hari sepi.',
-		'Trafik itu naik turun sepanjang hari. Tengah malam sepi, siang hari ramai. Sayang banget kalau jumlah servernya tetap segitu terus.',
-		'<b>Auto scaling</b> menambah dan mengurangi server otomatis mengikuti permintaan. Ramai, server nambah sendiri. Sepi, server dikurangi sendiri. Kamu cuma bayar yang benar benar jalan.',
-		'Tekan tombol play dan lihat satu hari penuh berputar. Perhatikan jumlah server mengikuti kurva trafik naik turun, dan meteran biaya ikut bergerak.'
+		'Di pelajaran tadi kamu sendiri yang menekan Tambah pas server kewalahan. Masalahnya, trafik bisa melonjak jam 2 pagi pas kamu tidur. Masa harus begadang buat jagain server.',
+		'<b>Auto scaling</b> itu robot yang begadang untukmu. Dia mantau satu angka, biasanya <b>CPU</b>, seberapa keras mesinmu lagi mikir. Bisa juga RAM atau jumlah request.',
+		'Kamu tinggal kasih dia aturan. Misal kalau CPU lewat 70 persen, tambah satu mesin. Kalau turun di bawah 30 persen, kurangi satu. Mesin baru otomatis kebagian beban dari load balancer yang kemarin.',
+		'Coba lihat. Trafik di bawah ini naik turun sendiri, persis pengunjung asli. Kamu juga boleh ikut campur pakai tombol plus dan minus, lalu perhatikan siapa yang kerja.'
 	],
 	reactions: {
 		'scaled-up':
-			'Lihat, trafik memuncak di siang hari dan server otomatis nambah sampai penuh. Tidak ada yang kewalahan, dan biayanya naik cuma pas dibutuhkan.',
+			'Pengunjung lagi ramai dan CPU tembus 70 persen. Aturannya menyala, dan mesin nambah sendiri sampai bebannya normal lagi.',
 		'scaled-down':
-			'Malam tiba, trafik turun, dan server otomatis dikurangi lagi. Biayanya ikut turun. Kamu cuma bayar yang sedang jalan.'
+			'Sepi lagi, CPU melorot di bawah 30 persen, dan mesin dipulangkan satu satu. Biayanya ikut turun. Kamu cuma bayar yang benar benar jalan.'
 	},
-	play: 'Putar satu hari',
-	running: 'Berputar...',
-	again: 'Putar lagi',
-	serversLabel: 'Server: {n}',
-	costLabel: 'Biaya',
-	trafficLabel: 'Trafik 24 jam',
-	night: 'malam, sepi',
-	midday: 'siang, ramai',
-	payNote: 'Server mengikuti trafik otomatis, jadi kamu bayar sesuai pemakaian.'
+	trafficLabel: 'pengunjung',
+	plusLabel: 'Tambah pengunjung',
+	minusLabel: 'Kurangi pengunjung',
+	balancerLabel: 'Load balancer',
+	ruleTitle: 'Aturan si robot',
+	cpuLabel: 'CPU',
+	condUp: 'Di atas 70%',
+	actUp: 'Tambah mesin',
+	condDown: 'Di bawah 30%',
+	actDown: 'Kurangi mesin',
+	addEvent: '+1 mesin',
+	removeEvent: '-1 mesin',
+	costLabel: 'Biaya ${n} per jam',
+	promptRaise: 'Trafiknya hidup, naik turun sendiri. Tungguin aja, atau dorong pakai plus dan minus.',
+	promptWatch: 'CPU lewat batas. Robotnya lagi nambah mesin sendiri, kamu santai aja.',
+	promptDrop: 'Beban sudah normal lagi. Pas trafiknya turun nanti, mesinnya juga dikurangi sendiri.',
+	promptDone: 'Naik sendiri pas ramai, turun sendiri pas sepi. Kamu bayar sesuai pemakaian.'
 };

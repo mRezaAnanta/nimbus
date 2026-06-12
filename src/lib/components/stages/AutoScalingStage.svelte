@@ -14,169 +14,747 @@
 	} = $props();
 	const tx = $derived(text as AutoScalingText);
 
-	// A simple 24 hour demand curve: quiet at night, busy at midday.
-	// Index 0..23 maps to a fraction 0..1 of peak demand.
-	const CURVE = [
-		0.1, 0.08, 0.06, 0.05, 0.06, 0.1, 0.2, 0.38, 0.58, 0.72, 0.85, 0.94, 1.0, 0.96, 0.88, 0.78,
-		0.66, 0.6, 0.55, 0.48, 0.4, 0.3, 0.2, 0.14
-	];
-	const MIN_SERVERS = 2;
-	const MAX_SERVERS = 6;
+	// The crowd drifts on its own like real traffic; the learner can still nudge it.
+	const STEP = 150;
+	const V_MIN = 150;
+	const V_MAX = 1050;
+	let visitors = $state(150);
+	let trend = $state(1);
+	let lastNudge = 0;
 
-	let hour = $state(0);
-	let playing = $state(false);
-	let ran = $state(false);
-	let timer: ReturnType<typeof setInterval> | undefined;
-	let peak = false;
-	let trough = false;
-	let done = false;
-
-	// servers follow the curve automatically between MIN and MAX
-	const demand = $derived(CURVE[hour]);
-	const servers = $derived(MIN_SERVERS + Math.round(demand * (MAX_SERVERS - MIN_SERVERS)));
-	// cost tracks the running servers
-	const cost = $derived(servers);
-	const isNight = $derived(hour < 6 || hour >= 22);
-	const hourLabel = $derived(`${String(hour).padStart(2, '0')}:00`);
-
-	const W = 320;
-	const H = 96;
-	const points = $derived(CURVE.map((v, i) => `${(i / 23) * W},${H - 8 - v * (H - 18)}`).join(' '));
-	const cursorX = $derived((hour / 23) * W);
-	const cursorY = $derived(H - 8 - demand * (H - 18));
-
-	function play() {
-		if (playing) return;
-		playing = true;
-		hour = 0;
-		peak = false;
-		trough = false;
-		timer = setInterval(() => {
-			hour = (hour + 1) % 24;
-			if (!peak && servers >= MAX_SERVERS) {
-				peak = true;
-				onstate?.('scaled-up');
-			}
-			if (peak && !trough && hour >= 22) {
-				trough = true;
-				onstate?.('scaled-down');
-			}
-			if (hour === 23) {
-				// a full cycle completed
-				clearInterval(timer);
-				playing = false;
-				ran = true;
-				if (peak && !done) {
-					done = true;
-					oncomplete?.();
-				}
-			}
-		}, 230);
+	function nudge(dir: number) {
+		visitors = Math.min(V_MAX, Math.max(V_MIN, visitors + dir * STEP));
+		trend = dir;
+		lastNudge = Date.now();
 	}
 
-	onDestroy(() => clearInterval(timer));
+	const MIN = 1;
+	const MAX = 6;
+	const PER = 250; // visitors one machine can serve at full tilt
+	let machines = $state(1);
+
+	// average CPU follows visitors per machine; the rule watches this number
+	const cpu = $derived(Math.min(99, Math.round((visitors / (machines * PER)) * 95)));
+	const firingUp = $derived(cpu > 70 && machines < MAX);
+	const firingDown = $derived(cpu < 30 && machines > MIN);
+	const cpuColor = $derived(cpu > 70 ? '#d3584a' : cpu > 50 ? '#dd9e36' : '#3a9c64');
+
+	const heads = $derived(Math.min(7, Math.ceil(visitors / STEP)));
+	const crowdColor = $derived(visitors >= 750 ? '#c2491f' : visitors >= 450 ? '#dd9e36' : '#8a949d');
+
+	let upSeen = $state(false);
+	let downSeen = $state(false);
+	let done = false;
+	const prompt = $derived(
+		cpu > 70 ? tx.promptWatch : upSeen && downSeen ? tx.promptDone : upSeen ? tx.promptDrop : tx.promptRaise
+	);
+
+	// a short lived toast each time the robot acts
+	let evt = $state<{ id: number; txt: string } | null>(null);
+	let eid = 0;
+	let timers: ReturnType<typeof setTimeout>[] = [];
+
+	function robotActs(txt: string) {
+		const id = ++eid;
+		evt = { id, txt };
+		timers.push(setTimeout(() => evt?.id === id && (evt = null), 1400));
+	}
+
+	// the traffic wanders by itself, climbing and dipping like a real day. A manual
+	// nudge pauses the drift for a moment so it never fights the learner.
+	$effect(() => {
+		const iv = setInterval(() => {
+			if (Date.now() - lastNudge < 6000) return;
+			if (visitors >= V_MAX) trend = -1;
+			else if (visitors <= V_MIN) trend = 1;
+			else if (Math.random() < 0.22) trend = -trend;
+			visitors = Math.min(V_MAX, Math.max(V_MIN, visitors + trend * STEP));
+		}, 5200);
+		return () => clearInterval(iv);
+	});
+
+	// the autoscaler wakes up on a fixed beat, checks the rule, moves one machine at a time
+	$effect(() => {
+		const iv = setInterval(() => {
+			if (cpu > 70 && machines < MAX) {
+				machines += 1;
+				robotActs(tx.addEvent);
+				if (!upSeen) {
+					upSeen = true;
+					onstate?.('scaled-up');
+				}
+			} else if (cpu < 30 && machines > MIN) {
+				machines -= 1;
+				robotActs(tx.removeEvent);
+				if (upSeen && !downSeen) {
+					downSeen = true;
+					onstate?.('scaled-down');
+					if (!done) {
+						done = true;
+						oncomplete?.();
+					}
+				}
+			}
+		}, 1100);
+		return () => clearInterval(iv);
+	});
+
+	// visitors raining through the balancer onto the machines, like the lessons before
+	type Drop = { id: number; lane: number; routed: boolean };
+	let drops = $state<Drop[]>([]);
+	let did = 0;
+
+	$effect(() => {
+		const gap = Math.max(140, Math.min(1100, Math.round(160000 / visitors)));
+		const iv = setInterval(() => {
+			const n = machines;
+			const lane = ((Math.floor(Math.random() * n) + 0.5) / n) * 100;
+			const d: Drop = { id: ++did, lane, routed: false };
+			drops = [...drops.slice(-12), d];
+			timers.push(setTimeout(() => (drops = drops.map((x) => (x.id === d.id ? { ...x, routed: true } : x))), 220));
+			timers.push(setTimeout(() => (drops = drops.filter((x) => x.id !== d.id)), 760));
+		}, gap);
+		return () => clearInterval(iv);
+	});
+
+	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-5">
-	<!-- 24h traffic curve with a moving cursor -->
-	<div class="w-full max-w-md rounded-2xl border border-line bg-card p-4">
-		<div class="mb-2 flex items-center justify-between text-[11px] font-semibold text-faint">
-			<span>{tx.trafficLabel}</span>
-			<span class="font-mono {isNight ? 'text-brand' : 'text-amber'}">
-				{hourLabel} ({isNight ? tx.night : tx.midday})
-			</span>
-		</div>
-		<svg viewBox="0 0 {W} {H}" class="h-24 w-full" preserveAspectRatio="none" aria-hidden="true">
-			<defs>
-				<linearGradient id="asfill" x1="0" y1="0" x2="0" y2="1">
-					<stop offset="0%" stop-color="#2e6fe0" stop-opacity="0.16" />
-					<stop offset="100%" stop-color="#2e6fe0" stop-opacity="0" />
-				</linearGradient>
-			</defs>
-			<polygon points="0,{H} {points} {W},{H}" fill="url(#asfill)" />
-			<polyline {points} fill="none" stroke="#2e6fe0" stroke-width="2" />
-			<line
-				x1={cursorX}
-				y1="0"
-				x2={cursorX}
-				y2={H}
-				stroke="#dd9e36"
-				stroke-width="1.5"
-				opacity="0.6"
-			/>
-			<circle cx={cursorX} cy={cursorY} r="4" fill="#dd9e36" stroke="#fff" stroke-width="1.5" />
-		</svg>
-	</div>
+{#snippet person(size: number, color: string)}
+	<svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+		<circle cx="12" cy="8" r="4" fill={color} />
+		<path d="M4 21a8 8 0 0 1 16 0Z" fill={color} />
+	</svg>
+{/snippet}
 
-	<!-- servers follow the curve; cost tracks alongside -->
-	<div class="flex w-full max-w-md items-stretch gap-3">
-		<div class="flex flex-1 flex-col items-center gap-2 rounded-2xl border border-line bg-card p-3">
-			<span class="text-[10px] font-semibold tracking-wide text-faint uppercase"
-				>{tx.serversLabel.replace('{n}', String(servers))}</span
-			>
-			<div class="flex min-h-[34px] flex-wrap items-center justify-center gap-1.5">
-				{#each Array(servers), i (i)}
-					<div class="srv"><span class="srv-dot"></span></div>
-				{/each}
-			</div>
-		</div>
-		<div
-			class="flex w-24 flex-col items-center justify-center gap-1 rounded-2xl border border-line bg-card p-3"
+<div class="flex h-full w-full flex-col items-center justify-center gap-3 md:gap-4">
+	<p class="prompt">{prompt}</p>
+
+	<!-- the only control the learner gets, a visitor counter -->
+	<div class="counter">
+		<button
+			type="button"
+			class="cbtn"
+			aria-label={tx.minusLabel}
+			onclick={() => nudge(-1)}
+			disabled={visitors <= V_MIN}>−</button
 		>
-			<span class="text-[10px] font-semibold tracking-wide text-faint uppercase"
-				>{tx.costLabel}</span
-			>
-			<div class="flex items-end gap-0.5">
-				{#each Array(cost), i (i)}
-					<span class="cost-bar" style="height:{8 + i * 2}px"></span>
-				{/each}
-			</div>
-			<span class="text-sm font-bold text-grass">${cost}</span>
+		<div class="cnum">
+			<span class="numrow">
+				{#key visitors}<b>{visitors}</b>{/key}
+				<svg class="tarrow" class:fall={trend < 0} width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+					<path d="M12 20V4m0 0l-6 6m6-6 6 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+				</svg>
+			</span>
+			<span>{tx.trafficLabel}</span>
 		</div>
+		<button
+			type="button"
+			class="cbtn"
+			aria-label={tx.plusLabel}
+			onclick={() => nudge(1)}
+			disabled={visitors >= V_MAX}>+</button
+		>
 	</div>
 
-	<button
-		type="button"
-		onclick={play}
-		disabled={playing}
-		class="rounded-xl bg-ink px-6 py-2.5 text-sm font-semibold text-white transition-all enabled:hover:brightness-125 disabled:opacity-50"
-	>
-		{playing ? tx.running : ran ? tx.again : tx.play}
-	</button>
-	<p class="h-4 max-w-md text-center text-xs text-muted">{tx.payNote}</p>
+	<div class="board">
+		<!-- the familiar scene, crowd through the balancer onto identical machines -->
+		<div class="scene">
+			<svg class="rails" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+				<line class="rail" x1="50" y1="16" x2="50" y2="34" />
+				{#each Array(machines) as _, i (i)}
+					<line class="rail" x1="50" y1="40" x2={((i + 0.5) / machines) * 100} y2="66" />
+				{/each}
+			</svg>
+			<div class="crowd">
+				{#each Array(heads) as _, k (k)}
+					<span class="hd">{@render person(11, crowdColor)}</span>
+				{/each}
+			</div>
+			<div class="balmini">
+				<svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+					<path d="M12 4v6m0 0L6 18m6-8 6 8" stroke="#2e6fe0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+				</svg>
+				{tx.balancerLabel}
+			</div>
+			{#each drops as d (d.id)}
+				<span class="dropper" class:routed={d.routed} style="--lx:{d.lane}%">
+					{@render person(11, crowdColor)}
+				</span>
+			{/each}
+			<div class="hrow">
+				{#each Array(machines) as _, i (i)}
+					<div class="hcol">
+						<div class="hmachine" class:hot={cpu > 90} style="--c:{cpuColor}">
+							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+								<rect x="3" y="4" width="18" height="7" rx="2" stroke="currentColor" stroke-width="1.7" />
+								<rect x="3" y="13" width="18" height="7" rx="2" stroke="currentColor" stroke-width="1.7" />
+								<circle cx="7" cy="7.5" r="1" fill="currentColor" />
+								<circle cx="7" cy="16.5" r="1" fill="currentColor" />
+							</svg>
+						</div>
+						<span class="cputrack"><i style="width:{cpu}%; background:{cpuColor}"></i></span>
+					</div>
+				{/each}
+			</div>
+		</div>
+
+		<!-- the robot's rule, kept as plain as a sticky note -->
+		<div class="rules">
+			<span class="rtitle">{tx.ruleTitle}</span>
+
+			<div class="gauge">
+				<span class="glabel">{tx.cpuLabel}</span>
+				<span class="gtrack">
+					<i class="gfill" style="width:{cpu}%; background:{cpuColor}"></i>
+					<i class="tick" style="left:30%"></i>
+					<i class="tick" style="left:70%"></i>
+				</span>
+				<span class="gnum" style="color:{cpuColor}">{cpu}%</span>
+			</div>
+
+			<div class="rrow" class:hot={firingUp}>
+				<span class="cond">{tx.condUp}</span>
+				<span class="ract up">{tx.actUp}</span>
+			</div>
+			<div class="rrow" class:hotdown={firingDown}>
+				<span class="cond">{tx.condDown}</span>
+				<span class="ract down">{tx.actDown}</span>
+			</div>
+
+			<div class="rfoot">
+				{#key machines}<span class="chip cost">{tx.costLabel.replace('{n}', String(machines))}</span>{/key}
+				{#if evt}
+					{#key evt.id}<span class="evt">{evt.txt}</span>{/key}
+				{/if}
+			</div>
+		</div>
+	</div>
 </div>
 
 <style>
-	.srv {
+	.prompt {
+		max-width: 320px;
+		text-align: center;
+		font-size: 12px;
+		line-height: 1.4;
+		color: #6a7681;
+	}
+
+	/* visitor counter, minus and plus around a big number */
+	.counter {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		border-radius: 999px;
+		border: 1px solid #e8e2d8;
+		background: #fff;
+		padding: 5px 6px;
+		box-shadow: 0 6px 16px rgba(22, 40, 60, 0.06);
+	}
+	.cbtn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		background: #16212b;
+		color: #fff;
+		font-size: 17px;
+		font-weight: 700;
+		line-height: 1;
+		transition:
+			filter 0.2s ease,
+			transform 0.15s ease;
+	}
+	.cbtn:enabled:hover {
+		filter: brightness(1.2);
+	}
+	.cbtn:active {
+		transform: translateY(1px);
+	}
+	.cbtn:disabled {
+		opacity: 0.3;
+	}
+	.numrow {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+	}
+	.tarrow {
+		color: #8a949d;
+		transition: transform 0.3s ease;
+	}
+	.tarrow.fall {
+		transform: rotate(180deg);
+	}
+	.cnum {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		min-width: 92px;
+		line-height: 1.05;
+	}
+	.cnum b {
+		font-size: 16px;
+		font-weight: 800;
+		color: #16212b;
+		font-variant-numeric: tabular-nums;
+		animation: bump 0.3s ease;
+	}
+	.cnum span {
+		font-size: 9px;
+		font-weight: 600;
+		color: #8a949d;
+	}
+
+	.board {
+		display: flex;
+		width: 100%;
+		max-width: 400px;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	/* the live scene */
+	.scene {
+		position: relative;
+		height: 148px;
+		border-radius: 16px;
+		border: 1px solid #e8e2d8;
+		background: #fff;
+		box-shadow: 0 8px 22px rgba(22, 40, 60, 0.05);
+		overflow: hidden;
+	}
+	.rails {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+	}
+	.rail {
+		stroke: #dcd6cb;
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-dasharray: 3 5;
+		vector-effect: non-scaling-stroke;
+		animation: flow 0.9s linear infinite;
+	}
+	@keyframes flow {
+		to {
+			stroke-dashoffset: -8;
+		}
+	}
+	.crowd {
+		position: absolute;
+		top: 8px;
+		left: 50%;
+		transform: translateX(-50%);
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 1px;
+		max-width: 90px;
+		line-height: 0;
+		z-index: 3;
+	}
+	.hd {
+		line-height: 0;
+	}
+	.balmini {
+		position: absolute;
+		top: 36%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		display: flex;
+		align-items: center;
+		gap: 3px;
+		border-radius: 8px;
+		border: 1px solid #cdddf6;
+		background: #eaf1fc;
+		padding: 2px 8px;
+		font-size: 8px;
+		font-weight: 700;
+		color: #2e6fe0;
+		white-space: nowrap;
+		z-index: 3;
+	}
+	.dropper {
+		position: absolute;
+		top: 14%;
+		left: 50%;
+		transform: translateX(-50%);
+		line-height: 0;
+		z-index: 1;
+		animation: ddrop 0.22s ease-in forwards;
+	}
+	.dropper.routed {
+		animation: droute 0.45s ease-out forwards;
+	}
+	@keyframes ddrop {
+		from {
+			top: 14%;
+			left: 50%;
+			opacity: 0;
+		}
+		to {
+			top: 36%;
+			left: 50%;
+			opacity: 1;
+		}
+	}
+	@keyframes droute {
+		from {
+			top: 36%;
+			left: 50%;
+			opacity: 1;
+		}
+		to {
+			top: 60%;
+			left: var(--lx);
+			opacity: 1;
+		}
+	}
+	.hrow {
+		position: absolute;
+		bottom: 10px;
+		left: 0;
+		right: 0;
+		display: flex;
+		justify-content: space-around;
+		align-items: flex-end;
+		z-index: 2;
+	}
+	.hcol {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 3px;
+	}
+	.hmachine {
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		width: 28px;
-		height: 24px;
-		border-radius: 7px;
-		border: 2px solid #3a9c64;
-		background: #e7f3ec;
-		animation: pop 0.25s ease;
+		height: 28px;
+		border-radius: 9px;
+		border: 2px solid var(--c);
+		background: color-mix(in srgb, var(--c) 10%, #fff);
+		color: var(--c);
+		box-shadow: 0 5px 12px color-mix(in srgb, var(--c) 20%, transparent);
+		animation: pop 0.3s ease;
+		transition:
+			border-color 0.3s ease,
+			background 0.3s ease,
+			color 0.3s ease;
 	}
-	.srv-dot {
-		width: 7px;
-		height: 7px;
-		border-radius: 50%;
-		background: #3a9c64;
+	.hmachine.hot {
+		animation: shake 0.4s ease-in-out infinite;
 	}
-	.cost-bar {
-		width: 4px;
+	.cputrack {
+		display: block;
+		width: 26px;
+		height: 3px;
 		border-radius: 2px;
-		background: #3a9c64;
+		background: #ece6dc;
+		overflow: hidden;
+	}
+	.cputrack i {
+		display: block;
+		height: 100%;
+		border-radius: 2px;
+		transition:
+			width 0.5s ease,
+			background 0.3s ease;
 	}
 	@keyframes pop {
 		from {
-			transform: scale(0.4);
+			transform: scale(0.5);
 			opacity: 0;
 		}
 		to {
 			transform: scale(1);
 			opacity: 1;
+		}
+	}
+	@keyframes shake {
+		0%,
+		100% {
+			transform: translateX(0);
+		}
+		25% {
+			transform: translateX(-1.5px);
+		}
+		75% {
+			transform: translateX(1.5px);
+		}
+	}
+
+	/* the rule card, one glance and you get it */
+	.rules {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		border-radius: 16px;
+		border: 1px solid #e8e2d8;
+		background: #fff;
+		padding: 12px 14px;
+		box-shadow: 0 8px 22px rgba(22, 40, 60, 0.05);
+	}
+	.rtitle {
+		font-size: 12px;
+		font-weight: 800;
+		color: #16212b;
+	}
+	.gauge {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+	.glabel {
+		flex: none;
+		font-size: 11px;
+		font-weight: 800;
+		color: #5e6b76;
+	}
+	.gtrack {
+		position: relative;
+		flex: 1;
+		height: 10px;
+		border-radius: 999px;
+		background: #f1ede5;
+		overflow: hidden;
+	}
+	.gfill {
+		position: absolute;
+		inset: 0 auto 0 0;
+		border-radius: 999px;
+		transition:
+			width 0.5s ease,
+			background 0.3s ease;
+	}
+	.tick {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 1.5px;
+		background: rgba(22, 33, 43, 0.25);
+	}
+	.gnum {
+		flex: none;
+		width: 38px;
+		text-align: right;
+		font-size: 13px;
+		font-weight: 800;
+		font-variant-numeric: tabular-nums;
+		transition: color 0.3s ease;
+	}
+	.rrow {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		border-radius: 10px;
+		border: 1px solid #f1ede5;
+		background: #faf9f6;
+		padding: 6px 10px;
+		transition: all 0.25s ease;
+	}
+	.cond {
+		font-size: 11px;
+		font-weight: 700;
+		color: #5e6b76;
+	}
+	.ract {
+		border-radius: 999px;
+		padding: 2px 10px;
+		font-size: 10px;
+		font-weight: 700;
+		white-space: nowrap;
+	}
+	.ract.up {
+		background: #ecf6f0;
+		border: 1px solid #cde6d7;
+		color: #2f7d54;
+	}
+	.ract.down {
+		background: #eaf1fc;
+		border: 1px solid #cdddf6;
+		color: #2e6fe0;
+	}
+	.rrow.hot {
+		border-color: #eecac4;
+		background: #fbeae7;
+	}
+	.rrow.hot .cond {
+		color: #b8392c;
+	}
+	.rrow.hot .ract.up {
+		background: #3a9c64;
+		border-color: #3a9c64;
+		color: #fff;
+	}
+	.rrow.hotdown {
+		border-color: #cdddf6;
+		background: #eaf1fc;
+	}
+	.rrow.hotdown .cond {
+		color: #2e6fe0;
+	}
+	.rrow.hotdown .ract.down {
+		background: #2e6fe0;
+		border-color: #2e6fe0;
+		color: #fff;
+	}
+	.rfoot {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		min-height: 20px;
+	}
+	.chip {
+		border-radius: 999px;
+		border: 1px solid #e8e2d8;
+		background: #fff;
+		padding: 2px 10px;
+		font-size: 10px;
+		font-weight: 700;
+		color: #5e6b76;
+		font-variant-numeric: tabular-nums;
+		animation: bump 0.4s ease;
+	}
+	.chip.cost {
+		border-color: #cde6d7;
+		background: #ecf6f0;
+		color: #2f7d54;
+	}
+	.evt {
+		margin-left: auto;
+		border-radius: 999px;
+		background: #16212b;
+		color: #fff;
+		padding: 2px 10px;
+		font-size: 10px;
+		font-weight: 700;
+		animation: toast 1.4s ease forwards;
+	}
+	@keyframes toast {
+		0% {
+			transform: translateY(4px);
+			opacity: 0;
+		}
+		15%,
+		80% {
+			transform: translateY(0);
+			opacity: 1;
+		}
+		100% {
+			opacity: 0;
+		}
+	}
+	@keyframes bump {
+		0% {
+			transform: scale(1);
+		}
+		40% {
+			transform: scale(1.1);
+		}
+		100% {
+			transform: scale(1);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.dropper,
+		.hmachine.hot,
+		.rail,
+		.evt {
+			animation-duration: 0.01s;
+		}
+	}
+
+	@media (min-width: 768px) {
+		.prompt {
+			max-width: 480px;
+			font-size: 14px;
+		}
+		.cbtn {
+			width: 38px;
+			height: 38px;
+			font-size: 20px;
+		}
+		.cnum {
+			min-width: 110px;
+		}
+		.cnum b {
+			font-size: 19px;
+		}
+		.cnum span {
+			font-size: 10.5px;
+		}
+		.board {
+			max-width: 760px;
+			flex-direction: row;
+			align-items: stretch;
+		}
+		.scene {
+			flex: 1.25;
+			height: auto;
+			min-height: 212px;
+		}
+		.rules {
+			flex: 1;
+			gap: 11px;
+			padding: 16px 18px;
+		}
+		.crowd {
+			max-width: 120px;
+		}
+		.balmini {
+			font-size: 10px;
+			padding: 3px 10px;
+		}
+		.hmachine {
+			width: 40px;
+			height: 40px;
+		}
+		.hmachine svg {
+			width: 17px;
+			height: 17px;
+		}
+		.cputrack {
+			width: 36px;
+			height: 4px;
+		}
+		.rtitle {
+			font-size: 14px;
+		}
+		.glabel {
+			font-size: 13px;
+		}
+		.gnum {
+			font-size: 15px;
+			width: 44px;
+		}
+		.rrow {
+			padding: 8px 12px;
+		}
+		.cond {
+			font-size: 13px;
+		}
+		.ract {
+			font-size: 11.5px;
+			padding: 3px 12px;
+		}
+		.chip {
+			font-size: 11.5px;
+			padding: 3px 12px;
+		}
+		.evt {
+			font-size: 11.5px;
+			padding: 3px 12px;
 		}
 	}
 </style>

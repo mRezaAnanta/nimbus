@@ -1,23 +1,32 @@
 import type { LessonText } from '../types';
 
 export interface ReverseProxyText extends LessonText {
+	promptLabel: string;
+	youLabel: string;
 	proxyLabel: string;
 	proxySub: string;
 	publicAddr: string;
+	idleHint: string;
 	hiddenLabel: string;
-	send: string;
-	routes: { path: string; label: string; backend: string }[];
-	backends: Record<string, string>;
+	// kind drives what the phone renders: 'page' | 'json' | 'image'
+	routes: { path: string; label: string; backend: string; btn: string; kind: string }[];
 	routedNote: string; // template with {n}
 }
 
 export interface LoadBalancerText extends LessonText {
 	startSale: string;
-	addBalancer: string;
+	addServer: string;
 	killServer: string;
 	reset: string;
 	balancerLabel: string;
+	balancerNote: string;
 	serverLabel: string; // template with {n}
+	crowdOne: string;
+	crowdMany: string;
+	promptStart: string;
+	promptOverload: string;
+	promptBalanced: string;
+	promptDone: string;
 	statusUp: string;
 	statusOver: string;
 	statusDown: string;
@@ -28,41 +37,71 @@ export interface LoadBalancerText extends LessonText {
 }
 
 export interface ScalingText extends LessonText {
-	verticalBtn: string;
-	horizontalBtn: string;
-	reset: string;
-	verticalLabel: string;
-	horizontalLabel: string;
-	cpuLabel: string;
+	tabVertical: string;
+	tabHorizontal: string;
+	hintVertical: string;
+	hintHorizontal: string;
+	trafficLabel: string;
+	levelCalm: string;
+	levelBusy: string;
+	levelFlood: string;
+	statusOk: string;
+	statusOver: string;
+	promptRaise: string;
+	promptRescue: string;
+	promptDone: string;
+	specCpu: string;
+	specRam: string;
+	specDisk: string;
+	perMachineSpec: string;
+	capacity: string; // template with {n}
+	upgrade: string;
+	downgrade: string;
 	maxedOut: string;
-	addNote: string;
-	workloadLabel: string;
+	siteDown: string;
+	addMachine: string;
+	removeMachine: string;
+	balancerLabel: string;
+	machineLabel: string; // template with {n}
 	tradeoffVertical: string;
 	tradeoffHorizontal: string;
 }
 
 export interface AutoScalingText extends LessonText {
-	play: string;
-	running: string;
-	again: string;
-	serversLabel: string; // template with {n}
-	costLabel: string;
 	trafficLabel: string;
-	night: string;
-	midday: string;
-	payNote: string;
+	plusLabel: string;
+	minusLabel: string;
+	balancerLabel: string;
+	ruleTitle: string;
+	cpuLabel: string;
+	condUp: string;
+	actUp: string;
+	condDown: string;
+	actDown: string;
+	addEvent: string;
+	removeEvent: string;
+	costLabel: string; // template with {n}
+	promptRaise: string;
+	promptWatch: string;
+	promptDrop: string;
+	promptDone: string;
 }
 
 export interface CdnText extends LessonText {
 	cdnOn: string;
 	cdnOff: string;
-	send: string;
+	statusOff: string;
+	statusOn: string; // template with {n}
 	originLabel: string;
 	edgeLabel: string;
-	userLabel: string;
+	visitorsLabel: string;
+	servedOrigin: string;
+	servedEdge: string; // template with {city}
+	hitChip: string;
+	verdictFast: string;
+	verdictOk: string;
+	verdictSlow: string;
+	readoutPrompt: string;
 	ms: string;
-	farNote: string;
-	nearNote: string;
-	off: string;
-	on: string;
+	cities: Record<string, string>;
 }

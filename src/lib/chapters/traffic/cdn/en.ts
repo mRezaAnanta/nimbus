@@ -1,28 +1,75 @@
 import type { CdnText } from '../types';
 
 export const en: CdnText = {
-	title: 'Caching and CDN',
+	title: 'Caching and CDNs',
 	intro: [
-		'Remember latency from the first chapter? The farther the server, the longer data takes to arrive. A visitor in Jakarta fetching from a server in the United States has to wait out a long round trip.',
-		'Plenty of things do not actually change between requests, like images and logos that stay the same. Instead of fetching them from far away every time, keep a copy close to the visitor. Keeping a ready copy like this is called <b>caching</b>.',
-		'A <b>CDN</b> (Content Delivery Network) places those copies in many cities around the world. Visitors are served from the nearest point, not from the distant origin server.',
-		'Try sending a request with the CDN off first, and see how long the far origin takes. Then turn the CDN on and send again, now served from a nearby cache.'
+		'Remember the latency lesson from chapter one? The farther the server, the longer data takes to arrive. The nimbus.com origin server lives in one place, in America, while your visitors are everywhere.',
+		'Yet much of a site never changes, the same images, logo, and videos for everyone. Instead of everyone fetching them all the way from America, keep copies near the visitors. That is called <b>caching</b>. The first time a point is asked it fetches from the origin once, after that the copy sticks around there.',
+		'A <b>CDN</b> (Content Delivery Network) is a network of copy-holding points spread across hundreds of cities worldwide. Visitors are automatically served by the nearest point, you never pick cities one by one.',
+		'The spread depends on the provider. Cloudflare sits in over 300 cities, AWS CloudFront has over 600 points, others differ again. Big cities are almost always covered, remote areas get served by the nearest point a bit farther away. And it has a price, a CDN is a paid service, so your bill goes up.',
+		'Try clicking visitors on the map while the CDN is off, everyone travels all the way to the origin. Then switch the CDN on and click again, and watch the nearest green point deliver the copy itself.'
 	],
 	reactions: {
 		origin:
-			'The CDN is still off, so the request has to travel all the way to the origin server and back. That is hundreds of milliseconds. Turn the CDN on, then send again.',
+			'Look at that path, all the way from the origin server in America. Visitors near America are fine, but the rest of the world waits hundreds of milliseconds. Switch the CDN on.',
+		enabled:
+			'There, those green dots are the CDN network, spread across many cities at once. It does raise your bill, but what you buy is speed. Click a visitor and see which point delivers.',
 		cached:
-			'Much faster. The copy is already in a nearby cache, so there is no long trip to the origin. Just a dozen or so milliseconds. That is what a CDN is for.'
+			'See, the origin is not the sender anymore, the nearest green point is. From hundreds of milliseconds down to a dozen. That is what a CDN is paid for.'
 	},
-	cdnOn: 'Turn on CDN',
-	cdnOff: 'Turn off CDN',
-	send: 'Send request',
+	cdnOn: 'Turn the CDN on',
+	cdnOff: 'Turn the CDN off',
+	statusOff: 'CDN off',
+	statusOn: 'CDN on, {n} points',
 	originLabel: 'Origin server',
-	edgeLabel: 'Nearby cache',
-	userLabel: 'Visitor',
+	edgeLabel: 'CDN point',
+	visitorsLabel: 'Visitors',
+	servedOrigin: 'from the origin in America',
+	servedEdge: 'from the {city} point',
+	hitChip: 'Delivered by the nearest point',
+	verdictFast: 'Snappy',
+	verdictOk: 'Decent',
+	verdictSlow: 'Sluggish',
+	readoutPrompt: 'Click a visitor on the map',
 	ms: 'ms',
-	farNote: 'long trip to the origin',
-	nearNote: 'answered by the nearby cache',
-	off: 'CDN off',
-	on: 'CDN on'
+	cities: {
+		surabaya: 'Surabaya',
+		jayapura: 'Jayapura',
+		brisbane: 'Brisbane',
+		manchester: 'Manchester',
+		riodejaneiro: 'Rio de Janeiro',
+		boston: 'Boston',
+		jakarta: 'Jakarta',
+		sydney: 'Sydney',
+		london: 'London',
+		saopaulo: 'São Paulo',
+		newyork: 'New York',
+		seattle: 'Seattle',
+		losangeles: 'Los Angeles',
+		dallas: 'Dallas',
+		miami: 'Miami',
+		toronto: 'Toronto',
+		mexicocity: 'Mexico City',
+		bogota: 'Bogotá',
+		lima: 'Lima',
+		buenosaires: 'Buenos Aires',
+		santiago: 'Santiago',
+		paris: 'Paris',
+		frankfurt: 'Frankfurt',
+		madrid: 'Madrid',
+		milan: 'Milan',
+		stockholm: 'Stockholm',
+		warsaw: 'Warsaw',
+		johannesburg: 'Johannesburg',
+		lagos: 'Lagos',
+		nairobi: 'Nairobi',
+		dubai: 'Dubai',
+		mumbai: 'Mumbai',
+		singapore: 'Singapore',
+		bangkok: 'Bangkok',
+		hongkong: 'Hong Kong',
+		tokyo: 'Tokyo',
+		seoul: 'Seoul',
+		auckland: 'Auckland'
+	}
 };
