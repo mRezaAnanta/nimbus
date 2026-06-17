@@ -6,7 +6,7 @@ export const en: NetworkText = {
 		'Your cloud servers live inside a <b>VPC</b>, a private network of your own. Picture a fenced house where you decide the rooms and the doors.',
 		'The rooms inside are called <b>subnets</b>. The one facing the street is the <b>public subnet</b>, its door opens to the internet, and this is where the web server greets visitors.',
 		'The one at the back is the <b>private subnet</b>, with no door to the street at all. The database lives here, and only the web server may talk to it from inside.',
-		'See for yourself. Send a visitor to your site, then try poking the database straight from the internet.'
+		'The fenced house is standing, both rooms in place. Send a visitor through the front door, then poke at the database straight from the internet and see how far you get.'
 	],
 	reactions: {
 		web: 'The visitor came through the front door, was served by the web server in the public subnet, and the web server fetched the data from the database in the back. The guest never touched the database.',

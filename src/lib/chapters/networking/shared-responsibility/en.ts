@@ -6,7 +6,7 @@ export const en: SharedResponsibilityText = {
 		'One of the most common cloud misunderstandings, "it is in the cloud, so it must be secure". Not necessarily.',
 		'Security in the cloud is split in two, called <b>shared responsibility</b>. The cloud provider guards <b>the building</b>, the physical data center, the hardware, and the network.',
 		'You guard <b>what is inside</b>, your data, who gets access, the keys, and your own configuration. Most cloud breaches happen because of a customer misconfiguration, not because the provider got cracked.',
-		'See the split below, two sides, each with their share.'
+		'The split is ready. Unfold it and see who carries what.'
 	],
 	reactions: {
 		shown:

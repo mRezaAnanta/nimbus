@@ -7,7 +7,7 @@ export const en: RegionText = {
 		'The catch is, Argentina has no data center of its own yet. But there is one on the same continent, and that choice of location decides how fast the site feels for your users.',
 		'But why would distance change the speed? The key is <b>latency</b>. Think back to playing an online game, you usually have to choose a server first, Asia, America, or Europe. The farther the server, the longer the data takes to travel back and forth, and the game (or website) starts to feel laggy.',
 		'That round-trip time of data between your users and the server is what we call <b>latency</b>. It is measured in milliseconds (ms), and the smaller the number, the faster.',
-		'Now it is your turn. Place your server in a few cities and watch the <b>latency</b>. The closer to Argentina, the smaller it should be.'
+		'The map is in your hands. Place your server in a few cities and compare the <b>latency</b>. The closer to Argentina, the smaller it should get.'
 	],
 	reactions: {
 		near: 'See, <b>São Paulo</b> is not in Argentina, but it is on the same continent, so it has the lowest latency of the options.',
@@ -21,6 +21,7 @@ export const en: RegionText = {
 	globeLabel: 'Globe',
 	ms: 'ms',
 	verdicts: { instant: 'Instant', fast: 'Fast', ok: 'Okay', slow: 'A bit slow', laggy: 'Laggy' },
+	compare: { near: 'Near', far: 'Far', hint: 'Test one near city and one far city to feel the difference' },
 	cities: {
 		'sa-east-1': 'São Paulo',
 		'us-east-1': 'Virginia, US',

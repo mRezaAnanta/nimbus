@@ -6,7 +6,7 @@ export const id: ReverseProxyText = {
 		'Situs jarang cuma satu server. Biasanya ada satu server buat halaman, satu lagi buat data, dan satu lagi buat gambar. Tiga server berbeda, ribet kalau pengunjung harus hafal semuanya.',
 		'Makanya kita pasang satu penerima di depan, namanya <b>reverse proxy</b>. Semua permintaan masuk lewat dia, lalu dia yang meneruskan ke server yang tepat di belakang.',
 		'Anggap dia resepsionis. Tiap tamu disambut di meja depan, lalu diantar ke ruangan yang benar. Tamu nggak pernah lihat kantor di belakang, dan cuma kenal satu alamat, yaitu <b>nimbus.com</b>.',
-		'Coba sendiri. Minta halaman, data, atau gambar lewat <b>nimbus.com</b>, lalu lihat proxy mengantar tiap permintaan ke server yang tepat sementara alamat asli server tetap tersembunyi.'
+		'Resepsionisnya sudah duduk manis di balik <b>nimbus.com</b>. Minta halaman, data, atau gambar, dan lihat tiap permintaan diantar ke server yang tepat sementara alamat aslinya tetap tersembunyi.'
 	],
 	reactions: {
 		web: 'Permintaan ke <b>/</b> diantar ke server halaman, dan kamu dapat halaman webnya. Satu alamat di depan, sisanya proxy yang urus. Coba jalur lain.',

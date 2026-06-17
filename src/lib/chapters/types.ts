@@ -66,6 +66,7 @@ export interface RegionText extends LessonText {
 	globeLabel: string;
 	ms: string;
 	verdicts: { instant: string; fast: string; ok: string; slow: string; laggy: string };
+	compare: { near: string; far: string; hint: string };
 	cities: Record<string, string>;
 }
 
@@ -77,6 +78,7 @@ export interface CableText extends LessonText {
 	cablesNote: string;
 	routeNote: string;
 	credit: string;
+	compare: { near: string; far: string; hint: string };
 	dests: Record<string, string>;
 }
 

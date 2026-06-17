@@ -6,7 +6,7 @@ export const id: DnsText = {
 		'Setiap server di internet punya <b>alamat IP</b>, deretan angka yang menunjukkan lokasinya, mirip nomor rumah. Browser butuh angka ini untuk menyambung.',
 		'Masalahnya, manusia susah menghafal angka. Jadi kita pakai nama yang gampang diingat seperti nimbus.com. Tapi komputer tetap butuh angkanya.',
 		'Di sinilah <b>DNS</b> bekerja. Dia buku telepon internet. Kamu sebut sebuah nama, dia balas dengan alamat IP-nya, dan barulah browser bisa menyambung ke server yang benar.',
-		'Coba sendiri. Pilih sebuah nama di bawah, lalu lihat DNS menemukan angkanya dan HP-mu tersambung.'
+		'Buku teleponnya sudah terbuka. Sebut sebuah nama dan ikuti DNS menemukan angkanya sampai HP-mu tersambung.'
 	],
 	reactions: {
 		resolved:

@@ -7,12 +7,12 @@ export const id: ContainerText = {
 		'Makanya semua kebutuhannya dibungkus jadi satu paket bernama <b>container</b>. Lihat susunannya. Paling bawah mesinnya, di atasnya <b>Docker</b> sebagai alas yang menjalankan container, dan di atasnya container container berdiri rapi, masing masing membawa kebutuhannya sendiri.',
 		'<b>Docker</b> itu alat container paling umum, hampir semua orang mulai dari sini. Kalau mesinnya lebih dari satu, ada <b>Docker Swarm</b> yang membuat beberapa mesin menjalankan container bersama sama.',
 		'Lalu ada <b>Kubernetes</b>, dan ini dunia yang berbeda. Ada otak bernama <b>control plane</b> yang mengatur banyak mesin berisi ratusan container, lengkap dengan auto scaling dan failover otomatisnya sendiri. Spotify dan Gojek hidup di dunia ini. Dan catat, Docker tidak wajib digandeng Kubernetes. Banyak yang mengira mereka harus sepaket, padahal Docker bisa berdiri sendiri, dan proyek kecilmu cukup dengan Docker saja.',
-		'Sekarang giliranmu. Bungkus aplikasimu jadi image, lalu jalankan salinan yang sama persis di tiga tempat berbeda.'
+		'Sekarang giliran aplikasimu yang dibungkus. Jadikan dia sebuah image, lalu jalankan salinan yang sama persis di tiga tempat berbeda.'
 	],
 	reactions: {
 		built:
 			'Image-nya jadi. Aplikasi, library, dan pengaturannya terkunci rapi dalam satu paket yang tidak bisa kelupaan apa apa.',
-		ran: 'Lihat, tiga tempat berbeda menjalankan container yang sama persis, tanpa drama "di laptopku jalan". Itulah kenapa container dipakai di mana mana.'
+		ran: 'Dan jalan semuanya. Tiga tempat berbeda, container yang sama persis, tanpa drama "di laptopku jalan". Itulah kenapa container dipakai di mana mana.'
 	},
 	buildLabel: 'Bungkus jadi image',
 	runLabel: 'Jalankan di 3 tempat',

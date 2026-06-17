@@ -6,7 +6,7 @@ export const en: StorageTypesText = {
 		'Time to store data. The cloud offers three shapes of storage, and each works differently and shines at different things.',
 		'<b>Object storage</b> is like a giant bucket. Files are tossed in whole, every file gets a key to fetch it back later, and the bucket never seems to fill up.',
 		'<b>Block storage</b> is a raw disk attached to a single machine, sliced into small blocks that read and write blazingly fast. <b>File storage</b> is a shared folder, one filing cabinet opened by many machines at once.',
-		'Open each one below. Watch how it stores things, and learn when you would reach for it.'
+		'All three are lined up waiting to be opened. Peek at how each one stores things, and note when you would reach for it.'
 	],
 	reactions: {
 		object:

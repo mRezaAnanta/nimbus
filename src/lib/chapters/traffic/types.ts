@@ -102,6 +102,7 @@ export interface CdnText extends LessonText {
 	verdictOk: string;
 	verdictSlow: string;
 	readoutPrompt: string;
+	compare: { off: string; on: string; hint: string };
 	ms: string;
 	cities: Record<string, string>;
 }

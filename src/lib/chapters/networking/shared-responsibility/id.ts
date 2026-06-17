@@ -6,7 +6,7 @@ export const id: SharedResponsibilityText = {
 		'Satu kesalahpahaman paling umum soal cloud, "kan sudah di cloud, berarti aman dong". Belum tentu.',
 		'Keamanan di cloud itu dibagi dua, namanya <b>shared responsibility</b>. Penyedia cloud menjaga <b>gedungnya</b>, fisik data center, hardware, dan jaringannya.',
 		'Sedangkan kamu menjaga <b>isimu</b>, data, siapa yang boleh akses, kunci, dan pengaturanmu sendiri. Sebagian besar kebobolan di cloud terjadi karena salah atur di sisi pelanggan, bukan karena penyedianya jebol.',
-		'Lihat pembagiannya di bawah, dua sisi dengan jatahnya masing masing.'
+		'Pembagiannya sudah disiapkan. Bentangkan, dan lihat siapa kebagian apa.'
 	],
 	reactions: {
 		shown:

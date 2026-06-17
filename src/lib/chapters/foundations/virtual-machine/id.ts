@@ -6,11 +6,11 @@ export const id: VirtualMachineText = {
 		'Lihat laptop ini. Di dalamnya cuma ada satu mesin, CPU, RAM, dan disk. Dan biasanya satu mesin cuma menjalankan satu sistem untuk satu pemakai.',
 		'Padahal mesin yang kuat sering banget nganggur, tenaganya kepakai sedikit doang. Triknya, satu mesin bisa dibelah jadi beberapa komputer virtual. Tiap potongan namanya <b>virtual machine</b> (VM).',
 		'Tiap VM punya sistem operasi sendiri dan merasa seperti komputer utuh, padahal semuanya berbagi satu hardware. Mirip gedung apartemen, satu bangunan, banyak unit, tiap penghuni punya pintu sendiri. Simpan baik baik konsep ini, sebentar lagi dia jadi kunci.',
-		'Coba sendiri. Belah layarnya, tambah VM satu per satu sampai penuh, dan perhatikan jatah CPU dan RAM ikut dibagi.'
+		'Mesinnya sudah menunggu, 8 vCPU dan 16 GB RAM yang banyak nganggurnya. Tambah VM satu per satu sampai penuh, dan perhatikan jatah CPU dan RAM ikut terbagi.'
 	],
 	reactions: {
 		first:
-			'Lihat, VM 1 langsung dapat jatahnya sendiri, 2 vCPU dan 4 GB, lengkap dengan sistem operasinya sendiri. Dia merasa jadi komputer utuh, padahal cuma sepotong.',
+			'Satu sayatan, dan VM 1 langsung dapat jatahnya sendiri, 2 vCPU dan 4 GB, lengkap dengan sistem operasinya sendiri. Dia merasa jadi komputer utuh, padahal cuma sepotong.',
 		more: 'Tambah terus. Tiap VM dapat potongan tenaga yang sama dan saling tidak bisa mengintip, persis unit apartemen yang bertetangga.',
 		full: 'Penuh. Satu mesin fisik sekarang berisi 4 komputer yang berdiri sendiri sendiri, dan tenaga yang tadinya nganggur kepakai semua. Trik inilah yang dipakai di mana mana.'
 	},

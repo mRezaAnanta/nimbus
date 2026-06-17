@@ -7,12 +7,12 @@ export const en: ContainerText = {
 		'So everything it needs gets wrapped into one package called a <b>container</b>. Look at the stack. The machine sits at the bottom, <b>Docker</b> sits on it as the base that runs containers, and on top the containers stand in a row, each carrying its own needs.',
 		'<b>Docker</b> is the most common container tool, nearly everyone starts here. When there is more than one machine, <b>Docker Swarm</b> makes a few machines run containers together.',
 		'Then there is <b>Kubernetes</b>, and that is a different world. A brain called the <b>control plane</b> manages many machines holding hundreds of containers, with its own automatic scaling and failover. Spotify and Gojek live in this world. And note this, Docker does not have to come with Kubernetes. Many people assume they are a bundle, yet Docker stands perfectly well on its own, and your small project does fine with plain Docker.',
-		'Your turn now. Pack your app into an image, then run the exact same copy in three different places.'
+		'Now it is your app’s turn to be packed. Turn it into an image, then run the exact same copy in three different places.'
 	],
 	reactions: {
 		built:
 			'The image is built. Your app, libraries, and settings are locked into one package that cannot forget anything.',
-		ran: 'See, three different places running the exact same container, no "works on my laptop" drama. That is why containers are everywhere.'
+		ran: 'And they all run. Three different places, the exact same container, no "works on my laptop" drama. That is why containers are everywhere.'
 	},
 	buildLabel: 'Pack into an image',
 	runLabel: 'Run in 3 places',

@@ -6,7 +6,7 @@ export const id: EncryptionText = {
 		'Data yang jalan lewat internet itu melewati banyak tangan, router rumah, ISP, kabel antar negara. Di sepanjang jalan itu bisa saja ada yang menguping.',
 		'<b>Enkripsi</b> mengacak pesanmu jadi huruf acak yang cuma bisa dibaca pemegang <b>kunci</b>. Penguping tetap bisa melihat lalu lintasnya, tapi isinya cuma acak acakan tak berarti.',
 		'Gembok kecil di browser artinya ini, sambunganmu memakai <b>HTTPS</b>, semua yang lewat dienkripsi. Data yang disimpan di disk pun bisa diacak juga, namanya enkripsi at rest.',
-		'Coba kirim PIN kartumu dua kali, sekali tanpa kunci, sekali terkunci, dan perhatikan si penyadap di tengah.'
+		'Di tengah jalur ini ada penyadap yang sedang menunggu. Kirim PIN kartumu dua kali, sekali tanpa kunci dan sekali terkunci, lalu bandingkan apa yang berhasil dia baca.'
 	],
 	reactions: {
 		plain:

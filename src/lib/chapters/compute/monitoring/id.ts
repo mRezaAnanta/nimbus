@@ -6,7 +6,7 @@ export const id: MonitoringText = {
 		'Pikirkan dashboard mobil. Ada speedometer, suhu mesin, sisa bensin. Tanpa itu kamu menyetir buta dan baru sadar mesin overheat setelah ngebul.',
 		'Server juga begitu. <b>Metrik</b> adalah angka kesehatannya, pemakaian CPU, jumlah trafik, jumlah error, dan <b>dashboard</b> menampilkan semuanya dalam satu layar.',
 		'Tapi kamu tidak mungkin melototin dashboard seharian. Makanya ada <b>alarm</b>. Kamu pasang batas, dan begitu terlewati, kamulah yang dicari duluan, jauh sebelum pengunjung merasa ada yang aneh.',
-		'Coba bikin trafik melonjak, lalu lihat siapa yang berteriak duluan.'
+		'Dashboard-nya sudah menyala dan ketiga angkanya masih hijau. Bikin trafiknya melonjak, dan tebak siapa yang berteriak duluan.'
 	],
 	reactions: {
 		alarm:

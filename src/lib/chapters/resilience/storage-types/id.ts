@@ -6,7 +6,7 @@ export const id: StorageTypesText = {
 		'Sekarang kita simpan data. Di cloud ada tiga bentuk penyimpanan, dan masing masing punya cara kerja serta jagoannya sendiri.',
 		'<b>Object storage</b> itu seperti ember raksasa. File dilempar masuk utuh utuh, tiap file dapat sebuah kunci untuk mengambilnya lagi, dan embernya seolah tidak pernah penuh.',
 		'<b>Block storage</b> itu disk mentah yang ditempel ke satu mesin, dipotong potong jadi blok kecil yang cepat banget dibaca tulis. <b>File storage</b> itu folder bersama, satu lemari berkas yang dibuka banyak mesin sekaligus.',
-		'Coba buka satu satu di bawah. Lihat cara masing masing menyimpan, dan kapan kamu memakainya.'
+		'Ketiganya sudah berjajar menunggu dibuka. Intip satu satu cara mereka menyimpan, dan ingat ingat kapan kamu bakal memakainya.'
 	],
 	reactions: {
 		object:

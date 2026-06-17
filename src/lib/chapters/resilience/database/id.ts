@@ -6,12 +6,12 @@ export const id: DatabaseText = {
 		'Data yang sering dipakai biasanya tinggal di sebuah database. Ada dua keluarga besar, dan keduanya menyimpan data dengan cara yang sangat berbeda.',
 		'<b>SQL</b> menata data dalam tabel berisi baris dan kolom. Aturannya ketat, semua baris wajib mengikuti kolom yang sama, dan antar tabel bisa saling terhubung. Ketatnya itulah yang bikin dia bisa menjamin transaksi selalu konsisten.',
 		'<b>NoSQL</b> menyimpan dokumen yang bentuknya bebas. Satu dokumen boleh punya isian yang beda dari tetangganya, dan koleksinya gampang melar ke banyak mesin saat datanya membludak.',
-		'Coba tambah isi di keduanya. Rasakan bedanya tabel yang ketat dan dokumen yang lentur, lalu lihat kapan masing masing dipakai.'
+		'Dua duanya sudah terisi beberapa data. Tambahkan sendiri baris dan dokumen barunya, dan rasakan bedanya tabel yang ketat dengan dokumen yang lentur.'
 	],
 	reactions: {
 		sql: 'Lihat, baris baru wajib ngikut kolom yang sudah ada, id, nama, saldo, tidak boleh kurang atau nambah sendiri. Ketat begini yang bikin uang tidak pernah hilang di tengah jalan.',
 		nosql:
-			'Lihat, dokumen baru bentuknya beda sendiri pun tetap diterima. Kebebasan ini yang bikin NoSQL enak buat data yang beraneka ragam dan gampang dilebarkan ke banyak mesin.'
+			'Yang ini jauh lebih santai. Dokumen baru bentuknya beda sendiri pun tetap diterima. Kebebasan ini yang bikin NoSQL enak buat data yang beraneka ragam dan gampang dilebarkan ke banyak mesin.'
 	},
 	sqlTitle: 'SQL',
 	sqlSub: 'tabel ketat yang saling terhubung',

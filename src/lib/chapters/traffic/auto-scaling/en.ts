@@ -6,7 +6,7 @@ export const en: AutoScalingText = {
 		'In the last lesson you were the one pressing Add when the servers drowned. The problem is that traffic can spike at 2 am while you are asleep. You cannot stay up all night babysitting servers.',
 		'<b>Auto scaling</b> is a robot that stays up for you. It watches one number, usually <b>CPU</b>, how hard your machines are thinking. It can also watch RAM or the number of requests.',
 		'You just hand it a rule. Say if CPU goes past 70 percent, add one machine. If it drops below 30 percent, remove one. New machines automatically get their share of traffic from the load balancer you met earlier.',
-		'Watch it. The traffic below rises and falls on its own, just like real visitors. You can also nudge it with the plus and minus buttons, then watch who does the work.'
+		'The robot is already on watch. The traffic is alive, rising and falling on its own like real visitors, and you can nudge it with plus and minus. Just watch who does the work.'
 	],
 	reactions: {
 		'scaled-up':
