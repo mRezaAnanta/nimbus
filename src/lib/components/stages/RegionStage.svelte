@@ -382,7 +382,7 @@
 				<div class="pointer-events-none absolute top-2 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1 md:hidden">
 					{@render compareChips()}
 					{#if !selected}
-						<span class="border-line text-muted rounded-full border bg-white/85 px-2.5 py-0.5 text-[10px] font-medium backdrop-blur">{tx.compare.hint}</span>
+						<span class="border-line text-muted max-w-[15rem] rounded-2xl border bg-white/85 px-3 py-1 text-center text-[10px] font-medium leading-snug backdrop-blur">{tx.compare.hint}</span>
 					{/if}
 				</div>
 			{/if}
