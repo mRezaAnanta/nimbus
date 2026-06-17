@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { lang, t } from '$lib/i18n';
 	import { getChapter } from '$lib/chapters';
+	import { progress } from '$lib/progress.svelte';
 	import SpeechBubble from '$lib/components/SpeechBubble.svelte';
 	import type { PageData } from './$types';
 
@@ -69,6 +70,9 @@
 			beat += 1;
 			return;
 		}
+		// finishing the last beat completes the lesson (Next is locked until the step is done),
+		// which unlocks the next lesson in the menu and persists to localStorage
+		progress.markDone(data.chapterId, data.lessonId);
 		shown = false;
 		locked = false;
 		if (isLastLesson) goto(`/${chapter.id}/done`);
