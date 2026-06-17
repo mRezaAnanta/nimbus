@@ -10,7 +10,7 @@ export const en: RegionText = {
 		'Pick a provider above first, then place your server in a few of its cities and compare the <b>latency</b>. The closer to Argentina, the smaller it should get.'
 	],
 	reactions: {
-		near: 'See, <b>São Paulo</b> is not in Argentina, but it is on the same continent, so it has the lowest latency of the options.',
+		near: 'See, this region is not in Argentina, but it sits on the <b>same continent</b>, so it has the lowest latency of the options.',
 		mid: 'Fairly far, the latency climbs. There is still a region closer to your users.',
 		far: 'Way too far. The data has to cross <b>half the world</b>, so it lags. That is exactly why picking the nearest region matters.'
 	},
