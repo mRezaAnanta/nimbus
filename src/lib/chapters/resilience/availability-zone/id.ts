@@ -8,7 +8,7 @@ export const id: AZText = {
 		'Hardware juga sering rusak, satu disk atau server bisa mati kapan saja, tapi itu biasanya sudah ditangani redundansi di dalam data center.',
 		'Yang lebih bahaya kalau satu gedung data center utuh tumbang. Pertanyaannya, gimana caranya website tetap jalan kalau itu terjadi?',
 		'Jawabannya, satu <b>region</b> itu bukan satu gedung. Di dalamnya ada beberapa <b>Availability Zone</b> (AZ), yaitu data center terpisah yang letaknya berjauhan dan punya listrik serta jaringan sendiri. Jadi kalau satu AZ kena masalah, yang lain tetap jalan.',
-		'Coba sendiri. Klik sebuah region untuk masuk ke dalamnya, sebar server-mu ke beberapa AZ, lalu picu gangguan.'
+		'Petanya sudah terbuka dengan dua region. Masuk ke salah satunya, sebar server-mu ke beberapa AZ, lalu picu gangguannya sendiri.'
 	],
 	reactions: {
 		virginia: 'Ini region Virginia. Titik-titik itu Availability Zone-nya, masing-masing satu data center yang terpisah.',

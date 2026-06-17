@@ -7,7 +7,7 @@ export const en: CdnText = {
 		'Yet much of a site never changes, the same images, logo, and videos for everyone. Instead of everyone fetching them all the way from America, keep copies near the visitors. That is called <b>caching</b>. The first time a point is asked it fetches from the origin once, after that the copy sticks around there.',
 		'A <b>CDN</b> (Content Delivery Network) is a network of copy-holding points spread across hundreds of cities worldwide. Visitors are automatically served by the nearest point, you never pick cities one by one.',
 		'The spread depends on the provider. Cloudflare sits in over 300 cities, AWS CloudFront has over 600 points, others differ again. Big cities are almost always covered, remote areas get served by the nearest point a bit farther away. And it has a price, a CDN is a paid service, so your bill goes up.',
-		'Try clicking visitors on the map while the CDN is off, everyone travels all the way to the origin. Then switch the CDN on and click again, and watch the nearest green point deliver the copy itself.'
+		'On this map the CDN is still off, so every visitor travels all the way to the origin. Click a few people and feel the lag, then switch the CDN on, click again, and watch the nearest green point deliver the copy.'
 	],
 	reactions: {
 		origin:
@@ -31,6 +31,7 @@ export const en: CdnText = {
 	verdictOk: 'Decent',
 	verdictSlow: 'Sluggish',
 	readoutPrompt: 'Click a visitor on the map',
+	compare: { off: 'Without CDN', on: 'With CDN', hint: 'Try a visitor without the CDN, then turn it on' },
 	ms: 'ms',
 	cities: {
 		surabaya: 'Surabaya',

@@ -6,7 +6,7 @@ export const id: AutoScalingText = {
 		'Di pelajaran tadi kamu sendiri yang menekan Tambah pas server kewalahan. Masalahnya, trafik bisa melonjak jam 2 pagi pas kamu tidur. Masa harus begadang buat jagain server.',
 		'<b>Auto scaling</b> itu robot yang begadang untukmu. Dia mantau satu angka, biasanya <b>CPU</b>, seberapa keras mesinmu lagi mikir. Bisa juga RAM atau jumlah request.',
 		'Kamu tinggal kasih dia aturan. Misal kalau CPU lewat 70 persen, tambah satu mesin. Kalau turun di bawah 30 persen, kurangi satu. Mesin baru otomatis kebagian beban dari load balancer yang kemarin.',
-		'Coba lihat. Trafik di bawah ini naik turun sendiri, persis pengunjung asli. Kamu juga boleh ikut campur pakai tombol plus dan minus, lalu perhatikan siapa yang kerja.'
+		'Robotnya sudah mulai jaga. Trafiknya hidup, naik turun sendiri persis pengunjung asli, dan kamu boleh ikut campur pakai plus dan minus. Tinggal perhatikan siapa yang kerja.'
 	],
 	reactions: {
 		'scaled-up':

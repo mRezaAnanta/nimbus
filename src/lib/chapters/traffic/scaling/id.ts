@@ -6,7 +6,7 @@ export const id: ScalingText = {
 		'Trafikmu makin naik dan satu server biasa mulai keteteran. Ada dua cara menambah tenaga, dan keduanya beda gaya.',
 		'Cara pertama namanya <b>scaling vertikal</b>. Kamu bikin satu mesin jadi lebih kuat, tambah CPU, RAM, dan disk-nya. Gampang dinaikin, tapi ada batas atasnya, dan kalau mau diturunkan lagi malah ribet karena mesin harus dimatikan dulu.',
 		'Cara kedua namanya <b>scaling horizontal</b>. Daripada satu mesin gede, kamu pakai banyak mesin identik dan bagi bebannya lewat load balancer. Nambah atau ngurangin gampang, dan kalau satu mati yang lain tetap jalan.',
-		'Coba mainkan. Naikkan jumlah pengunjungnya sampai dua sisi keteteran, lalu selamatkan sisi kiri lewat Upgrade dan sisi kanan lewat Tambah.'
+		'Dua sisi ini mulai dari mesin yang sama persis. Naikkan pengunjungnya sampai keduanya keteteran, lalu selamatkan sisi kiri lewat Upgrade dan sisi kanan lewat Tambah.'
 	],
 	reactions: {
 		surge:

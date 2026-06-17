@@ -440,8 +440,8 @@
 		</div>
 	</div>
 
-	<!-- Phone + readout -->
-	<div class="flex shrink-0 flex-row items-center justify-center gap-4 md:w-[200px] md:flex-col md:justify-center">
+	<!-- Phone + readout, desktop only. Small screens hide it so the map gets the whole space. -->
+	<div class="hidden shrink-0 items-center justify-center gap-4 md:flex md:w-[200px] md:flex-col md:justify-center">
 		<Browser phase={browser} />
 		<div class="border-line bg-card w-[150px] rounded-2xl border p-4 text-center md:w-full">
 			{#if inRegion && cfg}

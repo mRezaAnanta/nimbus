@@ -6,11 +6,11 @@ export const id: FailoverText = {
 		'Sebar ke beberapa AZ aman kalau cuma satu gedung yang tumbang. Tapi kalau satu region utuh yang kena, seperti waktu pusat data di Timur Tengah dihantam, kamu butuh rencana yang lebih besar.',
 		'Caranya, siapkan <b>region cadangan</b> di tempat lain. Region utama yang melayani, cadangan menunggu siaga. Begitu yang utama tumbang, trafik otomatis pindah ke cadangan. Perpindahan otomatis ini namanya <b>failover</b>.',
 		'Mirip kantor cabang yang langsung ambil alih kalau kantor pusat tutup. Selalu ada pengganti yang siap.',
-		'Coba sendiri. Sekarang cuma ada region utama. Matikan dia, lalu lihat yang terjadi.'
+		'Saat ini baru ada region utamanya saja, tanpa cadangan. Matikan dia, rasakan akibatnya, lalu siapkan penggantinya.'
 	],
 	reactions: {
 		spof: 'Nah, tanpa region cadangan, website-mu langsung mati begitu region utama tumbang. Klik region lain untuk jadikan cadangan, lalu matikan utamanya lagi.',
-		failover: 'Lihat, begitu region utama mati, trafik otomatis pindah ke region cadangan dan website-mu tetap jalan. Itulah failover.'
+		failover: 'Mulus banget. Begitu region utama mati, trafik otomatis pindah ke region cadangan dan website-mu tetap jalan. Itulah failover.'
 	},
 	primaryLabel: 'Utama',
 	standbyLabel: 'Cadangan',

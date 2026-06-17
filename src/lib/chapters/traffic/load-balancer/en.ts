@@ -7,7 +7,7 @@ export const en: LoadBalancerText = {
 		'Picture running a <b>flash sale</b>. At noon sharp, thousands of people open your site at once. One server fills up instantly, the site slows down, then goes down.',
 		'The fix is to put a <b>load balancer</b> in front of several identical servers. Its job is to split requests evenly across them, so no single server gets flooded on its own.',
 		'As a bonus, if one server dies the balancer stops sending to it and reroutes traffic to the ones still alive. Visitors never notice.',
-		'Try it. Start the flash sale with a single server first and watch it fall. Then add a load balancer and a few servers, and see the load spread out evenly.'
+		'The flash sale is ready to go, and a single server is on duty. Let it fall first, then bring in a load balancer with a few servers and watch the load spread out evenly.'
 	],
 	reactions: {
 		overload:

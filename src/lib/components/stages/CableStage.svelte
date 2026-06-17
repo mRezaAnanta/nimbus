@@ -21,6 +21,9 @@
 	const cableD = cableLines
 		.map((line) => 'M' + line.map(([lon, lat]) => `${fx(lon).toFixed(1)} ${fy(lat).toFixed(1)}`).join('L'))
 		.join(' ');
+	// Same cables as a geometry, projected live onto the globe (drawn only when the globe is still).
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const CABLE_GEO = { type: 'MultiLineString', coordinates: cableLines } as any;
 	// All landing stations as one path of round-capped zero-length dots.
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const landingD = (landingData as any as number[][])
@@ -51,6 +54,8 @@
 	import { cubicInOut } from 'svelte/easing';
 	import Browser from '../Browser.svelte';
 	import WorldMap from '../WorldMap.svelte';
+	import Globe from '../Globe.svelte';
+	import type { GlobeView } from '../Globe.svelte';
 	import type { LessonText, CableText } from '$lib/chapters/types';
 
 	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
@@ -66,6 +71,7 @@
 		{ code: 'eu-central-1', lon: 8.68, lat: 50.1, kind: 'far', dur: 3200 },
 		{ code: 'ap-northeast-1', lon: 139.7, lat: 35.7, kind: 'far', dur: 4500 }
 	];
+	const kindByCode = new Map(dests.map((d) => [d.code, d.kind]));
 
 	let selected = $state<Dest | null>(null);
 	let tried = $state<string[]>([]);
@@ -73,6 +79,11 @@
 	let sending = $state(false);
 	let browser = $state<'idle' | 'loading' | 'loaded'>('idle');
 	const t = new Tween(0, { duration: 1700, easing: cubicInOut });
+
+	// the learner has to send to a near destination AND a far one before moving on
+	const nearTested = $derived(tried.some((c) => kindByCode.get(c) === 'near'));
+	const farTested = $derived(tried.some((c) => kindByCode.get(c) === 'far'));
+	const compareDone = $derived(nearTested && farTested);
 
 	const route = $derived(selected ? (routeGeom[selected.code] ?? null) : null);
 	const routePath = $derived(route ? 'M' + route.flat.map((p) => `${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join('L') : '');
@@ -89,6 +100,22 @@
 		return [a[0] + (b[0] - a[0]) * lt, a[1] + (b[1] - a[1]) * lt];
 	}
 	const packet = $derived(route ? pointAt(route, t.current) : null);
+	// same idea in lon/lat, so the packet can ride the route on the globe too
+	function lonLatAt(code: string, frac: number): [number, number] | null {
+		const g = routeGeom[code];
+		const pts = ROUTES[code];
+		if (!g || !pts) return null;
+		const target = frac * g.total;
+		let i = 1;
+		while (i < g.cum.length && g.cum[i] < target) i++;
+		if (i >= pts.length) return pts[pts.length - 1];
+		const seg = g.cum[i] - g.cum[i - 1] || 1;
+		const lt = (target - g.cum[i - 1]) / seg;
+		const a = pts[i - 1];
+		const b = pts[i];
+		return [a[0] + (b[0] - a[0]) * lt, a[1] + (b[1] - a[1]) * lt];
+	}
+	const packetLL = $derived(selected ? lonLatAt(selected.code, t.current) : null);
 
 	const phase = $derived<'idle' | 'leaving' | 'undersea' | 'arrived'>(
 		!selected ? 'idle' : !sending ? 'arrived' : t.current < 0.12 ? 'leaving' : 'undersea'
@@ -108,7 +135,10 @@
 		browser = 'loaded';
 		onstate?.(d.kind);
 		if (!tried.includes(d.code)) tried = [...tried, d.code];
-		if (tried.length >= 1 && !fired) {
+		// unlock only after sending to both a near and a far destination
+		const near = tried.some((c) => kindByCode.get(c) === 'near');
+		const far = tried.some((c) => kindByCode.get(c) === 'far');
+		if (near && far && !fired) {
 			fired = true;
 			oncomplete?.();
 		}
@@ -117,7 +147,85 @@
 	onDestroy(() => t.set(t.current, { duration: 0 }));
 </script>
 
-<div class="flex h-full w-full flex-col gap-4 md:flex-row">
+{#snippet cableOverlay(v: GlobeView)}
+	<!-- the real undersea cables, the highlight of this lesson; skipped mid-spin to stay smooth -->
+	{#if !v.dragging}
+		{@const cd = v.path(CABLE_GEO)}
+		{#if cd}<path d={cd} fill="none" stroke="#3f7fd6" stroke-width="0.45" stroke-linecap="round" stroke-linejoin="round" opacity="0.4" />{/if}
+	{/if}
+
+	{#if selected}
+		{@const d = v.path({ type: 'LineString', coordinates: ROUTES[selected.code] ?? [] })}
+		{#if d}<path {d} fill="none" stroke="#2e6fe0" stroke-width="2.5" stroke-linecap="round" opacity="0.9" />{/if}
+	{/if}
+	{#if packetLL}
+		{@const pp = v.project(packetLL[0], packetLL[1])}
+		{#if pp}
+			<circle cx={pp[0]} cy={pp[1]} r="9" fill="#2e6fe0" opacity="0.2" />
+			<circle cx={pp[0]} cy={pp[1]} r="4.5" fill="#2e6fe0" />
+		{/if}
+	{/if}
+	{#each dests as d (d.code)}
+		{@const p = v.project(d.lon, d.lat)}
+		{#if p}
+			<g class="pin" role="button" tabindex="0" aria-label={tx.dests[d.code]} onclick={v.tap(() => send(d))} onkeydown={(e) => e.key === 'Enter' && send(d)}>
+				<circle cx={p[0]} cy={p[1]} r="13" fill="transparent" />
+				<circle cx={p[0]} cy={p[1]} r="6" fill={selected?.code === d.code ? '#2e6fe0' : '#fff'} stroke="#2e6fe0" stroke-width="2.5" />
+				<text x={p[0]} y={p[1] - 11} text-anchor="middle" fill="#16212b" font-size="12.5" font-weight="600">{tx.dests[d.code]}</text>
+			</g>
+		{/if}
+	{/each}
+	{@const upt = v.project(users.lon, users.lat)}
+	{#if upt}
+		<circle cx={upt[0]} cy={upt[1]} r="12" fill="#dd9e36" opacity="0.25" class="pulse" />
+		<circle cx={upt[0]} cy={upt[1]} r="6.5" fill="#16212b" />
+		<text x={upt[0]} y={upt[1] + 26} text-anchor="middle" fill="#16212b" font-size="13" font-weight="700">{tx.users}</text>
+	{/if}
+{/snippet}
+
+<!-- progress: the learner must send to a near and a far destination before moving on -->
+{#snippet stepChip(label: string, done: boolean)}
+	<span
+		class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold backdrop-blur transition-colors {done
+			? 'border-transparent bg-grass-soft text-grass'
+			: 'border-line bg-white/85 text-faint'}"
+	>
+		{#if done}
+			<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>
+		{:else}
+			<span class="h-1.5 w-1.5 rounded-full border border-current opacity-60"></span>
+		{/if}
+		{label}
+	</span>
+{/snippet}
+
+{#snippet compareChips()}
+	<div class="flex items-center justify-center gap-1.5">
+		{@render stepChip(tx.compare.near, nearTested)}
+		{@render stepChip(tx.compare.far, farTested)}
+	</div>
+{/snippet}
+
+<!-- small screens: a draggable globe instead of the tiny wide map -->
+<div class="h-full w-full md:hidden">
+	<div class="border-line relative h-full w-full overflow-hidden rounded-2xl border" style="background: #eef4fb;">
+		<Globe overlay={cableOverlay} />
+		<div class="pointer-events-none absolute top-2 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1">
+			{#if !compareDone}{@render compareChips()}{/if}
+			{#if selected}
+				<div class="border-line text-ink rounded-full border bg-white/85 px-3 py-1 text-[11px] font-semibold backdrop-blur">
+					{#if phase === 'leaving'}{tx.phases.leaving}{:else if phase === 'undersea'}{tx.phases.undersea}{:else}{tx.phases.arrived}{/if}
+				</div>
+			{:else if !compareDone}
+				<div class="border-line text-muted rounded-full border bg-white/85 px-2.5 py-0.5 text-[10px] font-medium backdrop-blur">{tx.compare.hint}</div>
+			{/if}
+		</div>
+		<p class="text-faint pointer-events-none absolute inset-x-0 bottom-1.5 text-center text-[10px] opacity-75">* {tx.routeNote}</p>
+	</div>
+</div>
+
+<!-- tablet and up: the full flat cable map with the phone preview -->
+<div class="hidden h-full w-full flex-col gap-4 md:flex md:flex-row">
 	<!-- Map -->
 	<div class="border-line relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl border" style="background: #eef4fb;">
 		<svg viewBox="0 0 {FLAT_W} {FLAT_H}" class="h-full w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label="undersea cable map">
@@ -166,10 +274,14 @@
 		<p class="text-faint pointer-events-none absolute right-2 bottom-1.5 text-[10px] opacity-70">{tx.credit}</p>
 	</div>
 
-	<!-- Phone + readout -->
+	<!-- Phone + readout (desktop only; small screens use the globe above) -->
 	<div class="flex shrink-0 flex-row items-center justify-center gap-4 md:w-[200px] md:flex-col md:justify-center">
 		<Browser phase={browser} />
 		<div class="border-line bg-card w-[160px] rounded-2xl border p-4 text-center md:w-full">
+			{#if !compareDone}
+				{@render compareChips()}
+				<p class="text-faint mt-1.5 text-[11px] leading-snug {selected ? 'mb-3' : ''}">{tx.compare.hint}</p>
+			{/if}
 			{#if selected}
 				<p class="text-ink text-sm font-semibold">{tx.dests[selected.code]}</p>
 				<p class="text-faint text-[11px]">{selected.code}</p>
@@ -177,7 +289,7 @@
 					{#if phase === 'leaving'}{tx.phases.leaving}{:else if phase === 'undersea'}{tx.phases.undersea}{:else}{tx.phases.arrived}{/if}
 				</p>
 				{#if !sending}<p class="text-faint mt-2 text-[11px]">{tx.again}</p>{/if}
-			{:else}
+			{:else if compareDone}
 				<p class="text-faint text-sm">{tx.prompt}</p>
 				<p class="text-faint mt-3 text-[11px]">{tx.cablesNote}</p>
 			{/if}

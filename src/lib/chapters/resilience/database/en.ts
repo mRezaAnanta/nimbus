@@ -6,12 +6,12 @@ export const en: DatabaseText = {
 		'Data you use often usually lives in a database. There are two big families, and they store data in very different ways.',
 		'<b>SQL</b> arranges data into tables of rows and columns. The rules are strict, every row must follow the same columns, and tables can link to each other. That strictness is exactly what lets it guarantee transactions stay consistent.',
 		'<b>NoSQL</b> stores free-form documents. One document may carry different fields than its neighbor, and the collection stretches easily across many machines when the data explodes.',
-		'Add to both of them. Feel the difference between the strict table and the flexible documents, then see when each one is used.'
+		'Both already hold a little data. Add new rows and documents yourself, and feel the difference between the strict table and the flexible documents.'
 	],
 	reactions: {
 		sql: 'See, the new row must follow the existing columns, id, name, balance, nothing missing and nothing extra. That strictness is why money never goes missing halfway.',
 		nosql:
-			'See, the new document has a different shape and still gets accepted. That freedom is what makes NoSQL great for wildly varied data that needs to stretch across many machines.'
+			'This side is far more relaxed. The new document has a different shape and still gets accepted. That freedom is what makes NoSQL great for wildly varied data that needs to stretch across many machines.'
 	},
 	sqlTitle: 'SQL',
 	sqlSub: 'strict tables that link together',

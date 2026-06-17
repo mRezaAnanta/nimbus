@@ -6,7 +6,7 @@ export const en: MonitoringText = {
 		'Think of a car dashboard. Speedometer, engine heat, fuel left. Without it you drive blind and only notice the engine overheating once it smokes.',
 		'Servers are the same. <b>Metrics</b> are their health numbers, CPU usage, traffic, error count, and a <b>dashboard</b> shows them all on one screen.',
 		'But you cannot stare at a dashboard all day. That is what <b>alarms</b> are for. You set a line, and the moment it is crossed, you are the first to know, long before visitors feel anything.',
-		'Make the traffic spike, then see who shouts first.'
+		'The dashboard is live and all three numbers are still green. Make the traffic spike, and guess who shouts first.'
 	],
 	reactions: {
 		alarm:

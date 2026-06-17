@@ -8,7 +8,7 @@ export const en: AZText = {
 		'Hardware fails too, a single disk or server can die at any time, but that is usually handled by redundancy inside the data center.',
 		'The bigger danger is when a whole data center building falls. The question is, how does your site stay up when that happens?',
 		'The answer is, a <b>region</b> is not a single building. Inside it are several <b>Availability Zones</b> (AZ), separate data centers set far apart, each with its own power and network. So if one AZ runs into trouble, the others keep running.',
-		'Try it. Click a region to go inside, spread your servers across several AZs, then trigger an outage.'
+		'The map is open with two regions on it. Step into one, spread your servers across several AZs, then trigger an outage yourself.'
 	],
 	reactions: {
 		virginia: 'This is the Virginia region. Those dots are its Availability Zones, each one a separate data center.',

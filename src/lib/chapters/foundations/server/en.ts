@@ -6,7 +6,7 @@ export const en: ServerText = {
 		'Every time you open a website, two parties are actually having a chat. One <b>asks</b>, the other <b>serves</b>.',
 		'The one asking is called the <b>client</b>. That is your phone or laptop, through the browser you are using right now. Its job is to request a page and paint it onto your screen.',
 		'The one serving is called the <b>server</b>. A computer somewhere that stays on 24 hours a day, waiting for requests to arrive and answering them.',
-		'To make it concrete, try it yourself. Click <b>Open website</b>, then watch the client and the server chat above.'
+		'Both characters are right here, your phone and a server standing by. Open the website and watch the two of them chat.'
 	],
 	reactions: {
 		served:

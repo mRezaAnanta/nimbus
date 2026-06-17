@@ -7,7 +7,7 @@ export const id: LoadBalancerText = {
 		'Bayangkan kamu lagi adain <b>flash sale</b>. Jam 12 tepat, ribuan orang buka situsmu barengan. Satu server langsung penuh, situs melambat, lalu down.',
 		'Solusinya, taruh <b>load balancer</b> di depan beberapa server yang identik. Tugasnya membagi permintaan rata ke semua server, jadi tidak ada satu pun yang kebanjiran sendirian.',
 		'Bonusnya, kalau satu server mati, balancer langsung berhenti mengirim ke server itu dan mengalihkan trafik ke yang masih hidup. Pengunjung tidak sadar apa apa.',
-		'Coba sendiri. Mulai flash sale dengan satu server dulu, lihat dia tumbang. Lalu tambahkan load balancer dan beberapa server, dan perhatikan bebannya terbagi rata.'
+		'Flash sale-nya tinggal dimulai, dan baru ada satu server yang berjaga. Biarkan dia tumbang dulu, lalu pasang load balancer dengan beberapa server dan perhatikan bebannya terbagi rata.'
 	],
 	reactions: {
 		overload:

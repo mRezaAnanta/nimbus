@@ -5,7 +5,7 @@ export const en: CloudText = {
 	intro: [
 		'Your laptop failed as a public server, and tunneling is only a borrowed door. A real site needs a serious home. There are two ways, run it yourself (called <b>on-premise</b>) or rent it in the <b>cloud</b>.',
 		'Many people think the cloud is something magical in the sky. But the cloud is... <b>just servers too</b>. The difference is they live in a company’s <i>data center</i>, not your house, and you simply rent them without ever seeing the machines.',
-		'To feel the difference, click both options above, the server at your home and the server in the cloud.'
+		'The two stand side by side here, the server at your home and the server in the cloud. Visit each and feel the difference.'
 	],
 	reactions: {
 		home: 'Running it yourself at home or the office is <b>on-premise</b>. Look above, when the power cuts, your site goes down with it.',

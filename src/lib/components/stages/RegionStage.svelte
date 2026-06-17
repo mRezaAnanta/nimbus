@@ -1,17 +1,13 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
+	import { geoInterpolate } from 'd3-geo';
 	import { Tween } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
-	import { geoOrthographic, geoPath, geoGraticule10, geoDistance } from 'd3-geo';
 	import Browser from '../Browser.svelte';
 	import WorldMap from '../WorldMap.svelte';
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	import landData from '$lib/data/land-110m.json';
+	import Globe from '../Globe.svelte';
+	import type { GlobeView } from '../Globe.svelte';
 	import type { LessonText, RegionText } from '$lib/chapters/types';
-
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const land = landData as any;
-	const graticule = geoGraticule10();
 
 	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
 		$props();
@@ -67,7 +63,7 @@
 		{ code: 'ap-southeast-7', lon: 100.5, lat: 13.75, ms: 348 }
 	];
 
-	let mode = $state<'flat' | 'globe'>('flat');
+	let mode = $state<'flat' | 'globe'>('flat'); // desktop toggle only; small screens are always the globe
 
 	// ---- shared selection state ----
 	let selected = $state<Region | null>(null);
@@ -79,8 +75,18 @@
 	let loadTimer: ReturnType<typeof setTimeout> | undefined;
 	const latency = new Tween(0, { duration: 650, easing: cubicOut });
 
+	// To make the point land, the learner has to compare a genuinely near region AND a genuinely
+	// far one (either order). Thresholds match Nim's near/far reactions: a nearby same-continent
+	// region (São Paulo) vs an overseas one. The mid picks in between count as neither, so Nim's
+	// "there is still a closer region" hint keeps nudging toward the real contrast.
+	const NEAR_MAX = 60;
+	const FAR_MIN = 200;
+	const msByCode = new Map(regions.map((r) => [r.code, r.ms]));
+	const nearTested = $derived(tried.some((c) => (msByCode.get(c) ?? 999) <= NEAR_MAX));
+	const farTested = $derived(tried.some((c) => (msByCode.get(c) ?? 0) > FAR_MIN));
+	const compareDone = $derived(nearTested && farTested);
+
 	function pick(r: Region) {
-		if (suppressClick) return;
 		selected = r;
 		latency.target = r.ms;
 		if (!tried.includes(r.code)) tried = [...tried, r.code];
@@ -88,7 +94,10 @@
 		browser = 'loading';
 		loadTimer = setTimeout(() => (browser = 'loaded'), Math.min(2000, 250 + r.ms * 5));
 		onstate?.(r.ms <= 60 ? 'near' : r.ms <= 200 ? 'mid' : 'far');
-		if (tried.length >= 2 && !fired) {
+		// unlock only once both a near and a far region have been compared
+		const near = tried.some((c) => (msByCode.get(c) ?? 999) <= NEAR_MAX);
+		const far = tried.some((c) => (msByCode.get(c) ?? 0) > FAR_MIN);
+		if (near && far && !fired) {
 			fired = true;
 			oncomplete?.();
 		}
@@ -109,8 +118,9 @@
 		amber: 'bg-amber-soft text-amber',
 		danger: 'bg-danger-soft text-danger'
 	};
+	const toneHex: Record<string, string> = { grass: '#3a9c64', amber: '#dd9e36', danger: '#d3584a' };
 
-	// ---- flat map (equirectangular, cropped 84N..56S to match WorldMap) ----
+	// ---- flat map (equirectangular, cropped 84N..56S to match WorldMap), desktop only ----
 	const FLAT_W = 960;
 	const FLAT_H = 373.33;
 	function fx(lon: number) {
@@ -131,8 +141,6 @@
 		return `M ${ux} ${uy} Q ${cx} ${cy} ${rx} ${ry}`;
 	}
 	const flatArc = $derived(selected ? arcFlat(selected) : '');
-
-	// label placement for the one active pin (keeps it inside the frame)
 	function flatLabel(r: Region) {
 		const x = fx(r.lon);
 		const y = fy(r.lat);
@@ -145,145 +153,157 @@
 		return { anchor, lx, nameY, codeY };
 	}
 
-	// ---- globe ----
-	const SIZE = 440;
-	let rotL = $state(52);
-	let rotP = $state(18);
-	const projection = $derived(
-		geoOrthographic()
-			.scale(SIZE / 2 - 8)
-			.translate([SIZE / 2, SIZE / 2])
-			.rotate([rotL, rotP])
-			.clipAngle(90)
-	);
-	const pathGen = $derived(geoPath(projection));
-	const landPath = $derived(pathGen(land) ?? '');
-	const gratPath = $derived(pathGen(graticule) ?? '');
-	function project(lon: number, lat: number): [number, number] | null {
-		if (geoDistance([lon, lat], [-rotL, -rotP]) > Math.PI / 2) return null;
-		return projection([lon, lat]) ?? null;
-	}
-	const usersPt = $derived(project(users.lon, users.lat));
-	const globeArc = $derived(
-		selected
-			? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-				(pathGen({ type: 'LineString', coordinates: [[users.lon, users.lat], [selected.lon, selected.lat]] } as any) ??
-					'')
-			: ''
-	);
-
-	let dragging = $state(false);
-	let lastX = 0;
-	let lastY = 0;
-	let suppressClick = false;
-	function down(e: PointerEvent) {
-		dragging = true;
-		lastX = e.clientX;
-		lastY = e.clientY;
-		suppressClick = false;
-	}
-	function move(e: PointerEvent) {
-		if (!dragging) return;
-		const dx = e.clientX - lastX;
-		const dy = e.clientY - lastY;
-		lastX = e.clientX;
-		lastY = e.clientY;
-		if (Math.abs(dx) + Math.abs(dy) > 3) suppressClick = true;
-		rotL += dx * 0.45;
-		rotP = Math.max(-85, Math.min(85, rotP - dy * 0.45));
-	}
-	function up() {
-		dragging = false;
+	// great-circle midpoint of the arc on the globe, where the latency tag sits (small screens)
+	function globeTag(v: GlobeView): [number, number] | null {
+		if (!selected) return null;
+		const m = geoInterpolate([users.lon, users.lat], [selected.lon, selected.lat])(0.5);
+		return v.project(m[0], m[1]) ?? v.project(selected.lon, selected.lat);
 	}
 
 	onDestroy(() => clearTimeout(loadTimer));
 </script>
 
+{#snippet latencyTag(px: number, py: number)}
+	{@const vk = verdictKey(selected!.ms)}
+	{@const c = toneHex[tone[vk]]}
+	<g transform="translate({px}, {py})" pointer-events="none">
+		<g class="ltag">
+			<rect x="-45" y="-26" width="90" height="44" rx="13" fill="#fff" stroke={c} stroke-width="2" />
+			<text x="0" y="-4" text-anchor="middle" font-weight="800" font-size="19" fill={c}
+				>{Math.round(latency.current)}<tspan font-size="11" font-weight="600" fill="#5e6b76"> {tx.ms}</tspan></text
+			>
+			<text x="0" y="12" text-anchor="middle" font-size="10.5" font-weight="700" fill={c}>{tx.verdicts[vk]}</text>
+		</g>
+	</g>
+{/snippet}
+
+<!-- globe overlay: arc, pins, user (shared by the small-screen globe and the desktop globe toggle) -->
+{#snippet globeBase(v: GlobeView)}
+	{#if selected}
+		{@const d = v.path({ type: 'LineString', coordinates: [[users.lon, users.lat], [selected.lon, selected.lat]] })}
+		{#if d}<path {d} fill="none" stroke="#2e6fe0" stroke-width="2.5" stroke-linecap="round" />{/if}
+	{/if}
+
+	{#each regions as r (r.code)}
+		{@const p = v.project(r.lon, r.lat)}
+		{#if p}
+			{@const on = selected?.code === r.code || hovered?.code === r.code}
+			<g
+				class="pin"
+				role="button"
+				tabindex="0"
+				aria-label={tx.cities[r.code]}
+				onclick={v.tap(() => pick(r))}
+				onkeydown={(e) => e.key === 'Enter' && pick(r)}
+				onpointerenter={() => (hovered = r)}
+				onpointerleave={() => hovered === r && (hovered = null)}
+			>
+				<circle cx={p[0]} cy={p[1]} r="11" fill="transparent" />
+				<circle cx={p[0]} cy={p[1]} r={on ? 6.5 : 4} fill={selected?.code === r.code ? '#2e6fe0' : '#fff'} stroke="#2e6fe0" stroke-width="2.5" />
+			</g>
+		{/if}
+	{/each}
+
+	{#if active}
+		{@const p = v.project(active.lon, active.lat)}
+		{#if p}
+			<g pointer-events="none">
+				<text x={p[0]} y={p[1] - 12} text-anchor="middle" fill="#16212b" font-size="12" font-weight="600">{tx.cities[active.code]}</text>
+				<text x={p[0]} y={p[1] + 22} text-anchor="middle" fill="#5e6b76" font-size="10">{active.code}</text>
+			</g>
+		{/if}
+	{/if}
+
+	{@const up = v.project(users.lon, users.lat)}
+	{#if up}
+		<circle cx={up[0]} cy={up[1]} r="11" fill="#dd9e36" opacity="0.25" class="pulse" />
+		<circle cx={up[0]} cy={up[1]} r="5.5" fill="#16212b" />
+		<text x={up[0]} y={up[1] + 21} text-anchor="middle" fill="#16212b" font-size="11" font-weight="700">{tx.users}</text>
+	{/if}
+{/snippet}
+
+<!-- small screens have no readout box, so the latency rides the line instead -->
+{#snippet globeWithTag(v: GlobeView)}
+	{@render globeBase(v)}
+	{#if selected}
+		{@const m = globeTag(v)}
+		{#if m}{@render latencyTag(m[0], m[1])}{/if}
+	{/if}
+{/snippet}
+
+<!-- progress: the learner must compare a near and a far region before moving on -->
+{#snippet stepChip(label: string, done: boolean)}
+	<span
+		class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold backdrop-blur transition-colors {done
+			? 'border-transparent bg-grass-soft text-grass'
+			: 'border-line bg-white/85 text-faint'}"
+	>
+		{#if done}
+			<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>
+		{:else}
+			<span class="h-1.5 w-1.5 rounded-full border border-current opacity-60"></span>
+		{/if}
+		{label}
+	</span>
+{/snippet}
+
+{#snippet compareChips()}
+	<div class="flex items-center justify-center gap-1.5">
+		{@render stepChip(tx.compare.near, nearTested)}
+		{@render stepChip(tx.compare.far, farTested)}
+	</div>
+{/snippet}
+
 <div class="flex h-full w-full flex-col gap-4 md:flex-row">
 	<!-- Map / Globe -->
 	<div class="border-line relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl border" style="background: #f1f6fc;">
-		<!-- view toggle -->
-		<div class="border-line absolute top-2 right-2 z-10 flex items-center gap-0.5 rounded-full border bg-white/85 p-0.5 text-[11px] font-semibold backdrop-blur">
-			<button
-				onclick={() => (mode = 'flat')}
-				class="rounded-full px-2.5 py-1 transition-colors {mode === 'flat' ? 'bg-ink text-white' : 'text-faint hover:text-ink'}"
-			>
-				{tx.flatLabel}
-			</button>
-			<button
-				onclick={() => (mode = 'globe')}
-				class="rounded-full px-2.5 py-1 transition-colors {mode === 'globe' ? 'bg-ink text-white' : 'text-faint hover:text-ink'}"
-			>
-				{tx.globeLabel}
-			</button>
+		<!-- small-screen progress: compare a near and a far region (desktop shows it in the box) -->
+		{#if !compareDone}
+			<div class="pointer-events-none absolute top-2 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1 md:hidden">
+				{@render compareChips()}
+				{#if !selected}
+					<span class="border-line text-muted rounded-full border bg-white/85 px-2.5 py-0.5 text-[10px] font-medium backdrop-blur">{tx.compare.hint}</span>
+				{/if}
+			</div>
+		{/if}
+
+		<!-- small screens: globe only -->
+		<div class="absolute inset-0 md:hidden">
+			<Globe overlay={globeWithTag} />
+			<p class="text-faint pointer-events-none absolute inset-x-0 bottom-1 text-center text-[11px]">{tx.drag}</p>
 		</div>
 
-		{#if mode === 'flat'}
-			<svg viewBox="0 0 {FLAT_W} {FLAT_H}" class="h-full w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label="map">
-				<rect width={FLAT_W} height={FLAT_H} fill="#f1f6fc" />
-				<WorldMap />
+		<!-- tablet and up: flat / globe toggle -->
+		<div class="absolute inset-0 hidden md:block">
+			<div class="border-line absolute top-2 right-2 z-10 flex items-center gap-0.5 rounded-full border bg-white/85 p-0.5 text-[11px] font-semibold backdrop-blur">
+				<button
+					onclick={() => (mode = 'flat')}
+					class="rounded-full px-2.5 py-1 transition-colors {mode === 'flat' ? 'bg-ink text-white' : 'text-faint hover:text-ink'}"
+				>
+					{tx.flatLabel}
+				</button>
+				<button
+					onclick={() => (mode = 'globe')}
+					class="rounded-full px-2.5 py-1 transition-colors {mode === 'globe' ? 'bg-ink text-white' : 'text-faint hover:text-ink'}"
+				>
+					{tx.globeLabel}
+				</button>
+			</div>
 
-				{#if flatArc}
-					{#key selected?.code}
-						<path d={flatArc} fill="none" stroke="#2e6fe0" stroke-width="2.5" stroke-linecap="round" class="arc" />
-					{/key}
-				{/if}
+			{#if mode === 'flat'}
+				<svg viewBox="0 0 {FLAT_W} {FLAT_H}" class="h-full w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label="map">
+					<rect width={FLAT_W} height={FLAT_H} fill="#f1f6fc" />
+					<WorldMap />
 
-				{#each regions as r (r.code)}
-					{@const x = fx(r.lon)}
-					{@const y = fy(r.lat)}
-					{@const on = selected?.code === r.code || hovered?.code === r.code}
-					<g
-						class="pin"
-						role="button"
-						tabindex="0"
-						aria-label={tx.cities[r.code]}
-						onclick={() => pick(r)}
-						onkeydown={(e) => e.key === 'Enter' && pick(r)}
-						onpointerenter={() => (hovered = r)}
-						onpointerleave={() => hovered === r && (hovered = null)}
-					>
-						<circle cx={x} cy={y} r="11" fill="transparent" />
-						<circle cx={x} cy={y} r={on ? 6.5 : 4.5} fill={selected?.code === r.code ? '#2e6fe0' : '#fff'} stroke="#2e6fe0" stroke-width="2.5" />
-					</g>
-				{/each}
+					{#if flatArc}
+						{#key selected?.code}
+							<path d={flatArc} fill="none" stroke="#2e6fe0" stroke-width="2.5" stroke-linecap="round" class="arc" />
+						{/key}
+					{/if}
 
-				{#if active}
-					{@const lp = flatLabel(active)}
-					<g class="lbl" pointer-events="none">
-						<text x={lp.lx} y={lp.nameY} text-anchor={lp.anchor} fill="#16212b" font-size="13" font-weight="600">{tx.cities[active.code]}</text>
-						<text x={lp.lx} y={lp.codeY} text-anchor={lp.anchor} fill="#8a949d" font-size="10.5">{active.code}</text>
-					</g>
-				{/if}
-
-				<circle cx={userFx} cy={userFy} r="12" fill="#dd9e36" opacity="0.25" class="pulse" />
-				<circle cx={userFx} cy={userFy} r="6.5" fill="#16212b" />
-				<text x={userFx} y={userFy + 26} text-anchor="middle" fill="#16212b" font-size="13" font-weight="700">{tx.users}</text>
-			</svg>
-		{:else}
-			<svg
-				viewBox="0 0 {SIZE} {SIZE}"
-				class="globe h-full w-full"
-				class:grabbing={dragging}
-				preserveAspectRatio="xMidYMid meet"
-				role="img"
-				aria-label="globe"
-				onpointerdown={down}
-				onpointermove={move}
-				onpointerup={up}
-				onpointerleave={up}
-			>
-				<circle cx={SIZE / 2} cy={SIZE / 2} r={SIZE / 2 - 8} fill="#bcd6ef" style="filter: drop-shadow(0 10px 24px rgba(22,40,60,0.14));" />
-				<path d={gratPath} fill="none" stroke="#a9c8e8" stroke-width="0.5" opacity="0.7" />
-				<path d={landPath} fill="#eaf2fc" stroke="#cdddf0" stroke-width="0.6" />
-
-				{#if globeArc}
-					<path d={globeArc} fill="none" stroke="#2e6fe0" stroke-width="2.5" stroke-linecap="round" />
-				{/if}
-
-				{#each regions as r (r.code)}
-					{@const p = project(r.lon, r.lat)}
-					{#if p}
+					{#each regions as r (r.code)}
+						{@const x = fx(r.lon)}
+						{@const y = fy(r.lat)}
 						{@const on = selected?.code === r.code || hovered?.code === r.code}
 						<g
 							class="pin"
@@ -295,36 +315,38 @@
 							onpointerenter={() => (hovered = r)}
 							onpointerleave={() => hovered === r && (hovered = null)}
 						>
-							<circle cx={p[0]} cy={p[1]} r="11" fill="transparent" />
-							<circle cx={p[0]} cy={p[1]} r={on ? 6.5 : 4} fill={selected?.code === r.code ? '#2e6fe0' : '#fff'} stroke="#2e6fe0" stroke-width="2.5" />
+							<circle cx={x} cy={y} r="11" fill="transparent" />
+							<circle cx={x} cy={y} r={on ? 6.5 : 4.5} fill={selected?.code === r.code ? '#2e6fe0' : '#fff'} stroke="#2e6fe0" stroke-width="2.5" />
+						</g>
+					{/each}
+
+					{#if active}
+						{@const lp = flatLabel(active)}
+						<g class="lbl" pointer-events="none">
+							<text x={lp.lx} y={lp.nameY} text-anchor={lp.anchor} fill="#16212b" font-size="13" font-weight="600">{tx.cities[active.code]}</text>
+							<text x={lp.lx} y={lp.codeY} text-anchor={lp.anchor} fill="#8a949d" font-size="10.5">{active.code}</text>
 						</g>
 					{/if}
-				{/each}
 
-				{#if active}
-					{@const p = project(active.lon, active.lat)}
-					{#if p}
-						<g pointer-events="none">
-							<text x={p[0]} y={p[1] - 12} text-anchor="middle" fill="#16212b" font-size="12" font-weight="600">{tx.cities[active.code]}</text>
-							<text x={p[0]} y={p[1] + 22} text-anchor="middle" fill="#5e6b76" font-size="10">{active.code}</text>
-						</g>
-					{/if}
-				{/if}
-
-				{#if usersPt}
-					<circle cx={usersPt[0]} cy={usersPt[1]} r="11" fill="#dd9e36" opacity="0.25" class="pulse" />
-					<circle cx={usersPt[0]} cy={usersPt[1]} r="5.5" fill="#16212b" />
-					<text x={usersPt[0]} y={usersPt[1] + 21} text-anchor="middle" fill="#16212b" font-size="11" font-weight="700">{tx.users}</text>
-				{/if}
-			</svg>
-			<p class="text-faint pointer-events-none absolute inset-x-0 bottom-1 text-center text-[11px]">{tx.drag}</p>
-		{/if}
+					<circle cx={userFx} cy={userFy} r="12" fill="#dd9e36" opacity="0.25" class="pulse" />
+					<circle cx={userFx} cy={userFy} r="6.5" fill="#16212b" />
+					<text x={userFx} y={userFy + 26} text-anchor="middle" fill="#16212b" font-size="13" font-weight="700">{tx.users}</text>
+				</svg>
+			{:else}
+				<Globe overlay={globeBase} />
+				<p class="text-faint pointer-events-none absolute inset-x-0 bottom-1 text-center text-[11px]">{tx.drag}</p>
+			{/if}
+		</div>
 	</div>
 
-	<!-- Phone + readout -->
-	<div class="flex shrink-0 flex-row items-center justify-center gap-4 md:w-[200px] md:flex-col md:justify-center">
+	<!-- Phone + readout (desktop only; small screens use the globe with the latency on the line) -->
+	<div class="hidden shrink-0 md:flex md:w-[200px] md:flex-col md:items-center md:justify-center md:gap-4">
 		<Browser phase={browser} />
-		<div class="border-line bg-card w-[150px] rounded-2xl border p-4 text-center md:w-full">
+		<div class="border-line bg-card w-full rounded-2xl border p-4 text-center">
+			{#if !compareDone}
+				{@render compareChips()}
+				<p class="text-faint mt-1.5 text-[11px] leading-snug {selected ? 'mb-3' : ''}">{tx.compare.hint}</p>
+			{/if}
 			{#if selected}
 				{@const vk = verdictKey(selected.ms)}
 				<p class="text-ink text-sm font-semibold">{tx.cities[selected.code]}</p>
@@ -335,7 +357,7 @@
 				<span class="mt-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold {toneBg[tone[vk]]}">
 					{tx.verdicts[vk]}
 				</span>
-			{:else}
+			{:else if compareDone}
 				<p class="text-faint text-sm">{tx.readoutPrompt}</p>
 			{/if}
 		</div>
@@ -354,12 +376,19 @@
 			opacity: 1;
 		}
 	}
-	.globe {
-		cursor: grab;
-		touch-action: none;
+	.ltag {
+		filter: drop-shadow(0 5px 12px rgba(22, 40, 60, 0.18));
+		animation: tag-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 	}
-	.globe.grabbing {
-		cursor: grabbing;
+	@keyframes tag-in {
+		from {
+			opacity: 0;
+			transform: translateY(5px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 	.pin {
 		cursor: pointer;

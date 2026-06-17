@@ -7,7 +7,7 @@ export const id: RegionText = {
 		'Masalahnya, Argentina belum punya data center sendiri. Tapi tetap ada satu di benua yang sama, dan pilihan lokasi inilah yang menentukan secepat apa website terasa di sisi pengguna.',
 		'Tapi kenapa jarak bisa ngaruh ke kecepatan? Kuncinya ada di <b>latensi</b>. Coba inget waktu main game online, kamu biasanya disuruh pilih server dulu, Asia, Amerika, atau Eropa. Makin jauh servernya, makin lama data bolak-balik, dan game (atau website) jadi terasa lemot.',
 		'Nah, waktu bolak-balik data antara penggunamu dan server itulah yang disebut <b>latensi</b>. Satuannya milidetik (ms), dan makin kecil angkanya makin cepat.',
-		'Sekarang giliranmu. Coba taruh server-mu di beberapa kota, lalu lihat <b>latensinya</b>. Makin dekat ke Argentina, harusnya makin kecil.'
+		'Petanya ada di tanganmu. Taruh server-mu di beberapa kota dan bandingkan <b>latensinya</b>. Makin dekat ke Argentina, harusnya makin kecil angkanya.'
 	],
 	reactions: {
 		near: 'Nah, <b>São Paulo</b> memang bukan di Argentina, tapi masih satu benua, jadi latensinya paling kecil di antara pilihan.',
@@ -21,6 +21,7 @@ export const id: RegionText = {
 	globeLabel: 'Globe',
 	ms: 'ms',
 	verdicts: { instant: 'Instan', fast: 'Cepat', ok: 'Lumayan', slow: 'Agak lambat', laggy: 'Lemot' },
+	compare: { near: 'Dekat', far: 'Jauh', hint: 'Tes satu kota dekat dan satu kota jauh biar kerasa bedanya' },
 	cities: {
 		'sa-east-1': 'São Paulo',
 		'us-east-1': 'Virginia, AS',

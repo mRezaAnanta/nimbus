@@ -6,7 +6,7 @@ export const en: ScalingText = {
 		'Your traffic keeps climbing and a single ordinary server starts to struggle. There are two ways to add power, and they work in very different styles.',
 		'The first is <b>vertical scaling</b>. You make one machine stronger, adding CPU, RAM, and disk. It is easy to grow, but it hits a ceiling, and shrinking it back is awkward because the machine has to be switched off first.',
 		'The second is <b>horizontal scaling</b>. Instead of one big machine, you run many identical machines and share the load through a load balancer. Adding or removing is easy, and if one dies the rest keep going.',
-		'Play with it. Raise the visitor count until both sides struggle, then rescue the left side with Upgrade and the right side with Add.'
+		'These two sides start from the exact same machine. Raise the visitor count until both struggle, then rescue the left side with Upgrade and the right side with Add.'
 	],
 	reactions: {
 		surge:
