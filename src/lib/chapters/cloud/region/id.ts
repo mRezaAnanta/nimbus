@@ -10,7 +10,7 @@ export const id: RegionText = {
 		'Pilih penyedia di atas dulu, lalu taruh server-mu di beberapa kotanya dan bandingkan <b>latensinya</b>. Makin dekat ke Argentina, harusnya makin kecil angkanya.'
 	],
 	reactions: {
-		near: 'Nah, <b>São Paulo</b> memang bukan di Argentina, tapi masih satu benua, jadi latensinya paling kecil di antara pilihan.',
+		near: 'Nah, region ini memang bukan di Argentina, tapi masih <b>satu benua</b>, jadi latensinya paling kecil di antara pilihan.',
 		mid: 'Lumayan jauh, latensinya naik. Masih ada region yang lebih dekat ke penggunamu.',
 		far: 'Jauh banget. Datanya harus menyeberang <b>separuh dunia</b>, jadi lemot. Itulah kenapa memilih region terdekat itu penting.'
 	},

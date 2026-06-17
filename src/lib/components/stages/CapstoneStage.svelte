@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ProviderLogo from '../ProviderLogo.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { CapstoneText } from '$lib/chapters/capstone/types';
 
@@ -52,38 +53,21 @@
 	<div class="cards">
 		<button type="button" class="prov" class:on={picked === 'aws'} onclick={() => pick('aws')}>
 			<span class="soon">{tx.comingSoon}</span>
-			<span class="mark aws">
-				<svg width="34" height="22" viewBox="0 0 48 30" fill="none" aria-hidden="true">
-					<text x="24" y="15" text-anchor="middle" font-size="15" font-weight="800" fill="#16212b" font-family="inherit">aws</text>
-					<path d="M8 22c10 6 26 6 33-1m-4-1.5 4.6 1-2 4" stroke="#ff9900" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-				</svg>
-			</span>
+			<span class="mark"><ProviderLogo id="aws" size={26} /></span>
 			<b>{tx.providers[0].name}</b>
 			<span class="psub">{tx.providers[0].sub}</span>
 			{#if picked === 'aws'}<span class="pickedtag">{tx.pickedTag}</span>{/if}
 		</button>
 		<button type="button" class="prov" class:on={picked === 'gcp'} onclick={() => pick('gcp')}>
 			<span class="soon">{tx.comingSoon}</span>
-			<span class="mark">
-				<svg width="30" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-					<path d="M7 19a5 5 0 0 1-.9-9.92A6.5 6.5 0 0 1 18.6 10.6 4.5 4.5 0 0 1 17.5 19Z" stroke="#4285f4" stroke-width="1.8" stroke-linejoin="round" />
-					<circle cx="8.6" cy="14.6" r="1.15" fill="#ea4335" />
-					<circle cx="12" cy="14.6" r="1.15" fill="#fbbc05" />
-					<circle cx="15.4" cy="14.6" r="1.15" fill="#34a853" />
-				</svg>
-			</span>
+			<span class="mark"><ProviderLogo id="gcp" size={26} /></span>
 			<b>{tx.providers[1].name}</b>
 			<span class="psub">{tx.providers[1].sub}</span>
 			{#if picked === 'gcp'}<span class="pickedtag">{tx.pickedTag}</span>{/if}
 		</button>
 		<button type="button" class="prov" class:on={picked === 'azure'} onclick={() => pick('azure')}>
 			<span class="soon">{tx.comingSoon}</span>
-			<span class="mark">
-				<svg width="26" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-					<path d="M13.6 3 5 19.6h4.4L20 6.4 13.6 3Z" fill="#0f6cbd" />
-					<path d="M11.2 9.2 4 21h10.8l1.6-3.4H9.8l5-8.4Z" fill="#3aa0e8" />
-				</svg>
-			</span>
+			<span class="mark"><ProviderLogo id="azure" size={26} /></span>
 			<b>{tx.providers[2].name}</b>
 			<span class="psub">{tx.providers[2].sub}</span>
 			{#if picked === 'azure'}<span class="pickedtag">{tx.pickedTag}</span>{/if}
@@ -315,7 +299,7 @@
 		.mark {
 			height: 38px;
 		}
-		.mark svg {
+		.mark :global(svg) {
 			transform: scale(1.25);
 		}
 		.note {

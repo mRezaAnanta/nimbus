@@ -7,6 +7,7 @@
 	import WorldMap from '../WorldMap.svelte';
 	import Globe from '../Globe.svelte';
 	import type { GlobeView } from '../Globe.svelte';
+	import ProviderLogo from '../ProviderLogo.svelte';
 	import type { LessonText, RegionText } from '$lib/chapters/types';
 
 	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
@@ -261,35 +262,6 @@
 	onDestroy(() => clearTimeout(loadTimer));
 </script>
 
-{#snippet providerLogo(id: ProviderId)}
-	{#if id === 'aws'}
-		<!-- AWS signature orange smile -->
-		<svg width="24" height="15" viewBox="0 0 40 24" fill="none" aria-hidden="true">
-			<path d="M4 12c7 6.5 25 6.5 32 0" stroke="#ff9900" stroke-width="3" stroke-linecap="round" />
-			<path d="M30 6.5 37 11l-3.5 6" stroke="#ff9900" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-		</svg>
-	{:else if id === 'azure'}
-		<!-- Azure two tone blue A -->
-		<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-			<path d="M12.4 3.5 21 20.5h-7.4l-3.6-1.4 4.4-.05L12 12z" fill="#0a4a8f" />
-			<path d="M12.4 3.5 3 20.5h5.1l1.6-4.4 4-.05L11.4 13z" fill="#3093e6" />
-		</svg>
-	{:else}
-		<!-- Google Cloud, the four brand colours -->
-		<svg width="22" height="18" viewBox="0 0 24 24" aria-hidden="true">
-			<defs>
-				<linearGradient id="gcl" x1="0" y1="0" x2="1" y2="0">
-					<stop offset="0" stop-color="#4285f4" />
-					<stop offset="0.36" stop-color="#ea4335" />
-					<stop offset="0.66" stop-color="#fbbc05" />
-					<stop offset="1" stop-color="#34a853" />
-				</linearGradient>
-			</defs>
-			<path d="M7 19a4.3 4.3 0 0 1 .5-8.5 5.3 5.3 0 0 1 10.1-1A3.8 3.8 0 0 1 17 19Z" fill="url(#gcl)" />
-		</svg>
-	{/if}
-{/snippet}
-
 {#snippet latencyTag(px: number, py: number)}
 	{@const vk = verdictKey(selected!.ms)}
 	{@const c = toneHex[tone[vk]]}
@@ -390,7 +362,7 @@
 					: 'border-line bg-card text-faint hover:text-ink'}"
 				style={provider === p.id ? `border-color:${p.color};color:${p.color};background:${p.color}14` : ''}
 			>
-				{@render providerLogo(p.id)}
+				<ProviderLogo id={p.id} size={20} />
 				<span>{p.short}</span>
 			</button>
 		{/each}
