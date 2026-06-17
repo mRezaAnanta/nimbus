@@ -78,10 +78,10 @@ glides toward the corner and routes into the first lesson.
 
 Inside a lesson, Nim's text has two parts in `lesson.text[lang]`:
 
-- **`intro: string[]`** — narrative beats. The **Next** button paginates them one at a time so
-  text never gets too long. On the last beat, Next advances the lesson (or to `/done`). Don't
-  write "click Next" inside the copy.
-- **`reactions: Record<token,string>`** — shown when the user acts on the stage; a reaction
+- **`intro: string[]`** holds the narrative beats. The **Next** button paginates them one at a
+  time so text never gets too long. On the last beat, Next advances the lesson (or to `/done`).
+  Don't write "click Next" inside the copy.
+- **`reactions: Record<token,string>`** are shown when the user acts on the stage; a reaction
   temporarily overrides the current beat. Stages emit tokens via `onstate(token)`:
   - `ServerStage` -> `served`; `CloudStage` -> `home`/`cloud` (first click) then `both`;
     `RegionStage` -> `near`/`mid`/`far` (by latency).

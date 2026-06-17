@@ -4,32 +4,23 @@
 cloud from absolute zero, interactively. A mascot named **Nim** guides you, and every concept is
 something you try on a live stage, not just read about.
 
-**Live: [nimbus.farhanaulianda.my.id](https://nimbus.farhanaulianda.my.id)** — bilingual
+**Live: [nimbus.farhanaulianda.my.id](https://nimbus.farhanaulianda.my.id)**. Bilingual
 (Indonesian and English), no sign-up, works on phone or desktop.
 
 ## What's inside
 
-**Part 1, Core Concepts** is fully playable. It teaches the ideas first, provider neutral, before
-any vendor names:
-
-1. **Client & Server** — what a server is, how a request travels, virtual machines, your laptop as a server, and tunneling.
-2. **The Cloud** — what the cloud actually is, the undersea cables data crosses, and how distance (regions) creates latency.
-3. **Resilience & Data** — availability zones, region failover, the three shapes of storage, and SQL vs NoSQL.
-4. **Traffic** — reverse proxy, load balancing, scaling, auto scaling, and caching with a CDN.
-5. **Networking & Security** — IP and DNS, private networks and subnets, firewalls, identity and access, encryption, and shared responsibility.
-6. **Compute & Operations** — containers, serverless, monitoring, and taming the bill.
-
-It ends at a **Provider Tracks** gateway where you pick AWS, Google Cloud, or Azure. **Part 2**,
-the per-provider tracks that re-apply every concept with real services, is on the way.
+**Part 1, Core Concepts** is fully playable: six provider-neutral chapters that teach the ideas
+first, ending at a **Provider Tracks** gateway where you pick AWS, Google Cloud, or Azure.
+**Part 2**, the per-provider tracks, is on the way.
 
 See **[CURRICULUM.md](./CURRICULUM.md)** for the full lesson-by-lesson roadmap.
 
 ## How it works
 
-Each lesson is a few short story beats from Nim, then an interactive stage you actually play with:
-place a server on a spinnable globe and watch the latency change, ride a data packet along real
-undersea cables, knock out a data center and see the site fail or survive, trim a cloud bill, and
-more. Progress is saved in your browser and lessons unlock in order.
+Each lesson is a few short story beats from Nim, then an interactive stage you actually play with.
+You place a server on a spinnable globe and watch the latency change, ride a data packet along
+real undersea cables, knock out a data center and see the site fail or survive, trim a cloud bill,
+and more. Progress is saved in your browser and lessons unlock in order.
 
 ## Tech stack
 
