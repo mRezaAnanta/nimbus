@@ -101,6 +101,7 @@
 	let it1: ReturnType<typeof setTimeout> | undefined;
 	let it2: ReturnType<typeof setTimeout> | undefined;
 	let it3: ReturnType<typeof setTimeout> | undefined;
+	let it4: ReturnType<typeof setTimeout> | undefined;
 
 	const introMode = $derived(beat <= 1 && region === null);
 	const inRegion = $derived(region !== null);
@@ -181,14 +182,16 @@
 
 	function playIntro() {
 		onlock?.(true);
-		introMissile = true; // a jet streaks in toward the data center
-		it0 = setTimeout(() => {
+		// hold briefly first, so a learner who just opened the page sees the calm map
+		// before a jet suddenly streaks in
+		it0 = setTimeout(() => (introMissile = true), 1500); // a jet streaks in toward the data center
+		it1 = setTimeout(() => {
 			introMissile = false;
 			introBoom = true; // then it explodes
-		}, 850);
-		it1 = setTimeout(() => (introBoom = false), 1650); // and the explosion fades away
-		it2 = setTimeout(() => (showNews = true), 1800);
-		it3 = setTimeout(() => onlock?.(false), 6000);
+		}, 2350);
+		it2 = setTimeout(() => (introBoom = false), 3150); // and the explosion fades away
+		it3 = setTimeout(() => (showNews = true), 3300);
+		it4 = setTimeout(() => onlock?.(false), 6500);
 	}
 
 	function enterRegion(k: RegionKey) {
@@ -261,6 +264,7 @@
 		clearTimeout(it1);
 		clearTimeout(it2);
 		clearTimeout(it3);
+		clearTimeout(it4);
 	});
 </script>
 
