@@ -3,11 +3,11 @@ import type { RegionText } from '../../types';
 export const id: RegionText = {
 	title: 'Apa itu Region?',
 	intro: [
-		'Ingat pengguna di <b>Argentina</b> tadi? Anggap penggunamu paling banyak di sana. Server cloud-mu harus ditaruh di salah satu lokasi data center milik penyedia. Mulai sekarang kita pakai <b>AWS</b> (Amazon Web Services) sebagai contoh, salah satu penyedia cloud terbesar.',
+		'Anggap penggunamu paling banyak ada di <b>Argentina</b>. Server cloud-mu harus ditaruh di salah satu lokasi data center milik penyedia. Ada beberapa penyedia cloud besar, dan tiap penyedia menyebar data center-nya dengan cara yang sedikit beda.',
 		'Masalahnya, Argentina belum punya data center sendiri. Tapi tetap ada satu di benua yang sama, dan pilihan lokasi inilah yang menentukan secepat apa website terasa di sisi pengguna.',
 		'Tapi kenapa jarak bisa ngaruh ke kecepatan? Kuncinya ada di <b>latensi</b>. Coba inget waktu main game online, kamu biasanya disuruh pilih server dulu, Asia, Amerika, atau Eropa. Makin jauh servernya, makin lama data bolak-balik, dan game (atau website) jadi terasa lemot.',
 		'Nah, waktu bolak-balik data antara penggunamu dan server itulah yang disebut <b>latensi</b>. Satuannya milidetik (ms), dan makin kecil angkanya makin cepat.',
-		'Petanya ada di tanganmu. Taruh server-mu di beberapa kota dan bandingkan <b>latensinya</b>. Makin dekat ke Argentina, harusnya makin kecil angkanya.'
+		'Pilih penyedia di atas dulu, lalu taruh server-mu di beberapa kotanya dan bandingkan <b>latensinya</b>. Makin dekat ke Argentina, harusnya makin kecil angkanya.'
 	],
 	reactions: {
 		near: 'Nah, <b>São Paulo</b> memang bukan di Argentina, tapi masih satu benua, jadi latensinya paling kecil di antara pilihan.',
@@ -16,45 +16,11 @@ export const id: RegionText = {
 	},
 	users: 'Penggunamu',
 	readoutPrompt: 'Pilih sebuah kota untuk mengukur kecepatannya',
+	pickProvider: 'Pilih penyedia cloud untuk lihat region-nya',
 	drag: 'Tarik untuk memutar bumi',
 	flatLabel: 'Peta',
 	globeLabel: 'Globe',
 	ms: 'ms',
 	verdicts: { instant: 'Instan', fast: 'Cepat', ok: 'Lumayan', slow: 'Agak lambat', laggy: 'Lemot' },
-	compare: { near: 'Dekat', far: 'Jauh', hint: 'Tes satu kota dekat dan satu kota jauh biar kerasa bedanya' },
-	cities: {
-		'sa-east-1': 'São Paulo',
-		'us-east-1': 'Virginia, AS',
-		'us-east-2': 'Ohio',
-		'us-west-1': 'California Utara',
-		'us-west-2': 'Oregon',
-		'ca-central-1': 'Montreal',
-		'ca-west-1': 'Calgary',
-		'mx-central-1': 'Meksiko',
-		'eu-west-1': 'Irlandia',
-		'eu-west-2': 'London',
-		'eu-west-3': 'Paris',
-		'eu-central-1': 'Frankfurt',
-		'eu-central-2': 'Zurich',
-		'eu-south-1': 'Milan',
-		'eu-south-2': 'Spanyol',
-		'eu-north-1': 'Stockholm',
-		'af-south-1': 'Cape Town',
-		'il-central-1': 'Tel Aviv',
-		'me-south-1': 'Bahrain',
-		'me-central-1': 'UEA',
-		'ap-south-1': 'Mumbai',
-		'ap-south-2': 'Hyderabad',
-		'ap-east-1': 'Hong Kong',
-		'ap-east-2': 'Taipei',
-		'ap-northeast-1': 'Tokyo',
-		'ap-northeast-2': 'Seoul',
-		'ap-northeast-3': 'Osaka',
-		'ap-southeast-1': 'Singapura',
-		'ap-southeast-2': 'Sydney',
-		'ap-southeast-3': 'Jakarta',
-		'ap-southeast-4': 'Melbourne',
-		'ap-southeast-5': 'Malaysia',
-		'ap-southeast-7': 'Thailand'
-	}
+	compare: { near: 'Dekat', far: 'Jauh', hint: 'Tes satu kota dekat dan satu kota jauh biar kerasa bedanya' }
 };

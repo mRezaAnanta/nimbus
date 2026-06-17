@@ -3,11 +3,11 @@ import type { RegionText } from '../../types';
 export const en: RegionText = {
 	title: 'What is a Region?',
 	intro: [
-		"Remember that user in <b>Argentina</b>? Say most of your users live there. Your cloud server has to sit in one of the provider's data center locations. From here on we use <b>AWS</b> (Amazon Web Services) as our example, one of the biggest cloud providers.",
+		'Say most of your users live in <b>Argentina</b>. Your cloud server has to sit in one of a provider’s data center locations. There are several big cloud providers, and each one spreads its data centers a little differently.',
 		'The catch is, Argentina has no data center of its own yet. But there is one on the same continent, and that choice of location decides how fast the site feels for your users.',
 		'But why would distance change the speed? The key is <b>latency</b>. Think back to playing an online game, you usually have to choose a server first, Asia, America, or Europe. The farther the server, the longer the data takes to travel back and forth, and the game (or website) starts to feel laggy.',
 		'That round-trip time of data between your users and the server is what we call <b>latency</b>. It is measured in milliseconds (ms), and the smaller the number, the faster.',
-		'The map is in your hands. Place your server in a few cities and compare the <b>latency</b>. The closer to Argentina, the smaller it should get.'
+		'Pick a provider above first, then place your server in a few of its cities and compare the <b>latency</b>. The closer to Argentina, the smaller it should get.'
 	],
 	reactions: {
 		near: 'See, <b>São Paulo</b> is not in Argentina, but it is on the same continent, so it has the lowest latency of the options.',
@@ -16,45 +16,11 @@ export const en: RegionText = {
 	},
 	users: 'Your users',
 	readoutPrompt: 'Pick a city to measure its speed',
+	pickProvider: 'Pick a cloud provider to see its regions',
 	drag: 'Drag to spin the globe',
 	flatLabel: 'Map',
 	globeLabel: 'Globe',
 	ms: 'ms',
 	verdicts: { instant: 'Instant', fast: 'Fast', ok: 'Okay', slow: 'A bit slow', laggy: 'Laggy' },
-	compare: { near: 'Near', far: 'Far', hint: 'Test one near city and one far city to feel the difference' },
-	cities: {
-		'sa-east-1': 'São Paulo',
-		'us-east-1': 'Virginia, US',
-		'us-east-2': 'Ohio',
-		'us-west-1': 'N. California',
-		'us-west-2': 'Oregon',
-		'ca-central-1': 'Montreal',
-		'ca-west-1': 'Calgary',
-		'mx-central-1': 'Mexico',
-		'eu-west-1': 'Ireland',
-		'eu-west-2': 'London',
-		'eu-west-3': 'Paris',
-		'eu-central-1': 'Frankfurt',
-		'eu-central-2': 'Zurich',
-		'eu-south-1': 'Milan',
-		'eu-south-2': 'Spain',
-		'eu-north-1': 'Stockholm',
-		'af-south-1': 'Cape Town',
-		'il-central-1': 'Tel Aviv',
-		'me-south-1': 'Bahrain',
-		'me-central-1': 'UAE',
-		'ap-south-1': 'Mumbai',
-		'ap-south-2': 'Hyderabad',
-		'ap-east-1': 'Hong Kong',
-		'ap-east-2': 'Taipei',
-		'ap-northeast-1': 'Tokyo',
-		'ap-northeast-2': 'Seoul',
-		'ap-northeast-3': 'Osaka',
-		'ap-southeast-1': 'Singapore',
-		'ap-southeast-2': 'Sydney',
-		'ap-southeast-3': 'Jakarta',
-		'ap-southeast-4': 'Melbourne',
-		'ap-southeast-5': 'Malaysia',
-		'ap-southeast-7': 'Thailand'
-	}
+	compare: { near: 'Near', far: 'Far', hint: 'Test one near city and one far city to feel the difference' }
 };

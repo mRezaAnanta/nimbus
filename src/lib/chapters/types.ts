@@ -61,13 +61,13 @@ export interface CloudText extends LessonText {
 export interface RegionText extends LessonText {
 	users: string;
 	readoutPrompt: string;
+	pickProvider: string;
 	drag: string;
 	flatLabel: string;
 	globeLabel: string;
 	ms: string;
 	verdicts: { instant: string; fast: string; ok: string; slow: string; laggy: string };
 	compare: { near: string; far: string; hint: string };
-	cities: Record<string, string>;
 }
 
 export interface CableText extends LessonText {

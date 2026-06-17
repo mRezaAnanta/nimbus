@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import { geoInterpolate } from 'd3-geo';
+	import { geoInterpolate, geoDistance } from 'd3-geo';
 	import { Tween } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import Browser from '../Browser.svelte';
@@ -13,91 +13,190 @@
 		$props();
 	const tx = $derived(text as RegionText);
 
-	// code drives the city label (text files) and is the unique key; lon/lat drive
-	// both the globe and the flat map (flat x/y are computed from lon/lat below).
-	type Region = { code: string; lon: number; lat: number; ms: number };
-
 	const users = { lon: -58.4, lat: -34.6 }; // Buenos Aires, Argentina
 
-	// Every AWS region in the standard commercial partition. ms is the estimated
-	// round-trip latency from Argentina (smaller is closer/faster).
-	const regions: Region[] = [
-		// South America
-		{ code: 'sa-east-1', lon: -46.6, lat: -23.5, ms: 24 },
-		// North America
-		{ code: 'us-east-1', lon: -77.5, lat: 39.0, ms: 120 },
-		{ code: 'us-east-2', lon: -82.99, lat: 39.96, ms: 128 },
-		{ code: 'us-west-1', lon: -121.96, lat: 37.35, ms: 155 },
-		{ code: 'us-west-2', lon: -122.0, lat: 45.5, ms: 165 },
-		{ code: 'ca-central-1', lon: -73.6, lat: 45.5, ms: 130 },
-		{ code: 'ca-west-1', lon: -114.07, lat: 51.05, ms: 175 },
-		{ code: 'mx-central-1', lon: -100.39, lat: 20.59, ms: 150 },
-		// Europe
-		{ code: 'eu-west-1', lon: -6.26, lat: 53.35, ms: 210 },
-		{ code: 'eu-west-2', lon: -0.12, lat: 51.5, ms: 213 },
-		{ code: 'eu-west-3', lon: 2.35, lat: 48.85, ms: 216 },
-		{ code: 'eu-central-1', lon: 8.68, lat: 50.1, ms: 220 },
-		{ code: 'eu-central-2', lon: 8.54, lat: 47.37, ms: 224 },
-		{ code: 'eu-south-1', lon: 9.19, lat: 45.46, ms: 228 },
-		{ code: 'eu-south-2', lon: -0.88, lat: 41.65, ms: 205 },
-		{ code: 'eu-north-1', lon: 18.07, lat: 59.33, ms: 235 },
-		// Africa
-		{ code: 'af-south-1', lon: 18.42, lat: -33.93, ms: 330 },
-		// Middle East
-		{ code: 'il-central-1', lon: 34.78, lat: 32.07, ms: 310 },
-		{ code: 'me-south-1', lon: 50.58, lat: 26.07, ms: 335 },
-		{ code: 'me-central-1', lon: 55.27, lat: 25.2, ms: 345 },
-		// Asia Pacific
-		{ code: 'ap-south-1', lon: 72.88, lat: 19.08, ms: 320 },
-		{ code: 'ap-south-2', lon: 78.49, lat: 17.39, ms: 325 },
-		{ code: 'ap-east-1', lon: 114.16, lat: 22.32, ms: 330 },
-		{ code: 'ap-east-2', lon: 121.56, lat: 25.03, ms: 335 },
-		{ code: 'ap-northeast-1', lon: 139.7, lat: 35.7, ms: 290 },
-		{ code: 'ap-northeast-2', lon: 126.98, lat: 37.57, ms: 300 },
-		{ code: 'ap-northeast-3', lon: 135.5, lat: 34.69, ms: 295 },
-		{ code: 'ap-southeast-1', lon: 103.8, lat: 1.35, ms: 340 },
-		{ code: 'ap-southeast-2', lon: 151.21, lat: -33.87, ms: 305 },
-		{ code: 'ap-southeast-3', lon: 106.85, lat: -6.2, ms: 350 },
-		{ code: 'ap-southeast-4', lon: 144.96, lat: -37.81, ms: 312 },
-		{ code: 'ap-southeast-5', lon: 101.69, lat: 3.14, ms: 345 },
-		{ code: 'ap-southeast-7', lon: 100.5, lat: 13.75, ms: 348 }
+	// Each provider has its own real regions, with its own naming (AWS uses codes like
+	// ap-southeast-1, Azure uses names like Southeast Asia, GCP uses asia-southeast1). Latency
+	// is estimated from real distance to Argentina, so the globe genuinely differs per provider.
+	type ProviderId = 'aws' | 'azure' | 'gcp';
+	type Region = { code: string; city: string; lon: number; lat: number; ms: number };
+	type Base = Omit<Region, 'ms'>;
+
+	const PROVIDERS: { id: ProviderId; short: string; color: string; regions: Base[] }[] = [
+		{
+			id: 'aws',
+			short: 'AWS',
+			color: '#ff9900',
+			regions: [
+				{ code: 'sa-east-1', city: 'São Paulo', lon: -46.63, lat: -23.55 },
+				{ code: 'us-east-1', city: 'N. Virginia', lon: -77.5, lat: 39.0 },
+				{ code: 'us-east-2', city: 'Ohio', lon: -82.99, lat: 39.96 },
+				{ code: 'us-west-1', city: 'N. California', lon: -121.96, lat: 37.35 },
+				{ code: 'us-west-2', city: 'Oregon', lon: -122.0, lat: 45.5 },
+				{ code: 'ca-central-1', city: 'Montreal', lon: -73.6, lat: 45.5 },
+				{ code: 'ca-west-1', city: 'Calgary', lon: -114.07, lat: 51.05 },
+				{ code: 'mx-central-1', city: 'Querétaro', lon: -100.39, lat: 20.59 },
+				{ code: 'eu-west-1', city: 'Ireland', lon: -6.26, lat: 53.35 },
+				{ code: 'eu-west-2', city: 'London', lon: -0.12, lat: 51.5 },
+				{ code: 'eu-west-3', city: 'Paris', lon: 2.35, lat: 48.85 },
+				{ code: 'eu-central-1', city: 'Frankfurt', lon: 8.68, lat: 50.1 },
+				{ code: 'eu-central-2', city: 'Zurich', lon: 8.54, lat: 47.37 },
+				{ code: 'eu-south-1', city: 'Milan', lon: 9.19, lat: 45.46 },
+				{ code: 'eu-south-2', city: 'Spain', lon: -0.88, lat: 41.65 },
+				{ code: 'eu-north-1', city: 'Stockholm', lon: 18.07, lat: 59.33 },
+				{ code: 'af-south-1', city: 'Cape Town', lon: 18.42, lat: -33.93 },
+				{ code: 'il-central-1', city: 'Tel Aviv', lon: 34.78, lat: 32.07 },
+				{ code: 'me-south-1', city: 'Bahrain', lon: 50.58, lat: 26.07 },
+				{ code: 'me-central-1', city: 'UAE', lon: 55.27, lat: 25.2 },
+				{ code: 'ap-south-1', city: 'Mumbai', lon: 72.88, lat: 19.08 },
+				{ code: 'ap-south-2', city: 'Hyderabad', lon: 78.49, lat: 17.39 },
+				{ code: 'ap-east-1', city: 'Hong Kong', lon: 114.16, lat: 22.32 },
+				{ code: 'ap-northeast-1', city: 'Tokyo', lon: 139.7, lat: 35.7 },
+				{ code: 'ap-northeast-2', city: 'Seoul', lon: 126.98, lat: 37.57 },
+				{ code: 'ap-northeast-3', city: 'Osaka', lon: 135.5, lat: 34.69 },
+				{ code: 'ap-southeast-1', city: 'Singapore', lon: 103.8, lat: 1.35 },
+				{ code: 'ap-southeast-2', city: 'Sydney', lon: 151.21, lat: -33.87 },
+				{ code: 'ap-southeast-3', city: 'Jakarta', lon: 106.85, lat: -6.2 },
+				{ code: 'ap-southeast-4', city: 'Melbourne', lon: 144.96, lat: -37.81 },
+				{ code: 'ap-southeast-5', city: 'Malaysia', lon: 101.69, lat: 3.14 },
+				{ code: 'ap-southeast-7', city: 'Thailand', lon: 100.5, lat: 13.75 }
+			]
+		},
+		{
+			id: 'azure',
+			short: 'Azure',
+			color: '#0078d4',
+			regions: [
+				{ code: 'Brazil South', city: 'São Paulo', lon: -46.63, lat: -23.55 },
+				{ code: 'East US', city: 'Virginia', lon: -79.42, lat: 37.37 },
+				{ code: 'East US 2', city: 'Virginia', lon: -78.39, lat: 36.85 },
+				{ code: 'Central US', city: 'Iowa', lon: -93.6, lat: 41.59 },
+				{ code: 'South Central US', city: 'Texas', lon: -98.5, lat: 29.42 },
+				{ code: 'North Central US', city: 'Illinois', lon: -87.62, lat: 41.88 },
+				{ code: 'West US', city: 'California', lon: -122.42, lat: 37.78 },
+				{ code: 'West US 2', city: 'Washington', lon: -119.85, lat: 47.23 },
+				{ code: 'West US 3', city: 'Arizona', lon: -112.07, lat: 33.45 },
+				{ code: 'Canada Central', city: 'Toronto', lon: -79.38, lat: 43.65 },
+				{ code: 'Mexico Central', city: 'Querétaro', lon: -100.39, lat: 20.59 },
+				{ code: 'North Europe', city: 'Ireland', lon: -6.26, lat: 53.35 },
+				{ code: 'West Europe', city: 'Netherlands', lon: 4.9, lat: 52.37 },
+				{ code: 'UK South', city: 'London', lon: -0.12, lat: 51.5 },
+				{ code: 'France Central', city: 'Paris', lon: 2.78, lat: 46.36 },
+				{ code: 'Germany West Central', city: 'Frankfurt', lon: 8.68, lat: 50.1 },
+				{ code: 'Switzerland North', city: 'Zurich', lon: 8.54, lat: 47.37 },
+				{ code: 'Sweden Central', city: 'Gävle', lon: 16.8, lat: 60.67 },
+				{ code: 'Norway East', city: 'Oslo', lon: 10.75, lat: 59.91 },
+				{ code: 'Italy North', city: 'Milan', lon: 9.19, lat: 45.46 },
+				{ code: 'Poland Central', city: 'Warsaw', lon: 21.01, lat: 52.23 },
+				{ code: 'UAE North', city: 'Dubai', lon: 55.27, lat: 25.2 },
+				{ code: 'Qatar Central', city: 'Doha', lon: 51.53, lat: 25.29 },
+				{ code: 'Israel Central', city: 'Tel Aviv', lon: 34.78, lat: 32.07 },
+				{ code: 'South Africa North', city: 'Johannesburg', lon: 28.05, lat: -26.2 },
+				{ code: 'Central India', city: 'Pune', lon: 73.86, lat: 18.52 },
+				{ code: 'Southeast Asia', city: 'Singapore', lon: 103.8, lat: 1.35 },
+				{ code: 'East Asia', city: 'Hong Kong', lon: 114.16, lat: 22.32 },
+				{ code: 'Japan East', city: 'Tokyo', lon: 139.7, lat: 35.7 },
+				{ code: 'Japan West', city: 'Osaka', lon: 135.5, lat: 34.69 },
+				{ code: 'Korea Central', city: 'Seoul', lon: 126.98, lat: 37.57 },
+				{ code: 'Australia East', city: 'Sydney', lon: 151.21, lat: -33.87 },
+				{ code: 'Australia Southeast', city: 'Melbourne', lon: 144.96, lat: -37.81 }
+			]
+		},
+		{
+			id: 'gcp',
+			short: 'Google',
+			color: '#1a73e8',
+			regions: [
+				{ code: 'southamerica-east1', city: 'São Paulo', lon: -46.63, lat: -23.55 },
+				{ code: 'southamerica-west1', city: 'Santiago', lon: -70.67, lat: -33.45 },
+				{ code: 'us-east1', city: 'S. Carolina', lon: -79.99, lat: 33.2 },
+				{ code: 'us-east4', city: 'N. Virginia', lon: -77.5, lat: 38.94 },
+				{ code: 'us-east5', city: 'Columbus', lon: -82.99, lat: 39.96 },
+				{ code: 'us-central1', city: 'Iowa', lon: -93.6, lat: 41.26 },
+				{ code: 'us-south1', city: 'Dallas', lon: -96.8, lat: 32.78 },
+				{ code: 'us-west1', city: 'Oregon', lon: -121.2, lat: 45.6 },
+				{ code: 'us-west2', city: 'Los Angeles', lon: -118.24, lat: 34.05 },
+				{ code: 'us-west3', city: 'Salt Lake City', lon: -111.89, lat: 40.76 },
+				{ code: 'us-west4', city: 'Las Vegas', lon: -115.14, lat: 36.17 },
+				{ code: 'northamerica-northeast1', city: 'Montreal', lon: -73.6, lat: 45.5 },
+				{ code: 'northamerica-northeast2', city: 'Toronto', lon: -79.38, lat: 43.65 },
+				{ code: 'northamerica-south1', city: 'Querétaro', lon: -100.39, lat: 20.59 },
+				{ code: 'europe-west1', city: 'Belgium', lon: 3.8, lat: 50.85 },
+				{ code: 'europe-west2', city: 'London', lon: -0.12, lat: 51.5 },
+				{ code: 'europe-west3', city: 'Frankfurt', lon: 8.68, lat: 50.1 },
+				{ code: 'europe-west4', city: 'Netherlands', lon: 6.83, lat: 53.44 },
+				{ code: 'europe-west6', city: 'Zurich', lon: 8.54, lat: 47.37 },
+				{ code: 'europe-west8', city: 'Milan', lon: 9.19, lat: 45.46 },
+				{ code: 'europe-west9', city: 'Paris', lon: 2.35, lat: 48.85 },
+				{ code: 'europe-north1', city: 'Finland', lon: 27.18, lat: 60.57 },
+				{ code: 'europe-southwest1', city: 'Madrid', lon: -3.7, lat: 40.42 },
+				{ code: 'europe-central2', city: 'Warsaw', lon: 21.01, lat: 52.23 },
+				{ code: 'me-west1', city: 'Tel Aviv', lon: 34.78, lat: 32.07 },
+				{ code: 'me-central1', city: 'Doha', lon: 51.53, lat: 25.29 },
+				{ code: 'africa-south1', city: 'Johannesburg', lon: 28.05, lat: -26.2 },
+				{ code: 'asia-south1', city: 'Mumbai', lon: 72.88, lat: 19.08 },
+				{ code: 'asia-south2', city: 'Delhi', lon: 77.21, lat: 28.61 },
+				{ code: 'asia-southeast1', city: 'Singapore', lon: 103.8, lat: 1.35 },
+				{ code: 'asia-southeast2', city: 'Jakarta', lon: 106.85, lat: -6.2 },
+				{ code: 'asia-east1', city: 'Taiwan', lon: 121.0, lat: 24.07 },
+				{ code: 'asia-east2', city: 'Hong Kong', lon: 114.16, lat: 22.32 },
+				{ code: 'asia-northeast1', city: 'Tokyo', lon: 139.7, lat: 35.7 },
+				{ code: 'asia-northeast2', city: 'Osaka', lon: 135.5, lat: 34.69 },
+				{ code: 'asia-northeast3', city: 'Seoul', lon: 126.98, lat: 37.57 },
+				{ code: 'australia-southeast1', city: 'Sydney', lon: 151.21, lat: -33.87 },
+				{ code: 'australia-southeast2', city: 'Melbourne', lon: 144.96, lat: -37.81 }
+			]
+		}
 	];
+
+	function msOf(c: { lon: number; lat: number }): number {
+		const km = geoDistance([users.lon, users.lat], [c.lon, c.lat]) * 6371;
+		return Math.round(10 + km * 0.018);
+	}
+
+	let provider = $state<ProviderId | null>(null);
+	const activeRegions = $derived.by<Region[]>(() => {
+		const p = PROVIDERS.find((x) => x.id === provider);
+		if (!p) return [];
+		return p.regions.map((r) => ({ ...r, ms: msOf(r) }));
+	});
 
 	let mode = $state<'flat' | 'globe'>('flat'); // desktop toggle only; small screens are always the globe
 
-	// ---- shared selection state ----
+	// ---- selection state ----
 	let selected = $state<Region | null>(null);
 	let hovered = $state<Region | null>(null);
 	const active = $derived(hovered ?? selected);
-	let tried = $state<string[]>([]);
 	let browser = $state<'idle' | 'loading' | 'loaded'>('idle');
-	let fired = false;
 	let loadTimer: ReturnType<typeof setTimeout> | undefined;
 	const latency = new Tween(0, { duration: 650, easing: cubicOut });
 
-	// To make the point land, the learner has to compare a genuinely near region AND a genuinely
-	// far one (either order). Thresholds match Nim's near/far reactions: a nearby same-continent
-	// region (São Paulo) vs an overseas one. The mid picks in between count as neither, so Nim's
-	// "there is still a closer region" hint keeps nudging toward the real contrast.
-	const NEAR_MAX = 60;
-	const FAR_MIN = 200;
-	const msByCode = new Map(regions.map((r) => [r.code, r.ms]));
-	const nearTested = $derived(tried.some((c) => (msByCode.get(c) ?? 999) <= NEAR_MAX));
-	const farTested = $derived(tried.some((c) => (msByCode.get(c) ?? 0) > FAR_MIN));
+	// Completion needs a genuinely near region (São Paulo) AND a genuinely far one, in any order.
+	// The flags persist across provider switches, so comparing across providers counts too.
+	let nearTested = $state(false);
+	let farTested = $state(false);
 	const compareDone = $derived(nearTested && farTested);
+	let fired = false;
+
+	function setProvider(id: ProviderId) {
+		provider = id;
+		selected = null;
+		hovered = null;
+		latency.target = 0;
+		browser = 'idle';
+		if (loadTimer) clearTimeout(loadTimer);
+	}
 
 	function pick(r: Region) {
 		selected = r;
 		latency.target = r.ms;
-		if (!tried.includes(r.code)) tried = [...tried, r.code];
 		if (loadTimer) clearTimeout(loadTimer);
 		browser = 'loading';
 		loadTimer = setTimeout(() => (browser = 'loaded'), Math.min(2000, 250 + r.ms * 5));
 		onstate?.(r.ms <= 60 ? 'near' : r.ms <= 200 ? 'mid' : 'far');
-		// unlock only once both a near and a far region have been compared
-		const near = tried.some((c) => (msByCode.get(c) ?? 999) <= NEAR_MAX);
-		const far = tried.some((c) => (msByCode.get(c) ?? 0) > FAR_MIN);
-		if (near && far && !fired) {
+		if (r.ms <= 60) nearTested = true;
+		if (r.ms > 200) farTested = true;
+		if (nearTested && farTested && !fired) {
 			fired = true;
 			oncomplete?.();
 		}
@@ -153,7 +252,6 @@
 		return { anchor, lx, nameY, codeY };
 	}
 
-	// great-circle midpoint of the arc on the globe, where the latency tag sits (small screens)
 	function globeTag(v: GlobeView): [number, number] | null {
 		if (!selected) return null;
 		const m = geoInterpolate([users.lon, users.lat], [selected.lon, selected.lat])(0.5);
@@ -162,6 +260,35 @@
 
 	onDestroy(() => clearTimeout(loadTimer));
 </script>
+
+{#snippet providerLogo(id: ProviderId)}
+	{#if id === 'aws'}
+		<!-- AWS signature orange smile -->
+		<svg width="24" height="15" viewBox="0 0 40 24" fill="none" aria-hidden="true">
+			<path d="M4 12c7 6.5 25 6.5 32 0" stroke="#ff9900" stroke-width="3" stroke-linecap="round" />
+			<path d="M30 6.5 37 11l-3.5 6" stroke="#ff9900" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+		</svg>
+	{:else if id === 'azure'}
+		<!-- Azure two tone blue A -->
+		<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+			<path d="M12.4 3.5 21 20.5h-7.4l-3.6-1.4 4.4-.05L12 12z" fill="#0a4a8f" />
+			<path d="M12.4 3.5 3 20.5h5.1l1.6-4.4 4-.05L11.4 13z" fill="#3093e6" />
+		</svg>
+	{:else}
+		<!-- Google Cloud, the four brand colours -->
+		<svg width="22" height="18" viewBox="0 0 24 24" aria-hidden="true">
+			<defs>
+				<linearGradient id="gcl" x1="0" y1="0" x2="1" y2="0">
+					<stop offset="0" stop-color="#4285f4" />
+					<stop offset="0.36" stop-color="#ea4335" />
+					<stop offset="0.66" stop-color="#fbbc05" />
+					<stop offset="1" stop-color="#34a853" />
+				</linearGradient>
+			</defs>
+			<path d="M7 19a4.3 4.3 0 0 1 .5-8.5 5.3 5.3 0 0 1 10.1-1A3.8 3.8 0 0 1 17 19Z" fill="url(#gcl)" />
+		</svg>
+	{/if}
+{/snippet}
 
 {#snippet latencyTag(px: number, py: number)}
 	{@const vk = verdictKey(selected!.ms)}
@@ -177,14 +304,13 @@
 	</g>
 {/snippet}
 
-<!-- globe overlay: arc, pins, user (shared by the small-screen globe and the desktop globe toggle) -->
 {#snippet globeBase(v: GlobeView)}
 	{#if selected}
 		{@const d = v.path({ type: 'LineString', coordinates: [[users.lon, users.lat], [selected.lon, selected.lat]] })}
 		{#if d}<path {d} fill="none" stroke="#2e6fe0" stroke-width="2.5" stroke-linecap="round" />{/if}
 	{/if}
 
-	{#each regions as r (r.code)}
+	{#each activeRegions as r (r.code)}
 		{@const p = v.project(r.lon, r.lat)}
 		{#if p}
 			{@const on = selected?.code === r.code || hovered?.code === r.code}
@@ -192,7 +318,7 @@
 				class="pin"
 				role="button"
 				tabindex="0"
-				aria-label={tx.cities[r.code]}
+				aria-label={r.city}
 				onclick={v.tap(() => pick(r))}
 				onkeydown={(e) => e.key === 'Enter' && pick(r)}
 				onpointerenter={() => (hovered = r)}
@@ -208,7 +334,7 @@
 		{@const p = v.project(active.lon, active.lat)}
 		{#if p}
 			<g pointer-events="none">
-				<text x={p[0]} y={p[1] - 12} text-anchor="middle" fill="#16212b" font-size="12" font-weight="600">{tx.cities[active.code]}</text>
+				<text x={p[0]} y={p[1] - 13} text-anchor="middle" fill="#16212b" font-size="12" font-weight="700">{active.city}</text>
 				<text x={p[0]} y={p[1] + 22} text-anchor="middle" fill="#5e6b76" font-size="10">{active.code}</text>
 			</g>
 		{/if}
@@ -222,7 +348,6 @@
 	{/if}
 {/snippet}
 
-<!-- small screens have no readout box, so the latency rides the line instead -->
 {#snippet globeWithTag(v: GlobeView)}
 	{@render globeBase(v)}
 	{#if selected}
@@ -231,7 +356,6 @@
 	{/if}
 {/snippet}
 
-<!-- progress: the learner must compare a near and a far region before moving on -->
 {#snippet stepChip(label: string, done: boolean)}
 	<span
 		class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold backdrop-blur transition-colors {done
@@ -254,112 +378,143 @@
 	</div>
 {/snippet}
 
-<div class="flex h-full w-full flex-col gap-4 md:flex-row">
-	<!-- Map / Globe -->
-	<div class="border-line relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl border" style="background: #f1f6fc;">
-		<!-- small-screen progress: compare a near and a far region (desktop shows it in the box) -->
-		{#if !compareDone}
-			<div class="pointer-events-none absolute top-2 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1 md:hidden">
-				{@render compareChips()}
-				{#if !selected}
-					<span class="border-line text-muted rounded-full border bg-white/85 px-2.5 py-0.5 text-[10px] font-medium backdrop-blur">{tx.compare.hint}</span>
-				{/if}
-			</div>
-		{/if}
-
-		<!-- small screens: globe only -->
-		<div class="absolute inset-0 md:hidden">
-			<Globe overlay={globeWithTag} />
-			<p class="text-faint pointer-events-none absolute inset-x-0 bottom-1 text-center text-[11px]">{tx.drag}</p>
-		</div>
-
-		<!-- tablet and up: flat / globe toggle -->
-		<div class="absolute inset-0 hidden md:block">
-			<div class="border-line absolute top-2 right-2 z-10 flex items-center gap-0.5 rounded-full border bg-white/85 p-0.5 text-[11px] font-semibold backdrop-blur">
-				<button
-					onclick={() => (mode = 'flat')}
-					class="rounded-full px-2.5 py-1 transition-colors {mode === 'flat' ? 'bg-ink text-white' : 'text-faint hover:text-ink'}"
-				>
-					{tx.flatLabel}
-				</button>
-				<button
-					onclick={() => (mode = 'globe')}
-					class="rounded-full px-2.5 py-1 transition-colors {mode === 'globe' ? 'bg-ink text-white' : 'text-faint hover:text-ink'}"
-				>
-					{tx.globeLabel}
-				</button>
-			</div>
-
-			{#if mode === 'flat'}
-				<svg viewBox="0 0 {FLAT_W} {FLAT_H}" class="h-full w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label="map">
-					<rect width={FLAT_W} height={FLAT_H} fill="#f1f6fc" />
-					<WorldMap />
-
-					{#if flatArc}
-						{#key selected?.code}
-							<path d={flatArc} fill="none" stroke="#2e6fe0" stroke-width="2.5" stroke-linecap="round" class="arc" />
-						{/key}
-					{/if}
-
-					{#each regions as r (r.code)}
-						{@const x = fx(r.lon)}
-						{@const y = fy(r.lat)}
-						{@const on = selected?.code === r.code || hovered?.code === r.code}
-						<g
-							class="pin"
-							role="button"
-							tabindex="0"
-							aria-label={tx.cities[r.code]}
-							onclick={() => pick(r)}
-							onkeydown={(e) => e.key === 'Enter' && pick(r)}
-							onpointerenter={() => (hovered = r)}
-							onpointerleave={() => hovered === r && (hovered = null)}
-						>
-							<circle cx={x} cy={y} r="11" fill="transparent" />
-							<circle cx={x} cy={y} r={on ? 6.5 : 4.5} fill={selected?.code === r.code ? '#2e6fe0' : '#fff'} stroke="#2e6fe0" stroke-width="2.5" />
-						</g>
-					{/each}
-
-					{#if active}
-						{@const lp = flatLabel(active)}
-						<g class="lbl" pointer-events="none">
-							<text x={lp.lx} y={lp.nameY} text-anchor={lp.anchor} fill="#16212b" font-size="13" font-weight="600">{tx.cities[active.code]}</text>
-							<text x={lp.lx} y={lp.codeY} text-anchor={lp.anchor} fill="#8a949d" font-size="10.5">{active.code}</text>
-						</g>
-					{/if}
-
-					<circle cx={userFx} cy={userFy} r="12" fill="#dd9e36" opacity="0.25" class="pulse" />
-					<circle cx={userFx} cy={userFy} r="6.5" fill="#16212b" />
-					<text x={userFx} y={userFy + 26} text-anchor="middle" fill="#16212b" font-size="13" font-weight="700">{tx.users}</text>
-				</svg>
-			{:else}
-				<Globe overlay={globeBase} />
-				<p class="text-faint pointer-events-none absolute inset-x-0 bottom-1 text-center text-[11px]">{tx.drag}</p>
-			{/if}
-		</div>
+<div class="flex h-full w-full flex-col gap-2.5">
+	<!-- provider picker: the globe changes with the choice -->
+	<div class="flex shrink-0 items-center justify-center gap-2">
+		{#each PROVIDERS as p (p.id)}
+			<button
+				type="button"
+				onclick={() => setProvider(p.id)}
+				class="flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[12.5px] font-semibold transition-all {provider === p.id
+					? ''
+					: 'border-line bg-card text-faint hover:text-ink'}"
+				style={provider === p.id ? `border-color:${p.color};color:${p.color};background:${p.color}14` : ''}
+			>
+				{@render providerLogo(p.id)}
+				<span>{p.short}</span>
+			</button>
+		{/each}
 	</div>
 
-	<!-- Phone + readout (desktop only; small screens use the globe with the latency on the line) -->
-	<div class="hidden shrink-0 md:flex md:w-[200px] md:flex-col md:items-center md:justify-center md:gap-4">
-		<Browser phase={browser} />
-		<div class="border-line bg-card w-full rounded-2xl border p-4 text-center">
-			{#if !compareDone}
-				{@render compareChips()}
-				<p class="text-faint mt-1.5 text-[11px] leading-snug {selected ? 'mb-3' : ''}">{tx.compare.hint}</p>
+	<div class="flex min-h-0 w-full flex-1 flex-col gap-4 md:flex-row">
+		<!-- Map / Globe -->
+		<div class="border-line relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl border" style="background: #f1f6fc;">
+			{#if !provider}
+				<div class="text-muted absolute inset-0 z-10 flex items-center justify-center px-6 text-center text-sm font-medium">
+					{tx.pickProvider}
+				</div>
 			{/if}
-			{#if selected}
-				{@const vk = verdictKey(selected.ms)}
-				<p class="text-ink text-sm font-semibold">{tx.cities[selected.code]}</p>
-				<p class="text-faint text-[11px]">{selected.code}</p>
-				<p class="mt-2 text-3xl font-bold tabular-nums {toneText[tone[vk]]}">
-					{Math.round(latency.current)}<span class="text-muted text-sm font-medium"> {tx.ms}</span>
-				</p>
-				<span class="mt-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold {toneBg[tone[vk]]}">
-					{tx.verdicts[vk]}
-				</span>
-			{:else if compareDone}
-				<p class="text-faint text-sm">{tx.readoutPrompt}</p>
+
+			<!-- small-screen progress + hint, over the globe -->
+			{#if provider && !compareDone}
+				<div class="pointer-events-none absolute top-2 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1 md:hidden">
+					{@render compareChips()}
+					{#if !selected}
+						<span class="border-line text-muted rounded-full border bg-white/85 px-2.5 py-0.5 text-[10px] font-medium backdrop-blur">{tx.compare.hint}</span>
+					{/if}
+				</div>
 			{/if}
+
+			<!-- small screens: globe only -->
+			<div class="absolute inset-0 md:hidden">
+				<Globe overlay={globeWithTag} />
+				{#if provider}
+					<p class="text-faint pointer-events-none absolute inset-x-0 bottom-1 text-center text-[11px]">{tx.drag}</p>
+				{/if}
+			</div>
+
+			<!-- tablet and up: flat / globe toggle -->
+			<div class="absolute inset-0 hidden md:block">
+				<div class="border-line absolute top-2 right-2 z-10 flex items-center gap-0.5 rounded-full border bg-white/85 p-0.5 text-[11px] font-semibold backdrop-blur">
+					<button
+						onclick={() => (mode = 'flat')}
+						class="rounded-full px-2.5 py-1 transition-colors {mode === 'flat' ? 'bg-ink text-white' : 'text-faint hover:text-ink'}"
+					>
+						{tx.flatLabel}
+					</button>
+					<button
+						onclick={() => (mode = 'globe')}
+						class="rounded-full px-2.5 py-1 transition-colors {mode === 'globe' ? 'bg-ink text-white' : 'text-faint hover:text-ink'}"
+					>
+						{tx.globeLabel}
+					</button>
+				</div>
+
+				{#if mode === 'flat'}
+					<svg viewBox="0 0 {FLAT_W} {FLAT_H}" class="h-full w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label="map">
+						<rect width={FLAT_W} height={FLAT_H} fill="#f1f6fc" />
+						<WorldMap />
+
+						{#if flatArc}
+							{#key selected?.code}
+								<path d={flatArc} fill="none" stroke="#2e6fe0" stroke-width="2.5" stroke-linecap="round" class="arc" />
+							{/key}
+						{/if}
+
+						{#each activeRegions as r (r.code)}
+							{@const x = fx(r.lon)}
+							{@const y = fy(r.lat)}
+							{@const on = selected?.code === r.code || hovered?.code === r.code}
+							<g
+								class="pin"
+								role="button"
+								tabindex="0"
+								aria-label={r.city}
+								onclick={() => pick(r)}
+								onkeydown={(e) => e.key === 'Enter' && pick(r)}
+								onpointerenter={() => (hovered = r)}
+								onpointerleave={() => hovered === r && (hovered = null)}
+							>
+								<circle cx={x} cy={y} r="11" fill="transparent" />
+								<circle cx={x} cy={y} r={on ? 6.5 : 4.5} fill={selected?.code === r.code ? '#2e6fe0' : '#fff'} stroke="#2e6fe0" stroke-width="2.5" />
+							</g>
+						{/each}
+
+						{#if active}
+							{@const lp = flatLabel(active)}
+							<g class="lbl" pointer-events="none">
+								<text x={lp.lx} y={lp.nameY} text-anchor={lp.anchor} fill="#16212b" font-size="13" font-weight="700">{active.city}</text>
+								<text x={lp.lx} y={lp.codeY} text-anchor={lp.anchor} fill="#8a949d" font-size="10.5">{active.code}</text>
+							</g>
+						{/if}
+
+						{#if provider}
+							<circle cx={userFx} cy={userFy} r="12" fill="#dd9e36" opacity="0.25" class="pulse" />
+							<circle cx={userFx} cy={userFy} r="6.5" fill="#16212b" />
+							<text x={userFx} y={userFy + 26} text-anchor="middle" fill="#16212b" font-size="13" font-weight="700">{tx.users}</text>
+						{/if}
+					</svg>
+				{:else}
+					<Globe overlay={globeBase} />
+					{#if provider}
+						<p class="text-faint pointer-events-none absolute inset-x-0 bottom-1 text-center text-[11px]">{tx.drag}</p>
+					{/if}
+				{/if}
+			</div>
+		</div>
+
+		<!-- Phone + readout (desktop only; small screens read the latency off the line) -->
+		<div class="hidden shrink-0 md:flex md:w-[200px] md:flex-col md:items-center md:justify-center md:gap-4">
+			<Browser phase={browser} />
+			<div class="border-line bg-card w-full rounded-2xl border p-4 text-center">
+				{#if !compareDone}
+					{@render compareChips()}
+					<p class="text-faint mt-1.5 text-[11px] leading-snug {selected ? 'mb-3' : ''}">{tx.compare.hint}</p>
+				{/if}
+				{#if selected}
+					{@const vk = verdictKey(selected.ms)}
+					<p class="text-ink text-sm font-semibold">{selected.city}</p>
+					<p class="text-faint text-[11px]">{selected.code}</p>
+					<p class="mt-2 text-3xl font-bold tabular-nums {toneText[tone[vk]]}">
+						{Math.round(latency.current)}<span class="text-muted text-sm font-medium"> {tx.ms}</span>
+					</p>
+					<span class="mt-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold {toneBg[tone[vk]]}">
+						{tx.verdicts[vk]}
+					</span>
+				{:else if compareDone}
+					<p class="text-faint text-sm">{provider ? tx.readoutPrompt : tx.pickProvider}</p>
+				{/if}
+			</div>
 		</div>
 	</div>
 </div>
