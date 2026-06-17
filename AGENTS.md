@@ -4,6 +4,9 @@ Nimbus is an open-source, game-like website for learning cloud computing from ze
 interactively. A cloud mascot named **Nim** guides the learner (Clash-of-Clans vibe).
 Every game metaphor is tied to reality through Nim's reactions.
 
+Live at <https://nimbus.farhanaulianda.my.id>. For what Nimbus is, see **README.md**; for the
+lesson roadmap, see **CURRICULUM.md**. This file is the architecture and contributor guide.
+
 ## Commands (use **bun**)
 
 ```bash
@@ -38,8 +41,10 @@ src/lib/chapters/
       index.ts              #   CONTENT/config: id, mood, stage component, ties text together
       id.ts                 #   LANGUAGE: Bahasa Indonesia strings
       en.ts                 #   LANGUAGE: English strings
-    cloud/  { index.ts, id.ts, en.ts }
-    region/ { index.ts, id.ts, en.ts }
+    request-journey/ { index.ts, id.ts, en.ts }
+    virtual-machine/ { index.ts, id.ts, en.ts }
+  cloud/                    # the next chapter, its own folder
+    cloud/  cable/  region/ # each a lesson folder of { index.ts, id.ts, en.ts }
 ```
 
 **Language is separated from content.** A lesson's `index.ts` holds structure only

@@ -10,13 +10,12 @@ The curriculum is split into two parts, in order:
    load balancer is and how it routes, what a reverse proxy does, how scaling and caching work,
    and so on. No vendor product names yet, just the ideas, made concrete with real examples.
 2. **Part 2, Provider Tracks.** Only after the concepts are clear do we get specific: a dedicated
-   AWS track, a GCP track, an Azure track. Each one re-applies the same concepts using that
+   AWS track, a Google Cloud track, an Azure track. Each re-applies the same concepts using that
    provider's actual services and shows how they differ.
 
 The rule: do not jump to a provider's services before the underlying concept is clear.
 
-Use this file to see what each chapter contains and what is left to build. When a lesson ships,
-tick its box.
+Legend: [x] shipped, [ ] planned, (opt) optional or advanced.
 
 ## The lesson pattern (every lesson follows this)
 
@@ -26,145 +25,112 @@ tick its box.
   does on the stage (`reactions` via `onstate`).
 - An interactive stage that reacts in real time. The learner does something and sees the
   consequence, not just reads about it.
-- Concepts first. Part 1 stays provider neutral, using concrete examples (often AWS, since it is
-  the most common) only to stay tangible. Vendor specific products live in Part 2.
 - Bilingual (Indonesian and English), with language separated from content per lesson
-  (`index.ts` config, `id.ts` and `en.ts` text). See AGENTS.md for the recipe.
-- Minimalist and clean. No dashes as separators, no emoji spam, no purple gradients.
-
-Legend: [x] shipped, [ ] planned, (opt) optional or advanced.
+  (`index.ts` config, `id.ts` and `en.ts` text). See AGENTS.md for the recipe and design rules.
 
 # Part 1: Konsep Inti (Core Concepts)
 
-Provider neutral. The "why and how" that everything else builds on.
+Provider neutral. The "why and how" that everything else builds on. **All shipped and playable.**
 
-## Chapter 1: Fondasi (Foundations) [shipped]
+## Chapter 1: Client & Server (Client & Server) [shipped]
 
 The physical reality under the word "cloud".
 
-- [x] **Server**. A website is served by a computer somewhere. Stage: click "Open website" and
-  watch the request and response between your phone and the server.
-- [x] **Cloud**. On premise versus cloud. The cloud is just servers in someone else's data
-  center. Stage: compare keeping the server at home (dies on a power cut) versus renting it.
-- [x] **Region**. Distance creates latency, so pick the location nearest your users. Stage:
-  place your server in different cities and measure the latency.
+- [x] **Server**. A website is served by a computer somewhere; the client asks, the server
+  answers. Stage: open a site and watch the request and response travel between phone and server.
+- [x] **Request journey**. A request hops through phone, router, ISP, and the global network, and
+  all the way back. Stage: follow the packet station by station.
+- [x] **Virtual machine**. One physical server sliced into many isolated virtual computers. Stage:
+  split a host into VMs, allocate CPU and RAM, and feel the contention when you over allocate.
+- [x] **Laptop as a server**. Your laptop can serve a site, but the home IP changes, it must stay
+  on, and uploads are slow. Stage: serve from a laptop and hit each problem.
+- [x] **Tunneling**. A borrowed public door (like ngrok) through a third party, fine for demos,
+  not production. Stage: open a tunnel and reach the laptop from outside.
+
+## Chapter 2: The Cloud (Cloud) [shipped]
+
+What the cloud actually is, and what data crosses to reach it.
+
+- [x] **Cloud**. On premise versus cloud; the cloud is just servers in a company's data center.
+  Stage: compare a server at home (dies on a power cut) with one rented in the cloud.
 - [x] **Cable**. Data crosses oceans through real undersea cables, not satellites. Stage: send
-  data from Argentina to a far data center and follow it along the real cable route.
+  data to a near and a far destination and follow it along the real cable route.
+- [x] **Region**. Distance creates latency, so pick the region nearest your users, and each
+  provider spreads its regions differently. Stage: pick a provider (AWS, Azure, Google), place a
+  server in different cities, and compare a near region with a far one.
 
-## Chapter 2: Ketahanan (Resilience) [shipped]
+## Chapter 3: Resilience & Data (Ketahanan & Data) [shipped]
 
-One copy in one place is fragile. Survive failures.
+One copy in one place is fragile. Survive failures, and store data well.
 
-- [x] **Availability Zone**. Opens with a real 2026 event: a drone-strike animation on a data
-  center plus news popups (drones struck AWS data centers in the UAE and Bahrain), with Next
-  locked until it plays, to show physical threats are real. Then teaches that a region holds
-  several isolated AZs, and (on entering a region) that the a/b/c naming is shuffled per account
-  and kept secret. Stage: a world map with two clickable regions (Virginia, Singapore); click to
-  open a close-up of that region's real boundary and AZs, spread servers across them, trigger an
-  outage, and watch the site go down (single AZ) or survive (multiple AZs).
-- [x] **Failover**. Escalates from one AZ to a whole region being lost (tied to the same
-  Middle East data center strikes): keep a standby region and switch to it automatically. Stage:
-  on the world map a primary region (Virginia) serves; kill it with no standby and the site goes
-  down; click another region (Singapore) to make it a standby, kill the primary again, and a
-  drone strike on the primary triggers failover so the site stays up.
+- [x] **Availability Zone**. A region is not one building; it holds several isolated AZs. Opens
+  with a real data center strike intro. Stage: spread servers across a region's AZs, trigger an
+  outage, and watch the site survive (multiple AZs) or fall (a single AZ).
+- [x] **Failover**. A whole region can be lost; keep a standby region and switch automatically.
+  Stage: kill the primary with no standby (site down), add a standby, kill again, and traffic
+  fails over so the site stays up.
+- [x] **Storage types**. Object, block, and file storage, and when to use each. Stage: match each
+  shape to the right use case.
+- [x] **Databases (SQL versus NoSQL)**. Structured tables with relations versus flexible key or
+  document stores, and the trade offs. Stage: model a use case in each and see which fits.
 
-## Chapter 3: Lalu Lintas (Traffic) [next]
+## Chapter 4: Traffic (Lalu Lintas) [shipped]
 
 Serve many users at once without falling over.
 
-- [ ] **Reverse Proxy**. A single front door that receives every request and forwards it to the
-  right server behind it, hiding the backends. Stage: requests hit the proxy, which routes by
-  path (the site versus the API) and keeps the real servers hidden. Reality tie: a receptionist.
-- [ ] **Load Balancer**. Spread requests across many identical servers, skipping any that are
-  unhealthy. Stage: traffic overloads one server (red), add a balancer plus servers so it splits
-  evenly, then kill one server and watch the balancer route around it. Reality tie: a greeter
-  sending each customer to the shortest checkout line.
-- [ ] **Scaling**. Vertical (a bigger machine) versus horizontal (more machines), and the trade
-  offs. Stage: a growing workload; try a bigger box (hits a ceiling, costly) versus more boxes.
-- [ ] **Auto Scaling**. Add and remove capacity automatically as demand rises and falls. Stage:
-  a day and night traffic graph; capacity follows the curve, and so does the cost meter.
-- [ ] **Caching and CDN**. Keep a ready copy close to where it is needed to avoid repeating work
-  and long trips. Stage: the first request travels far, then a nearby cache answers instantly;
-  a CDN puts caches near users worldwide. Reuses the world map and ties back to latency.
+- [x] **Reverse proxy**. A single front door that receives every request and forwards it to the
+  right backend, hiding them. Stage: requests hit the proxy, which routes by path.
+- [x] **Load balancer**. Spread requests across identical servers, skipping unhealthy ones. Stage:
+  overload one server, add a balancer plus servers, then kill one and watch it route around.
+- [x] **Scaling**. Vertical (a bigger machine) versus horizontal (more machines), and the trade
+  offs. Stage: a growing workload; upgrade one box versus add more boxes.
+- [x] **Auto scaling**. Add and remove capacity automatically as demand rises and falls. Stage: a
+  day and night traffic curve, with capacity and the cost meter following it.
+- [x] **Caching and CDN**. Keep a copy close to users to skip the long trip. Stage: a far origin
+  versus a nearby edge, toggled on a world map, tying back to latency.
 
-## Chapter 4: Komputasi (Compute) [planned]
+## Chapter 5: Networking & Security (Jaringan & Keamanan) [shipped]
 
-The different ways to run code.
+How everything connects, is addressed, isolated, and kept safe.
 
-- [ ] **Virtual Machine**. One physical server sliced into many isolated virtual computers.
-  Reality tie: an apartment building, one structure with many independent units. Stage: split a
-  host into VMs, allocate CPU and RAM, over allocate and feel the contention.
-- [ ] **Container**. Package an app with everything it needs so it runs the same anywhere, and
-  lighter than a VM. Reality tie: a standard shipping container. Stage: ship an app as a
-  container and run it identically on different hosts; compare size and startup with a VM.
-- [ ] **Serverless**. Write a function, the platform runs it on demand and scales to zero, you
-  pay per call. Reality tie: motion sensor lights. Stage: compare an always on server with
-  serverless for rare, bursty traffic (idle cost versus per call cost).
-
-## Chapter 5: Penyimpanan (Storage) [planned]
-
-Where data lives and how it stays safe.
-
-- [ ] **Storage types**. Object (whole files by key), block (a raw disk), and file (a shared
-  folder). Reality tie: a parcel locker, a hard drive, a shared drive. Stage: pick the right one
-  for a use case (photos versus a database disk versus shared documents).
-- [ ] **Databases (SQL versus NoSQL)**. Structured tables with relations and queries versus
-  flexible key or document stores, and the trade offs. Stage: model a use case in each and see
-  which fits (bank transactions versus a huge simple lookup).
-- [ ] **Replication and Backups**. Keep copies for durability and recovery; replicas versus
-  backups. Reality tie: photocopies kept in different buildings. Stage: lose a copy and recover.
-- [ ] (opt) **In memory cache**. A fast scratchpad in front of the database for hot data.
-
-## Chapter 6: Jaringan (Networking) [planned]
-
-How everything connects, addressed, and isolated.
-
-- [ ] **IP and DNS**. Every server has an address (IP); DNS turns a name into that address.
-  Reality tie: phone numbers and a phonebook. Stage: type a domain and watch it resolve to an IP
-  then connect (callback to the Server lesson).
-- [ ] **Private networks and subnets**. Your own isolated network with public (internet facing)
-  and private (internal only) areas. Reality tie: a building with a public lobby and staff only
-  floors. Stage: put a web server public and a database private, then test what is reachable.
-- [ ] **Firewall**. Rules that allow or deny traffic by port and source. Reality tie: a bouncer
-  with a guest list. Stage: toggle rules and watch connections succeed or get blocked.
-- [ ] (opt) **NAT and gateways**. How private machines reach out without being reachable.
-
-## Chapter 7: Keamanan (Security) [planned]
-
-Keeping it safe and private.
-
-- [ ] **Identity and Access**. Authentication (who you are) versus authorization (what you may
-  do), and least privilege. Reality tie: an ID badge and which doors it opens. Stage: assign
-  scoped permissions and try an allowed action versus a denied one.
-- [ ] **Encryption**. Scramble data at rest and in transit so only key holders can read it.
-  Reality tie: a locked box. Stage: send data over a cable readable versus encrypted, tying back
-  to the Cable lesson.
-- [ ] **Shared responsibility**. The provider secures the cloud, you secure what you put in it.
+- [x] **IP and DNS**. Every server has an address (IP); DNS turns a name into that address. Stage:
+  type a domain and watch it resolve to an IP, then connect.
+- [x] **Private networks and subnets**. Public (internet facing) and private (internal only) areas
+  of your own network. Stage: put a web server public and a database private, then test what is
+  reachable.
+- [x] **Firewalls**. Rules that allow or deny traffic by port and source. Stage: toggle rules and
+  watch connections pass or get blocked.
+- [x] **Identity and Access**. Authentication (who you are) versus authorization (what you may
+  do), and least privilege. Stage: assign scoped permissions and try an allowed versus a denied
+  action.
+- [x] **Encryption**. Scramble data at rest and in transit so only key holders can read it. Stage:
+  send data readable versus encrypted, tying back to the Cable lesson.
+- [x] **Shared responsibility**. The provider secures the cloud, you secure what you put in it.
   Stage: sort responsibilities into the "provider" and "you" buckets.
 
-## Chapter 8: Operasi (Operations) [planned]
+## Chapter 6: Compute & Operations (Komputasi & Operasi) [shipped]
 
-Running it well, and not overpaying.
+The ways to run code, and running it well without overpaying.
 
-- [ ] **Monitoring and Observability**. Metrics, logs, and alarms so you know what is happening.
-  Reality tie: a car dashboard. Stage: watch the gauges and set an alarm that triggers scaling.
-- [ ] **Cost model**. Pay as you go, no big upfront cost, and right sizing to save. Reality tie:
-  a utility bill versus buying your own generator. Stage: a live cost meter as you add and remove
-  resources; trim an over provisioned setup.
-- [ ] (opt) **Infrastructure as Code**. Define the whole setup in code so it is reproducible.
+- [x] **Containers**. Package an app with everything it needs so it runs the same anywhere, and
+  lighter than a VM. Stage: build an image and run the same container in several places.
+- [x] **Serverless**. Write a function; the platform runs it on demand and scales to zero, you pay
+  per call. Stage: compare an always on server with serverless for rare, bursty traffic.
+- [x] **Monitoring**. Metrics, logs, and alarms so you know what is happening. Stage: watch the
+  gauges and set an alarm.
+- [x] **Cost**. Pay as you go, and right sizing to save. Stage: a live bill; turn off an idle
+  server and shrink an oversized one, and watch the number drop.
 
-## Chapter 9: Proyek Akhir (Capstone) [planned]
+## Gateway: Provider Tracks (Jalur Provider) [shipped]
 
-- [ ] **Design the architecture**. With concepts only (no vendor names), assemble a resilient,
-  scalable design for a sample app: DNS, then a CDN, then a reverse proxy and load balancer, then
-  auto scaled compute across zones, then a database with replication and backups. Pass challenges:
-  a traffic spike, a zone outage, and a far away user.
+- [x] **Pick your track**. With Part 1's concepts in hand, choose the provider to learn next, AWS,
+  Google Cloud, or Azure. This is the handoff from Part 1 into Part 2.
 
-# Part 2: Jalur Provider (Provider Tracks) [later]
+# Part 2: Jalur Provider (Provider Tracks) [planned]
 
 Only after Part 1. Each track re-applies the concepts above using that provider's real services,
 side by side so the learner sees the same idea wearing different names, plus what is unique to
-each. Lessons will be detailed when Part 1 is close to done.
+each. Lessons will be detailed as each track is built.
 
 ## Track A: AWS [planned]
 
@@ -189,5 +155,6 @@ each. Lessons will be detailed when Part 1 is close to done.
 ## Ideas parked for later
 
 - A side by side "same concept, three providers" comparison view.
-- Achievements or a progress map screen (the Clash of Clans base view).
+- An end to end capstone build (assemble a full architecture, then pass a traffic spike, a zone
+  outage, and a far away user).
 - A sandbox mode to freely build an architecture without a lesson.

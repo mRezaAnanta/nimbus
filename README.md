@@ -1,49 +1,64 @@
 # ☁️ Nimbus
 
 **Learn cloud computing by playing.** Nimbus is an open-source, game-like website that teaches
-cloud from absolute zero, interactively. A cloud mascot named **Nim** guides you, and every
-concept is something you try yourself rather than just read about.
+cloud from absolute zero, interactively. A mascot named **Nim** guides you, and every concept is
+something you try on a live stage, not just read about.
 
-Inspired by Skill Builder, but built like a game: bite-sized story beats, hands-on stages, and
-real-world explanations woven into the play.
+**Live: [nimbus.farhanaulianda.my.id](https://nimbus.farhanaulianda.my.id)** — bilingual
+(Indonesian and English), no sign-up, works on phone or desktop.
 
-## What's inside (Chapter 1: Foundations)
+## What's inside
 
-1. **What is a server?** see a request go out and a page come back.
-2. **What is the cloud?** on-premise vs cloud, and what the cloud actually is.
-3. **What is a Region?** place your server on a real world map / spinnable globe and feel latency.
+**Part 1, Core Concepts** is fully playable. It teaches the ideas first, provider neutral, before
+any vendor names:
 
-More chapters (Availability Zones, scaling, security, and beyond) are on the way.
+1. **Client & Server** — what a server is, how a request travels, virtual machines, your laptop as a server, and tunneling.
+2. **The Cloud** — what the cloud actually is, the undersea cables data crosses, and how distance (regions) creates latency.
+3. **Resilience & Data** — availability zones, region failover, the three shapes of storage, and SQL vs NoSQL.
+4. **Traffic** — reverse proxy, load balancing, scaling, auto scaling, and caching with a CDN.
+5. **Networking & Security** — IP and DNS, private networks and subnets, firewalls, identity and access, encryption, and shared responsibility.
+6. **Compute & Operations** — containers, serverless, monitoring, and taming the bill.
+
+It ends at a **Provider Tracks** gateway where you pick AWS, Google Cloud, or Azure. **Part 2**,
+the per-provider tracks that re-apply every concept with real services, is on the way.
+
+See **[CURRICULUM.md](./CURRICULUM.md)** for the full lesson-by-lesson roadmap.
+
+## How it works
+
+Each lesson is a few short story beats from Nim, then an interactive stage you actually play with:
+place a server on a spinnable globe and watch the latency change, ride a data packet along real
+undersea cables, knock out a data center and see the site fail or survive, trim a cloud bill, and
+more. Progress is saved in your browser and lessons unlock in order.
 
 ## Tech stack
 
-SvelteKit, Svelte 5 (runes), TypeScript, Tailwind CSS v4, d3-geo, and **bun**.
+SvelteKit, Svelte 5 (runes mode), TypeScript, Tailwind CSS v4, d3-geo, and **bun**.
 
-## Run it locally
+## Run locally
 
 ```sh
 bun install
 bun run dev
 ```
 
-Then open the printed URL. Other scripts: `bun run check` (typecheck), `bun run build`, `bun run lint`.
+Then open the printed URL. Other scripts: `bun run check` (typecheck, kept at zero errors and
+warnings), `bun run build`, and `bun run lint`.
 
 ## Contributing
 
-Content lives as plain data per chapter in `src/lib/chapters/`, with language and content
-separated per lesson (`index.ts` for config, `id.ts` / `en.ts` for text). Adding a lesson,
-chapter, or language doesn't require touching the engine. See **[AGENTS.md](./AGENTS.md)** for
-the architecture and step-by-step recipes, and **[CURRICULUM.md](./CURRICULUM.md)** for the
-full lesson roadmap and what is left to build.
+Content lives as plain data per chapter in `src/lib/chapters/`, with language separated from
+content per lesson (`index.ts` for config, `id.ts` and `en.ts` for text). Adding a lesson,
+chapter, or language never touches the engine. See **[AGENTS.md](./AGENTS.md)** for the
+architecture, the design rules, and step-by-step recipes.
 
-Currently bilingual: Indonesian and English.
-
-## Data credits
+## Credits
 
 - World map: [Natural Earth](https://www.naturalearthdata.com/) (public domain), via `bun scripts/generate-worldmap.mjs`.
-- Region boundaries (Virginia, Singapore) for the Availability Zone lesson: [Natural Earth](https://www.naturalearthdata.com/) (public domain), via `bun scripts/generate-region-shapes.mjs`.
-- Undersea cables and landing stations: [TeleGeography Submarine Cable Map](https://www.submarinecablemap.com/), via `bun scripts/generate-cables.mjs`. Shown with attribution in the Cable lesson. The data packet routes are generated from the real cable graph; check that they follow actual cables with `bun scripts/verify-routes.mjs`.
+- Region boundaries (Availability Zone lesson): [Natural Earth](https://www.naturalearthdata.com/) (public domain), via `bun scripts/generate-region-shapes.mjs`.
+- Undersea cables and landing stations: [TeleGeography Submarine Cable Map](https://www.submarinecablemap.com/), via `bun scripts/generate-cables.mjs`, shown with attribution in the Cable lesson.
+- Provider logos are trademarks of their respective owners (Amazon Web Services, Microsoft Azure, Google Cloud) and are used only to identify each provider.
 
 ## License
 
-MIT (code). Bundled map data keeps the license of its source listed under Data credits.
+MIT (code). Bundled map data keeps the license of its source, listed under Credits.
