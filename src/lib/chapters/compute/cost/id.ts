@@ -4,8 +4,8 @@ export const id: CostText = {
 	title: 'Mengatur biaya',
 	intro: [
 		'Di cloud kamu bayar sesuai pakai. Enaknya di situ, bahayanya juga di situ, karena semua yang lupa dimatikan terus menagih diam diam.',
-		'Dua penyakit tagihan paling umum, server <b>nganggur</b> yang menyala tanpa kerjaan, dan server <b>kebesaran</b> yang tenaganya cuma kepakai sedikit.',
-		'Obatnya namanya <b>right sizing</b>, sesuaikan ukuran dengan kebutuhan nyata. Matikan yang nganggur, kecilkan yang kebesaran, dan tagihanmu langsung kurus tanpa situsmu terganggu.',
+		'Dua pemborosan yang paling sering bikin tagihan membengkak, yaitu server <b>nganggur</b> yang menyala terus tanpa kerjaan, dan server <b>kebesaran</b> yang tenaganya cuma kepakai sedikit.',
+		'Solusinya namanya <b>right sizing</b>, yaitu menyesuaikan ukuran server dengan kebutuhan nyata. Matikan yang nganggur, kecilkan yang kebesaran, dan tagihanmu langsung turun tanpa situsmu terganggu sedikit pun.',
 		'Tagihan bulan ini lagi bengkak, dan dua pemborosannya bersembunyi di antara tiga server itu. Bereskan keduanya dan lihat angkanya menyusut.'
 	],
 	reactions: {
@@ -29,5 +29,5 @@ export const id: CostText = {
 	noteIdle: 'Ada dua pemborosan bersembunyi di tagihan ini',
 	noteOff: 'Yang nganggur tidak menagih lagi',
 	noteResize: 'Yang kebesaran sekarang pas',
-	noteDone: 'Tagihan kurus, situs tetap jalan'
+	noteDone: 'Tagihan turun, situs tetap jalan'
 };

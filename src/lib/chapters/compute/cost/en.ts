@@ -4,8 +4,8 @@ export const en: CostText = {
 	title: 'Taming the bill',
 	intro: [
 		'In the cloud you pay for what you use. That is the charm and the danger, because everything you forget to turn off keeps quietly charging.',
-		'The two most common bill diseases, an <b>idle</b> server running with no work to do, and an <b>oversized</b> server using only a sliver of its power.',
-		'The cure is called <b>right sizing</b>, matching size to real need. Turn off the idle one, shrink the oversized one, and the bill slims down without your site noticing.',
+		'The two most common kinds of waste, an <b>idle</b> server running with no work to do, and an <b>oversized</b> server using only a sliver of its power.',
+		'The fix is called <b>right sizing</b>, matching a server’s size to its real need. Turn off the idle one, shrink the oversized one, and your bill drops without your site noticing at all.',
 		'This month’s bill is swollen, and the two wastes are hiding among those three servers. Clean them up and watch the number shrink.'
 	],
 	reactions: {
@@ -29,5 +29,5 @@ export const en: CostText = {
 	noteIdle: 'Two wastes are hiding in this bill',
 	noteOff: 'The idle one stopped charging',
 	noteResize: 'The oversized one fits now',
-	noteDone: 'A slim bill, the site still runs'
+	noteDone: 'A lower bill, the site still runs'
 };

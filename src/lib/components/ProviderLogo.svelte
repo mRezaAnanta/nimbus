@@ -1,7 +1,6 @@
 <script lang="ts">
 	// One shared mark per cloud provider, used by both the Region lesson and the Capstone picker so
-	// they always match. AWS and Azure are the providers' official brand logos; Google Cloud is a
-	// stylised stand-in (the official logo is not in the icon packs available).
+	// they always match. These are the providers' official brand logos.
 	let { id, size = 28 }: { id: 'aws' | 'azure' | 'gcp'; size?: number } = $props();
 </script>
 
