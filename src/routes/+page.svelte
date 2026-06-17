@@ -10,7 +10,17 @@
 	const target = `/${first.id}/${first.lessons[0].id}`;
 
 	let beat = $state(0);
-	const lines = $derived($t.welcome);
+	// on a phone, Nim adds a cheeky note recommending a bigger screen, and sizing adapts
+	let small = $state(false);
+	$effect(() => {
+		const mq = window.matchMedia('(max-width: 767px)');
+		small = mq.matches;
+		const onChange = (e: MediaQueryListEvent) => (small = e.matches);
+		mq.addEventListener('change', onChange);
+		return () => mq.removeEventListener('change', onChange);
+	});
+	const lines = $derived(small ? [...$t.welcome, $t.welcomeMobile] : $t.welcome);
+	const shown = $derived(Math.min(beat, lines.length - 1));
 	const isLast = $derived(beat >= lines.length - 1);
 
 	function next() {
@@ -39,7 +49,7 @@
 	class="relative flex min-h-dvh flex-col overflow-hidden"
 	style="background: radial-gradient(120% 90% at 75% 8%, #eef4fc 0%, #f6f4ee 55%, #faf9f6 100%);"
 >
-	<header class="z-20 flex shrink-0 items-center justify-between px-5 pt-4 md:px-8">
+	<header class="z-20 flex shrink-0 items-center justify-between px-5 pt-[max(1rem,env(safe-area-inset-top))] md:px-8">
 		<span class="font-display text-lg font-semibold tracking-tight">Nimbus</span>
 		<div class="border-line flex items-center gap-0.5 rounded-full border bg-white/70 p-0.5 text-[11px] font-bold backdrop-blur">
 			<button
@@ -57,39 +67,40 @@
 		</div>
 	</header>
 
-	<main class="flex flex-1 items-center justify-center p-6">
-		<div class="flex items-end gap-2">
-			<!-- Nim, bobbing (glides to the lesson corner via the view transition) -->
-			<div class="float shrink-0 self-end" style="view-transition-name: nim">
-				<Nim mood="happy" size={180} />
-			</div>
+	<main class="flex flex-1 flex-col items-center justify-center gap-1 px-5 pb-8">
+		<!-- Nim, bobbing (glides to the lesson corner via the view transition) -->
+		<div class="float shrink-0" style="view-transition-name: nim">
+			<Nim mood="happy" size={small ? 128 : 164} />
+		</div>
 
-			<!-- cloud bubble -->
-			<div class="mb-10 w-full max-w-md" style="filter: drop-shadow(0 12px 26px rgba(22,40,60,0.14));">
-				<div class="bg-card relative rounded-[28px]">
-					<span class="bg-card absolute -top-3 left-8 h-7 w-7 rounded-full"></span>
-					<span class="bg-card absolute -top-5 left-16 h-10 w-10 rounded-full"></span>
-					<span class="bg-card absolute -top-2.5 right-14 h-6 w-6 rounded-full"></span>
-					<span class="bg-card absolute -bottom-3 left-7 h-4 w-4 rounded-full"></span>
-					<span class="bg-card absolute -bottom-8 left-2 h-3 w-3 rounded-full"></span>
+		<!-- speech cloud -->
+		<div class="w-full max-w-md" style="filter: drop-shadow(0 16px 32px rgba(22,40,60,0.13));">
+			<div class="bg-card relative rounded-[30px]">
+				<!-- puffs: a little tail rising toward Nim, plus soft cloud edges -->
+				<span class="bg-card absolute -top-3 left-1/2 h-9 w-9 -translate-x-1/2 rounded-full"></span>
+				<span class="bg-card absolute -top-7 left-[41%] h-5 w-5 rounded-full"></span>
+				<span class="bg-card absolute -top-10 left-[45%] h-3 w-3 rounded-full"></span>
+				<span class="bg-card absolute -top-2 left-9 h-6 w-6 rounded-full"></span>
+				<span class="bg-card absolute -top-2 right-11 h-5 w-5 rounded-full"></span>
+				<span class="bg-card absolute -bottom-2.5 left-12 h-4 w-4 rounded-full"></span>
+				<span class="bg-card absolute -bottom-2.5 right-16 h-3 w-3 rounded-full"></span>
 
-					<div class="relative px-6 py-5">
-						<p class="text-faint text-[11px] font-bold tracking-widest uppercase">Nim</p>
-						{#key beat}
-							<p in:fade={{ duration: 220 }} class="text-ink/90 mt-1.5 min-h-[5rem] text-[15.5px] leading-relaxed">
-								{@html lines[beat]}
-							</p>
-						{/key}
+				<div class="relative px-6 py-5 md:px-7 md:py-6">
+					<p class="text-brand text-[11px] font-bold tracking-widest uppercase">Nim</p>
+					{#key shown}
+						<p in:fade={{ duration: 220 }} class="text-ink/90 mt-1.5 min-h-[6.5rem] text-[15.5px] leading-relaxed md:min-h-[5rem]">
+							{@html lines[shown]}
+						</p>
+					{/key}
 
-						<div class="mt-4 flex items-center justify-between">
-							<ProgressDots total={lines.length} current={beat} />
-							<button
-								onclick={next}
-								class="bg-brand rounded-xl px-6 py-2.5 text-sm font-semibold text-white shadow-[0_3px_0_rgba(28,74,160,0.5)] transition-all hover:brightness-110 active:translate-y-0.5 active:shadow-[0_1px_0_rgba(28,74,160,0.5)]"
-							>
-								{isLast ? $t.start : $t.next}
-							</button>
-						</div>
+					<div class="mt-3.5 flex items-center justify-between md:mt-4">
+						<ProgressDots total={lines.length} current={beat} />
+						<button
+							onclick={next}
+							class="bg-brand rounded-xl px-7 py-2.5 text-sm font-semibold text-white shadow-[0_3px_0_rgba(28,74,160,0.5)] transition-all hover:brightness-110 active:translate-y-0.5 active:shadow-[0_1px_0_rgba(28,74,160,0.5)]"
+						>
+							{isLast ? $t.start : $t.next}
+						</button>
 					</div>
 				</div>
 			</div>
@@ -97,7 +108,11 @@
 	</main>
 
 	<p class="text-faint pointer-events-none absolute inset-x-0 bottom-3 text-center text-[11px]">
-		{$lang === 'id' ? 'Tekan Spasi atau klik untuk lanjut' : 'Press Space or click to continue'}
+		{#if $lang === 'id'}
+			{small ? 'Ketuk Lanjut untuk mulai' : 'Tekan Spasi atau klik untuk lanjut'}
+		{:else}
+			{small ? 'Tap Next to begin' : 'Press Space or click to continue'}
+		{/if}
 	</p>
 </div>
 
@@ -112,6 +127,11 @@
 		}
 		50% {
 			transform: translateY(-9px);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.float {
+			animation: none;
 		}
 	}
 </style>
