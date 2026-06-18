@@ -4,7 +4,7 @@ export const en: VirtualMachineText = {
 	title: 'What is a virtual machine?',
 	intro: [
 		'Look at this laptop. Inside there is just one machine, CPU, RAM, and disk. And usually one machine runs one system for one user.',
-		'Yet a powerful machine sits idle most of the time, only a sliver of its power gets used. The trick is to slice one machine into several virtual computers. Each slice is called a <b>virtual machine</b> (VM).',
+		'Yet a powerful machine sits idle most of the time, only a sliver of its power gets used. The trick is to slice one machine into several virtual computers. The slicing technique is called <b>virtualization</b>, and each slice it produces is a <b>virtual machine</b> (VM).',
 		'Every VM runs its own operating system and feels like a whole computer, even though they all share one set of hardware. Like an apartment building, one structure, many units, every resident with their own door. Hold on to this idea, it becomes the key very soon.',
 		'The machine is waiting, 8 vCPUs and 16 GB of RAM mostly sitting idle. Add VMs one by one until it is full, and watch the CPU and RAM get divided up.'
 	],

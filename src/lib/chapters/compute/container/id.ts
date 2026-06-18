@@ -6,7 +6,7 @@ export const id: ContainerText = {
 		'Aplikasimu tidak jalan sendirian. Dia butuh bahasa pemrograman, library, dan file pengaturan. Pindahkan ke komputer lain, satu saja kelupaan, langsung error. Klasik, "di laptopku jalan kok".',
 		'Makanya semua kebutuhannya dibungkus jadi satu paket bernama <b>container</b>. Lihat susunannya. Paling bawah mesinnya, di atasnya <b>Docker</b> sebagai alas yang menjalankan container, dan di atasnya container container berdiri rapi, masing masing membawa kebutuhannya sendiri.',
 		'<b>Docker</b> itu alat container paling umum, hampir semua orang mulai dari sini. Kalau mesinnya lebih dari satu, ada <b>Docker Swarm</b> yang membuat beberapa mesin menjalankan container bersama sama.',
-		'Lalu ada <b>Kubernetes</b>, dan ini dunia yang berbeda. Ada otak bernama <b>control plane</b> yang mengatur banyak mesin berisi ratusan container, lengkap dengan auto scaling dan failover otomatisnya sendiri. Spotify dan Gojek hidup di dunia ini. Dan catat, Docker tidak wajib digandeng Kubernetes. Banyak yang mengira mereka harus sepaket, padahal Docker bisa berdiri sendiri, dan proyek kecilmu cukup dengan Docker saja.',
+		'Lalu ada <b>Kubernetes</b>, dan ini dunia yang berbeda. Ada otak bernama <b>control plane</b> yang mengatur banyak mesin berisi ratusan container, lengkap dengan auto scaling dan failover otomatisnya sendiri. Perusahaan sebesar Spotify atau Gojek menjalankan layanannya pakai Kubernetes. Dan catat, Docker tidak wajib digandeng Kubernetes. Banyak yang mengira mereka harus sepaket, padahal Docker bisa berdiri sendiri, dan proyek kecilmu cukup dengan Docker saja.',
 		'Sekarang giliran aplikasimu yang dibungkus. Jadikan dia sebuah image, lalu jalankan salinan yang sama persis di tiga tempat berbeda.'
 	],
 	reactions: {

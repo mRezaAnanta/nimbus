@@ -5,7 +5,7 @@ export const id: RequestJourneyText = {
 	intro: [
 		'Tadi kamu lihat client minta dan server menjawab. Tapi di antara HP-mu dan server itu ada perjalanan yang panjang banget, dan semuanya kelar dalam sekejap mata.',
 		'Begitu kamu menekan buka, permintaanmu keluar dari HP lewat WiFi ke <b>router</b> di rumahmu. Router itu gerbang rumah, semua perangkat di rumahmu keluar masuk internet lewat dia.',
-		'Dari router, permintaan diteruskan ke <b>ISP</b>, penyedia internet langgananmu. ISP-lah yang menyambungkan rumahmu ke jaringan dunia, lewat kabel di pinggir jalan, antar kota, bahkan nanti dasar laut.',
+		'Dari router, permintaan diteruskan ke <b>ISP</b> (Internet Service Provider), penyedia internet langgananmu. ISP-lah yang menyambungkan rumahmu ke jaringan dunia, lewat kabel di pinggir jalan, antar kota, bahkan nanti dasar laut.',
 		'Sampai di tujuannya, server membaca permintaanmu dan mengirim jawaban, lewat jalan yang sama, balik sampai jadi halaman di layar HP-mu. Bolak balik ini biasanya cuma puluhan milidetik.',
 		'Jalurnya sudah terbentang lengkap, dari HP-mu sampai ke server di ujung sana. Buka nimbus.com dan ikuti permintaanmu menempuh perjalanan itu.'
 	],

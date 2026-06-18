@@ -4,7 +4,7 @@ export const id: CloudText = {
 	title: 'Apa itu cloud?',
 	intro: [
 		'Laptopmu gugur jadi server publik, dan tunneling cuma pintu pinjaman. Situs beneran butuh rumah yang serius. Ada dua cara, yaitu kelola sendiri (disebut <b>on-premise</b>) atau sewa di <b>cloud</b>.',
-		'Banyak orang ngira cloud itu sesuatu yang ajaib di langit. Padahal cloud ya... <b>server biasa juga</b>. Bedanya, dia bukan di rumahmu, melainkan di gedung <i>data center</i> milik perusahaan besar, dan kamu tinggal sewa tanpa pernah melihat mesinnya.',
+		'Banyak orang ngira cloud itu sesuatu yang ajaib di langit. Padahal cloud ya... <b>server biasa</b>, cuma lokasinya di gedung <i>data center</i> milik perusahaan, bukan di rumahmu. Biasanya kamu tinggal sewa tanpa pernah lihat mesinnya, tapi ada juga yang bikin sendiri, namanya <b>private cloud</b>.',
 		'Dua duanya sudah berdiri bersebelahan, server di rumahmu dan server di cloud. Tengok satu satu dan rasakan bedanya.'
 	],
 	reactions: {

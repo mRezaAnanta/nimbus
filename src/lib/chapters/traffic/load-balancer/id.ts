@@ -5,7 +5,7 @@ export const id: LoadBalancerText = {
 	intro: [
 		'Satu server itu ada batasnya. Selama trafik kalem, dia santai. Tapi begitu pengunjung membludak, dia kewalahan.',
 		'Bayangkan kamu lagi adain <b>flash sale</b>. Jam 12 tepat, ribuan orang buka situsmu barengan. Satu server langsung penuh, situs melambat, lalu down.',
-		'Solusinya, taruh <b>load balancer</b> di depan beberapa server yang identik. Tugasnya membagi permintaan rata ke semua server, jadi tidak ada satu pun yang kebanjiran sendirian.',
+		'Solusinya, taruh <b>load balancer</b> di depan beberapa server yang identik. Tugasnya membagi permintaan ke semua server, defaultnya bergiliran satu per satu (round robin, ada cara lain seperti least connections), jadi tidak ada satu pun yang kebanjiran sendirian.',
 		'Bonusnya, kalau satu server mati, balancer langsung berhenti mengirim ke server itu dan mengalihkan trafik ke yang masih hidup. Pengunjung tidak sadar apa apa.',
 		'Flash sale-nya tinggal dimulai, dan baru ada satu server yang berjaga. Biarkan dia tumbang dulu, lalu pasang load balancer dengan beberapa server dan perhatikan bebannya terbagi rata.'
 	],

@@ -17,8 +17,8 @@ export const networking: Chapter = {
 			sub: 'Kamu sudah paham jaringan dan keamanannya:',
 			items: [
 				'Setiap server punya <b>alamat IP</b>, dan <b>DNS</b> mengubah nama seperti nimbus.com jadi IP itu',
-				'Sebuah <b>VPC</b> adalah jaringan privatmu, dengan <b>subnet publik</b> untuk web dan <b>subnet privat</b> untuk database',
-				'Aturan <b>firewall</b> mengizinkan atau menolak trafik per port dan sumber, dengan default <b>tolak semua</b>',
+				'Sebuah <b>VPC</b> adalah private network milikmu, dengan <b>public subnet</b> untuk web dan <b>private subnet</b> untuk database',
+				'Aturan <b>firewall</b> mengizinkan atau menolak trafik per port dan sumber, dan paling aman dimulai dari <b>tolak semua</b> lalu izinkan yang perlu saja',
 				'<b>Autentikasi</b> membuktikan siapa kamu, <b>otorisasi</b> menentukan apa yang boleh, dan <b>least privilege</b> memberi akses seperlunya',
 				'<b>Enkripsi</b> mengacak data agar hanya pemegang kunci yang bisa membaca, saat berjalan (HTTPS) maupun saat disimpan',
 				'<b>Shared responsibility</b>, provider mengamankan cloud-nya, kamu mengamankan data, akses, dan konfigurasimu'
@@ -33,7 +33,7 @@ export const networking: Chapter = {
 			items: [
 				'Every server has an <b>IP address</b>, and <b>DNS</b> turns a name like nimbus.com into that IP',
 				'A <b>VPC</b> is your private network, with a <b>public subnet</b> for the web and a <b>private subnet</b> for the database',
-				'<b>Firewall</b> rules allow or deny traffic by port and source, with a default of <b>deny everything</b>',
+				'<b>Firewall</b> rules allow or deny traffic by port and source, and the safest setup starts by <b>denying everything</b> then allowing only what is needed',
 				'<b>Authentication</b> proves who you are, <b>authorization</b> decides what you may do, and <b>least privilege</b> grants only what is needed',
 				'<b>Encryption</b> scrambles data so only key holders can read it, both in transit (HTTPS) and at rest',
 				'<b>Shared responsibility</b>, the provider secures the cloud, you secure your data, access, and configuration'
