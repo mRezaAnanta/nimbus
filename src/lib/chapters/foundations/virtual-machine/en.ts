@@ -17,6 +17,8 @@ export const en: VirtualMachineText = {
 	hostLabel: 'One physical machine',
 	hostCpu: '8 vCPU',
 	hostRam: '16 GB RAM',
+	virtLayer: 'Virtualization',
+	virtSub: 'splits one physical machine into many VMs',
 	singleLabel: 'One system',
 	singleSub: 'all the power for a single user',
 	addVm: 'Add a VM',
