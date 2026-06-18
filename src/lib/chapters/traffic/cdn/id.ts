@@ -5,7 +5,7 @@ export const id: CdnText = {
 	intro: [
 		'Ingat pelajaran latensi di bab Cloud? Makin jauh server, makin lama data sampai. Server asal nimbus.com cuma ada di satu tempat, di Amerika, padahal pengunjungmu ada di mana mana.',
 		'Padahal banyak isi situs itu itu saja, gambar, logo, video yang sama untuk semua orang. Daripada tiap orang ambil jauh jauh ke Amerika, simpan salinannya dekat pengunjung. Itu namanya <b>caching</b>. Pertama kali sebuah titik ditanya dia ambil dulu dari server asal, setelah itu salinannya nempel di situ.',
-		'<b>CDN</b> (Content Delivery Network) adalah jaringan titik penyimpan salinan yang tersebar di ratusan kota di seluruh dunia. Pengunjung otomatis dilayani titik terdekat, kamu nggak perlu milih kota satu satu.',
+		'<b>CDN</b> (Content Delivery Network) itu caching yang sama, cuma disebar ke seluruh dunia, jaringan titik penyimpan salinan di ratusan kota. Pengunjung otomatis dilayani titik terdekat, kamu nggak perlu milih kota satu satu.',
 		'Sebarannya tergantung penyedia. Cloudflare ada di 300 lebih kota, CloudFront punya AWS 600 lebih titik, penyedia lain beda lagi. Kota besar hampir pasti kebagian, daerah terpencil dilayani titik terdekat yang agak jauh. Dan ada harganya, CDN itu layanan berbayar, jadi tagihanmu nambah.',
 		'Di peta ini CDN-nya masih mati, semua pengunjung harus jauh jauh ke server asal. Klik beberapa orang dan rasakan lambatnya, lalu nyalakan CDN, klik lagi, dan lihat titik hijau terdekat yang mengirim salinannya.'
 	],

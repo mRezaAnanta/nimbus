@@ -5,7 +5,7 @@ export const en: RequestJourneyText = {
 	intro: [
 		'You just saw the client ask and the server answer. But between your phone and that server lies a very long trip, and the whole thing finishes in the blink of an eye.',
 		'The moment you tap open, your request leaves the phone over WiFi to the <b>router</b> in your house. The router is the front gate, every device in your home enters and leaves the internet through it.',
-		'From the router, the request is handed to your <b>ISP</b>, the internet provider you pay every month. The ISP is what connects your house to the wider world, through cables along the street, between cities, and later even the sea floor.',
+		'From the router, the request is handed to your <b>ISP</b> (Internet Service Provider), the internet company you pay every month. The ISP is what connects your house to the wider world, through cables along the street, between cities, and later even the sea floor.',
 		'At its destination, the server reads your request and sends an answer back along the very same road, all the way to the page on your screen. The round trip usually takes just tens of milliseconds.',
 		'The route is laid out end to end, from your phone to the server at the far side. Open nimbus.com and follow your request along it.'
 	],

@@ -4,7 +4,7 @@ export const en: CloudText = {
 	title: 'What is the cloud?',
 	intro: [
 		'Your laptop failed as a public server, and tunneling is only a borrowed door. A real site needs a serious home. There are two ways, run it yourself (called <b>on-premise</b>) or rent it in the <b>cloud</b>.',
-		'Many people think the cloud is something magical in the sky. But the cloud is... <b>just servers too</b>. The difference is they live in a company’s <i>data center</i>, not your house, and you simply rent them without ever seeing the machines.',
+		'Many people think the cloud is something magical in the sky. But the cloud is... <b>just servers</b>, living in a company’s <i>data center</i> instead of your house. Usually you rent them and never see the machines, though some companies build their own, a <b>private cloud</b>.',
 		'The two stand side by side here, the server at your home and the server in the cloud. Visit each and feel the difference.'
 	],
 	reactions: {

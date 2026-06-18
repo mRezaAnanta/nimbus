@@ -1,26 +1,26 @@
 import type { ScalingText } from '../types';
 
 export const id: ScalingText = {
-	title: 'Scaling vertikal vs horizontal',
+	title: 'Vertical vs horizontal scaling',
 	intro: [
 		'Trafikmu makin naik dan satu server biasa mulai keteteran. Ada dua cara menambah tenaga, dan keduanya beda gaya.',
-		'Cara pertama namanya <b>scaling vertikal</b>. Kamu bikin satu mesin jadi lebih kuat, tambah CPU, RAM, dan disk-nya. Gampang dinaikin, tapi ada batas atasnya, dan kalau mau diturunkan lagi malah ribet karena mesin harus dimatikan dulu.',
-		'Cara kedua namanya <b>scaling horizontal</b>. Daripada satu mesin gede, kamu pakai banyak mesin identik dan bagi bebannya lewat load balancer. Nambah atau ngurangin gampang, dan kalau satu mati yang lain tetap jalan.',
+		'Cara pertama namanya <b>vertical scaling</b>. Kamu bikin satu mesin jadi lebih kuat, tambah CPU, RAM, dan disk-nya. Gampang dinaikin, tapi ada batas atasnya, dan kalau mau diturunkan lagi malah ribet karena mesin harus dimatikan dulu.',
+		'Cara kedua namanya <b>horizontal scaling</b>. Daripada satu mesin gede, kamu pakai banyak mesin identik dan bagi bebannya lewat load balancer. Nambah atau ngurangin gampang, dan kalau satu mati yang lain tetap jalan.',
 		'Dua sisi ini mulai dari mesin yang sama persis. Naikkan pengunjungnya sampai keduanya keteteran, lalu selamatkan sisi kiri lewat Upgrade dan sisi kanan lewat Tambah.'
 	],
 	reactions: {
 		surge:
 			'Pengunjungnya naik dan servernya mulai kewalahan. Sekarang selamatkan dua duanya, sisi kiri dengan upgrade mesin, sisi kanan dengan nambah mesin.',
 		vertical:
-			'Scaling vertikal bikin satu mesin yang sama jadi lebih besar, CPU, RAM, dan disk-nya naik. Kapasitasnya ikut naik. Terus upgrade sampai mentok.',
+			'Vertical scaling bikin satu mesin yang sama jadi lebih besar, CPU, RAM, dan disk-nya naik. Kapasitasnya ikut naik. Terus upgrade sampai mentok.',
 		ceiling:
-			'Nah, mentok. Mesinnya sudah paling gede dan nggak bisa lebih. Itu batas atas scaling vertikal, dan tetap satu titik yang kalau mati semua ikut mati. Coba Horizontal.',
+			'Nah, mentok. Mesinnya sudah paling gede dan nggak bisa lebih. Itu batas atas vertical scaling, dan tetap satu titik yang kalau mati semua ikut mati. Coba Horizontal.',
 		downgrade:
-			'Lihat, buat ngecilin mesin dia harus dimatikan dulu, jadi situs sempat down. Naik gampang, turun ribet. Itu sisi repot scaling vertikal.',
+			'Lihat, buat ngecilin mesin dia harus dimatikan dulu, jadi situs sempat down. Naik gampang, turun ribet. Itu sisi repot vertical scaling.',
 		horizontal:
-			'Scaling horizontal nambah mesin identik dan load balancer membagi pengunjung rata. Mau nambah atau ngurangin gampang tanpa matiin apa apa, dan satu mesin mati pun yang lain tetap melayani.'
+			'Horizontal scaling nambah mesin identik dan load balancer membagi pengunjung rata. Mau nambah atau ngurangin gampang tanpa matiin apa apa, dan satu mesin mati pun yang lain tetap melayani.'
 	},
-	tabVertical: 'Vertikal',
+	tabVertical: 'Vertical',
 	tabHorizontal: 'Horizontal',
 	hintVertical: 'Satu mesin dibikin makin kuat',
 	hintHorizontal: 'Beban dibagi ke banyak mesin',

@@ -16,10 +16,10 @@ export const traffic: Chapter = {
 			sub: 'Kamu sudah paham cara melayani banyak pengunjung:',
 			items: [
 				'Satu <b>reverse proxy</b> jadi pintu depan, mengantar tiap permintaan ke server yang tepat dan menyembunyikan server di belakang',
-				'<b>Load balancer</b> membagi trafik rata ke banyak server dan melewati server yang mati',
-				'Scaling <b>vertikal</b> berarti satu mesin lebih besar (ada batasnya), scaling <b>horizontal</b> berarti lebih banyak mesin (jauh lebih lentur)',
+				'<b>Load balancer</b> membagi trafik ke banyak server (defaultnya bergiliran, bisa pakai cara lain) dan melewati server yang mati',
+				'<b>Vertical scaling</b> berarti satu mesin lebih besar (ada batasnya), <b>horizontal scaling</b> berarti lebih banyak mesin (jauh lebih lentur)',
 				'<b>Auto scaling</b> menambah dan mengurangi server otomatis, jadi kamu bayar sesuai pemakaian',
-				'<b>Caching dan CDN</b> menaruh salinan dekat pengunjung supaya cepat dan tidak perlu perjalanan jauh'
+				'<b>CDN</b> itu salah satu bentuk caching, yaitu menaruh salinan dekat pengunjung di banyak lokasi supaya cepat dan tidak perlu perjalanan jauh'
 			],
 			nextNote:
 				'Berikutnya: <b>Jaringan & Keamanan</b>. Gimana nama nimbus.com berubah jadi alamat, jaringan privat, firewall, sampai kunci dan identitas.',
@@ -30,10 +30,10 @@ export const traffic: Chapter = {
 			sub: 'You now know how to serve many visitors:',
 			items: [
 				'A single <b>reverse proxy</b> is the front door, walking each request to the right server and hiding the servers behind it',
-				'A <b>load balancer</b> splits traffic evenly across many servers and skips a server that is down',
-				'<b>Vertical</b> scaling means one bigger machine (it hits a ceiling), <b>horizontal</b> scaling means more machines (far more flexible)',
+				'A <b>load balancer</b> spreads traffic across many servers (round robin by default, other methods exist) and skips a server that is down',
+				'<b>Vertical scaling</b> means one bigger machine (it hits a ceiling), <b>horizontal scaling</b> means more machines (far more flexible)',
 				'<b>Auto scaling</b> adds and removes servers automatically, so you pay only for what you use',
-				'<b>Caching and a CDN</b> keep copies close to visitors so they load fast without a long trip'
+				'A <b>CDN</b> is a kind of caching, keeping a copy close to visitors in many places so they load fast without a long trip'
 			],
 			nextNote:
 				'Next up: <b>Networking & Security</b>. How the name nimbus.com turns into an address, private networks, firewalls, keys, and identity.',
