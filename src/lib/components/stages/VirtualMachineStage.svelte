@@ -18,6 +18,9 @@
 	const tx = $derived(text as VirtualMachineText);
 
 	const lastBeat = $derived(beat >= tx.intro.length - 1);
+	// from the second beat (where virtualization is introduced) the one screen splits and the
+	// virtualization layer slides in, before the learner builds any VMs
+	const sliced = $derived(beat >= 1);
 	// the laptop narrates from the first beat, so keep the stage undimmed
 	$effect(() => {
 		void beat;
@@ -58,7 +61,7 @@
 			<div class="lid" class:open>
 				<div class="lidback"></div>
 				<div class="screen">
-					{#if vms === 0}
+					{#if !sliced}
 						<div class="single">
 							<div class="shead"><span class="sled"></span><span class="stab"></span></div>
 							<div class="sbody">
@@ -95,6 +98,14 @@
 			<div class="deck"><span class="pad"></span></div>
 		</div>
 	</div>
+
+	<!-- the virtualization layer that slices the one machine into many -->
+	{#if sliced}
+		<div class="vlayer">
+			<span class="vlayer-name">{tx.virtLayer}</span>
+			<span class="vlayer-sub">{tx.virtSub}</span>
+		</div>
+	{/if}
 
 	<!-- the one machine underneath it all -->
 	<div class="chips">
@@ -330,10 +341,71 @@
 		align-items: center;
 		justify-content: center;
 		border-radius: 9px;
-		border: 1.5px dashed #e0d9cd;
+		border: 1.5px solid #ece5d8;
 		color: #cfc7b8;
 		font-size: 17px;
 		font-weight: 700;
+	}
+	/* the four cells slice into being the moment virtualization kicks in */
+	.grid4 .slot {
+		animation: slicein 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+	}
+	.grid4 .slot:nth-child(1) {
+		animation-delay: 0.04s;
+	}
+	.grid4 .slot:nth-child(2) {
+		animation-delay: 0.12s;
+	}
+	.grid4 .slot:nth-child(3) {
+		animation-delay: 0.2s;
+	}
+	.grid4 .slot:nth-child(4) {
+		animation-delay: 0.28s;
+	}
+	@keyframes slicein {
+		from {
+			opacity: 0;
+			transform: scale(0.55);
+		}
+		to {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
+	/* the virtualization layer the VMs sit on, above the one physical machine */
+	.vlayer {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 244px;
+		padding: 6px 14px;
+		border-radius: 11px;
+		background: #eaf1fc;
+		border: 1px solid #bcd6f5;
+		line-height: 1.15;
+		animation: layerin 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+	}
+	.vlayer-name {
+		font-size: 11px;
+		font-weight: 800;
+		letter-spacing: 0.02em;
+		color: #2e6fe0;
+	}
+	.vlayer-sub {
+		font-size: 9px;
+		font-weight: 600;
+		color: #6a8fc4;
+	}
+	@keyframes layerin {
+		from {
+			opacity: 0;
+			transform: translateY(-7px) scaleX(0.8);
+		}
+		to {
+			opacity: 1;
+			transform: none;
+		}
 	}
 
 	.chips {
@@ -443,7 +515,9 @@
 
 	@media (prefers-reduced-motion: reduce) {
 		.cta,
-		.vm {
+		.vm,
+		.vlayer,
+		.grid4 .slot {
 			animation-duration: 0.01s;
 		}
 		.lid {
@@ -454,6 +528,16 @@
 		.lid {
 			width: 330px;
 			height: 212px;
+		}
+		.vlayer {
+			width: 320px;
+			padding: 7px 16px;
+		}
+		.vlayer-name {
+			font-size: 13px;
+		}
+		.vlayer-sub {
+			font-size: 10.5px;
 		}
 		.deck {
 			width: 380px;

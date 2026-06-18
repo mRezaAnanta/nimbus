@@ -17,6 +17,8 @@ export const id: VirtualMachineText = {
 	hostLabel: 'Satu mesin fisik',
 	hostCpu: '8 vCPU',
 	hostRam: '16 GB RAM',
+	virtLayer: 'Virtualization',
+	virtSub: 'membagi satu mesin fisik jadi banyak VM',
 	singleLabel: 'Satu sistem',
 	singleSub: 'semua tenaga buat satu pemakai',
 	addVm: 'Tambah VM',

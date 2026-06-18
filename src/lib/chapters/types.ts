@@ -170,6 +170,8 @@ export interface VirtualMachineText extends LessonText {
 	hostLabel: string;
 	hostCpu: string;
 	hostRam: string;
+	virtLayer: string;
+	virtSub: string;
 	singleLabel: string;
 	singleSub: string;
 	addVm: string;
