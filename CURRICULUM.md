@@ -96,12 +96,13 @@ How traffic flows in and out, and where it gets stuck. The primer for the Traffi
 
 - [x] **Ingress and egress**. Data coming into a server is ingress, data leaving is egress. In the
       cloud, ingress is usually free and egress is usually billed (so downloads drive the bill).
-      Stage: toggle the two directions and watch packets flow in versus out, with a free or billed
-      tag.
-- [x] **Bandwidth and throughput**. Bandwidth is the road's maximum capacity, throughput is what
-      actually gets through per second, and a full road drops packets (packet loss). Stage: switch
-      between a small and a big bandwidth and watch the throughput number and packet loss change.
-      The wrap-up also names RPS, concurrency, and jitter. Latency is covered earlier in Region.
+      Stage: visitors upload photos (ingress, free) then download photos (egress, billed) while a
+      live egress bill climbs, motivating caching and a CDN later.
+- [x] **Bandwidth and throughput**. Bandwidth is the road's maximum capacity (the ceiling),
+      throughput is what actually gets through per second. Stage: a video that goes viral; add
+      viewers one by one until throughput hits the bandwidth ceiling and some buffer, then upgrade
+      bandwidth so every viewer plays HD again. The wrap-up also names RPS, concurrency, and jitter.
+      Latency is covered earlier in Region.
 - [x] **Bottleneck**. The one point that limits everyone; under heavy traffic a queue piles up and
       the site slows or falls over. Real case of an online shop under load, shown from both sides.
       Stage: add visitors until the single database is overwhelmed (customer side shows the pages
