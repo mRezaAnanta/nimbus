@@ -58,7 +58,8 @@ the changelog are generated automatically from those commit messages.
 The content lives as plain data per chapter in `src/lib/chapters/`, with language kept separate from
 content per lesson, so adding a lesson, chapter, or language never touches the engine. See
 [CONTRIBUTING.md](./CONTRIBUTING.md) for the full guide, [AGENTS.md](./AGENTS.md) for the
-architecture and design rules, and [CHANGELOG.md](./CHANGELOG.md) for the release history.
+architecture and design rules, [REFERENCES.md](./REFERENCES.md) for the sources behind each lesson,
+and [CHANGELOG.md](./CHANGELOG.md) for the release history.
 
 ## Credits
 

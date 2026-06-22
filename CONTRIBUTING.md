@@ -37,6 +37,9 @@ per lesson (`index.ts` for config, `id.ts` and `en.ts` for text). Shared UI live
 architecture, the design rules (for example, how Nim talks), and step-by-step recipes are in
 [AGENTS.md](./AGENTS.md). Please read it before adding content.
 
+Every lesson is backed by an authoritative source, mapped in [REFERENCES.md](./REFERENCES.md). Keep
+that mapping accurate when you add or change a lesson, so the material stays accountable.
+
 ## Branches
 
 Branch off `main` and name the branch `type/short-topic`, matching the commit type. For example:
