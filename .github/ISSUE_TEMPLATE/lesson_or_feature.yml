@@ -1,0 +1,27 @@
+name: Lesson or feature proposal
+description: Propose a new lesson, an improvement, or a feature
+labels: ['enhancement']
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What concept or feature, in one or two sentences?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it helps a learner
+    validations:
+      required: true
+  - type: input
+    id: chapter
+    attributes:
+      label: Where it fits
+      placeholder: for example, Chapter 5 Traffic, after Load balancer
+  - type: textarea
+    id: real
+    attributes:
+      label: Real world tie
+      description: Every lesson ties to something real. What is the real example?

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Try Nimbus
+    url: https://nimbus.farhanaulianda.my.id
+    about: Play the live site
+  - name: Architecture and design rules
+    url: https://github.com/svviitzerland/nimbus/blob/main/AGENTS.md
+    about: How the project is built and how to add content
