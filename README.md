@@ -9,7 +9,7 @@ something you try on a live stage, not just read about.
 
 ## What's inside
 
-**Part 1, Core Concepts** is fully playable: six provider-neutral chapters that teach the ideas
+**Part 1, Core Concepts** is fully playable: seven provider-neutral chapters that teach the ideas
 first, ending at a **Provider Tracks** gateway where you pick AWS, Google Cloud, or Azure.
 **Part 2**, the per-provider tracks, is on the way.
 
@@ -38,10 +38,24 @@ warnings), `bun run build`, and `bun run lint`.
 
 ## Contributing
 
+Contributions are welcome, by pull request.
+
 Content lives as plain data per chapter in `src/lib/chapters/`, with language separated from
 content per lesson (`index.ts` for config, `id.ts` and `en.ts` for text). Adding a lesson,
 chapter, or language never touches the engine. See **[AGENTS.md](./AGENTS.md)** for the
 architecture, the design rules, and step-by-step recipes.
+
+**How to contribute**
+
+1. Branch off `main`. Name the branch `type/short-topic`, for example `feat/cdn-lesson` or
+   `fix/menu-overflow`.
+2. Make your change, and keep `bun run check` at zero errors and zero warnings (run `bun run build`
+   too).
+3. Write commit messages in the [Conventional Commits](https://www.conventionalcommits.org) format,
+   `type: short summary`. For example `feat: add CDN lesson` or
+   `fix: stop the space bar skipping a lesson`. Common types are `feat`, `fix`, `docs`, `refactor`,
+   `style`, and `chore`.
+4. Open a pull request against `main` and describe what changed and why.
 
 ## Credits
 
