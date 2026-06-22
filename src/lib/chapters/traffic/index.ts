@@ -7,12 +7,12 @@ import { cdn } from './cdn';
 
 export const traffic: Chapter = {
 	id: 'traffic',
-	number: 4,
+	number: 5,
 	title: { id: 'Lalu Lintas', en: 'Traffic' },
 	lessons: [reverseProxy, loadBalancer, scaling, autoScaling, cdn],
 	summary: {
 		id: {
-			title: 'Bab 4 selesai',
+			title: 'Bab 5 selesai',
 			sub: 'Kamu sudah paham cara melayani banyak pengunjung:',
 			items: [
 				'Satu <b>reverse proxy</b> jadi pintu depan, mengantar tiap permintaan ke server yang tepat dan menyembunyikan server di belakang',
@@ -26,7 +26,7 @@ export const traffic: Chapter = {
 			restart: 'Ulangi dari awal'
 		},
 		en: {
-			title: 'Chapter 4 complete',
+			title: 'Chapter 5 complete',
 			sub: 'You now know how to serve many visitors:',
 			items: [
 				'A single <b>reverse proxy</b> is the front door, walking each request to the right server and hiding the servers behind it',

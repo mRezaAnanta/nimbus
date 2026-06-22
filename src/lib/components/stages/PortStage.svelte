@@ -1,0 +1,231 @@
+<script lang="ts">
+	import { SvelteSet } from 'svelte/reactivity';
+	import type { LessonText, PortText } from '$lib/chapters/types';
+
+	let {
+		text,
+		oncomplete,
+		onstate
+	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
+	const tx = $derived(text as PortText);
+
+	let active = $state('');
+	const viewed = new SvelteSet<string>();
+	let done = false;
+	const current = $derived(tx.ports.find((p) => p.port === active));
+
+	function pick(port: string) {
+		active = port;
+		onstate?.(port);
+		viewed.add(port);
+		if (viewed.size === tx.ports.length && !done) {
+			done = true;
+			onstate?.('all');
+			oncomplete?.();
+		}
+	}
+</script>
+
+<div class="wrap">
+	<div class="addr">
+		<span class="alabel">{tx.addrLabel}</span>
+		<span class="achip">{tx.address}</span>
+	</div>
+
+	<div class="building">
+		<div class="facade">
+			<span></span><span></span><span></span><span></span><span></span><span></span>
+		</div>
+		<div class="doors">
+			{#each tx.ports as p}
+				<button
+					type="button"
+					class="door"
+					class:open={viewed.has(p.port)}
+					class:active={active === p.port}
+					onclick={() => pick(p.port)}
+				>
+					<span class="leaf">
+						{#if viewed.has(p.port)}
+							<span class="svc">{p.name}</span>
+						{:else}
+							<span class="knob"></span>
+						{/if}
+					</span>
+					<span class="pnum">{p.port}</span>
+				</button>
+			{/each}
+		</div>
+	</div>
+
+	<p class="desc">
+		{#if current}<span class="dport">Port {current.port}</span
+			>{current.desc}{:else}{tx.tapHint}{/if}
+	</p>
+</div>
+
+<style>
+	.wrap {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 13px;
+		width: min(94vw, 360px);
+		height: 100%;
+	}
+	.addr {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+	}
+	.alabel {
+		font-size: 11px;
+		font-weight: 700;
+		color: #8a949d;
+	}
+	.achip {
+		border-radius: 999px;
+		border: 1px solid #cdddf6;
+		background: #eaf1fc;
+		color: #2e6fe0;
+		font-size: 12px;
+		font-weight: 800;
+		padding: 3px 12px;
+	}
+	.building {
+		width: 100%;
+		border-radius: 16px 16px 12px 12px;
+		border: 1.5px solid #e6e0d6;
+		background: linear-gradient(#fff, #faf7f1);
+		padding: 12px 12px 14px;
+		box-shadow: 0 12px 28px rgba(22, 40, 60, 0.09);
+	}
+	.facade {
+		display: grid;
+		grid-template-columns: repeat(6, 1fr);
+		gap: 6px;
+		margin-bottom: 12px;
+	}
+	.facade span {
+		height: 12px;
+		border-radius: 3px;
+		background: #eef2f6;
+		border: 1px solid #e3e8ee;
+	}
+	.doors {
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		gap: 7px;
+	}
+	.door {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 5px;
+		cursor: pointer;
+		background: none;
+	}
+	.leaf {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 64px;
+		border-radius: 8px 8px 4px 4px;
+		border: 1.5px solid #d9cfbf;
+		background: #efe7d8;
+		transition:
+			border-color 0.2s ease,
+			background 0.25s ease,
+			transform 0.2s ease;
+	}
+	.door:hover .leaf {
+		transform: translateY(-2px);
+	}
+	.door.open .leaf {
+		border-color: #bcd6f5;
+		background: #eef5ff;
+	}
+	.door.active .leaf {
+		border-color: #2e6fe0;
+		box-shadow: 0 0 0 2px rgba(46, 111, 224, 0.16);
+	}
+	.knob {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: #b6a98f;
+	}
+	.svc {
+		padding: 0 3px;
+		text-align: center;
+		font-size: 10.5px;
+		font-weight: 800;
+		line-height: 1.1;
+		color: #2e6fe0;
+		animation: pop 0.25s ease both;
+	}
+	@keyframes pop {
+		from {
+			opacity: 0;
+			transform: scale(0.8);
+		}
+		to {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+	.pnum {
+		font-size: 11px;
+		font-weight: 800;
+		color: #6a7681;
+		font-variant-numeric: tabular-nums;
+	}
+	.door.open .pnum {
+		color: #2b3640;
+	}
+	.desc {
+		min-height: 2.6em;
+		max-width: 320px;
+		text-align: center;
+		font-size: 12.5px;
+		font-weight: 600;
+		line-height: 1.45;
+		color: #4a5560;
+	}
+	.dport {
+		display: inline-block;
+		margin-right: 6px;
+		border-radius: 6px;
+		background: #16212b;
+		color: #fff;
+		font-size: 11px;
+		font-weight: 800;
+		padding: 1px 7px;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.svc {
+			animation: none;
+		}
+	}
+	@media (min-width: 768px) {
+		.wrap {
+			width: 440px;
+			gap: 16px;
+		}
+		.leaf {
+			height: 78px;
+		}
+		.pnum {
+			font-size: 12.5px;
+		}
+		.svc {
+			font-size: 12px;
+		}
+		.desc {
+			font-size: 14px;
+			max-width: 400px;
+		}
+	}
+</style>

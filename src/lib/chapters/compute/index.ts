@@ -6,12 +6,12 @@ import { cost } from './cost';
 
 export const compute: Chapter = {
 	id: 'compute',
-	number: 6,
+	number: 7,
 	title: { id: 'Komputasi & Operasi', en: 'Compute & Operations' },
 	lessons: [container, serverless, monitoring, cost],
 	summary: {
 		id: {
-			title: 'Bab 6 selesai',
+			title: 'Bab 7 selesai',
 			sub: 'Kamu sudah paham cara menjalankan dan mengelola aplikasi:',
 			items: [
 				'Sebuah <b>container</b> adalah paket ringan dan portabel yang jalan sama persis di mana saja',
@@ -24,7 +24,7 @@ export const compute: Chapter = {
 			restart: 'Ulangi dari awal'
 		},
 		en: {
-			title: 'Chapter 6 complete',
+			title: 'Chapter 7 complete',
 			sub: 'You now know how to run and operate an app:',
 			items: [
 				'A <b>container</b> is a light, portable package that runs the same anywhere',

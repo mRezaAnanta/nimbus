@@ -90,10 +90,21 @@
 		if (data.index > 0) goto(`/${chapter.id}/${chapter.lessons[data.index - 1].id}`);
 	}
 	function onKey(e: KeyboardEvent) {
-		if (e.code === 'Space') {
-			e.preventDefault();
-			if (canNext) next();
-		}
+		if (e.code !== 'Space') return;
+		// Don't hijack the space bar when the learner is typing into a field or focused on a
+		// control (e.g. typing "cd documents" in the CLI lesson, where a space is part of the input).
+		const el = e.target as HTMLElement | null;
+		const tag = el?.tagName;
+		if (
+			tag === 'INPUT' ||
+			tag === 'TEXTAREA' ||
+			tag === 'SELECT' ||
+			tag === 'BUTTON' ||
+			el?.isContentEditable
+		)
+			return;
+		e.preventDefault();
+		if (canNext) next();
 	}
 </script>
 
@@ -106,14 +117,18 @@
 <main class="relative flex min-h-0 flex-1 flex-col">
 	<!-- Title band (in normal flow, never overlaps the stage) -->
 	<div class="shrink-0 px-4 pt-3 pb-1 text-center">
-		<p class="text-faint text-[11px] font-semibold tracking-widest uppercase">
-			{chapter.unnumbered ? chapter.title[$lang] : `${$t.chapter} ${chapter.number}: ${chapter.title[$lang]}`}
+		<p class="text-[11px] font-semibold tracking-widest text-faint uppercase">
+			{chapter.unnumbered
+				? chapter.title[$lang]
+				: `${$t.chapter} ${chapter.number}: ${chapter.title[$lang]}`}
 		</p>
-		<h1 class="font-display text-ink mt-1 text-2xl font-medium md:text-[1.9rem]">{text.title}</h1>
+		<h1 class="mt-1 font-display text-2xl font-medium text-ink md:text-[1.9rem]">{text.title}</h1>
 	</div>
 
 	<!-- Stage. Sits between the title and Nim and is bounded so neither ever gets pushed off screen. -->
-	<section class="flex min-h-0 flex-1 items-start justify-center overflow-hidden px-4 pb-4 pt-2 md:px-8 md:pb-6 md:pt-5">
+	<section
+		class="flex min-h-0 flex-1 items-start justify-center overflow-hidden px-4 pt-2 pb-4 md:px-8 md:pt-5 md:pb-6"
+	>
 		{#key data.lessonId}
 			<div class="stage-in h-full w-full">
 				<div
@@ -121,7 +136,14 @@
 						? ''
 						: 'pointer-events-none opacity-40 select-none'}"
 				>
-					<Stage {text} {beat} oncomplete={onComplete} onstate={onState} onlock={onLock} onshow={onShow} />
+					<Stage
+						{text}
+						{beat}
+						oncomplete={onComplete}
+						onstate={onState}
+						onlock={onLock}
+						onshow={onShow}
+					/>
 				</div>
 			</div>
 		{/key}
@@ -134,7 +156,16 @@
 	<div
 		class="pointer-events-none absolute bottom-0 left-0 z-10 px-3 pb-[max(0.6rem,env(safe-area-inset-bottom))] md:bottom-5 md:left-5 md:px-0 md:pb-0"
 	>
-		<SpeechBubble nim={message} mood={currentMood} {canNext} {canBack} {final} {aside} onnext={next} onback={back} />
+		<SpeechBubble
+			nim={message}
+			mood={currentMood}
+			{canNext}
+			{canBack}
+			{final}
+			{aside}
+			onnext={next}
+			onback={back}
+		/>
 	</div>
 </main>
 
