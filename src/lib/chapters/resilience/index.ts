@@ -20,7 +20,7 @@ export const resilience: Chapter = {
 				'<b>SQL</b> kuat untuk transaksi yang konsisten, <b>NoSQL</b> kuat untuk data besar dan beragam'
 			],
 			nextNote:
-				'Berikutnya: <b>Lalu Lintas</b>. Kita bahas cara melayani banyak pengunjung sekaligus, mulai dari reverse proxy sampai CDN.',
+				'Berikutnya: <b>Aliran Data</b>. Kita lihat data masuk dan keluar server (ingress dan egress), dan kenapa trafik ramai bisa macet di satu titik (bottleneck).',
 			restart: 'Ulangi dari awal'
 		},
 		en: {
@@ -33,7 +33,7 @@ export const resilience: Chapter = {
 				'<b>SQL</b> is strong for consistent transactions, <b>NoSQL</b> is strong for huge and varied data'
 			],
 			nextNote:
-				'Next up: <b>Traffic</b>. We will see how to serve many visitors at once, from a reverse proxy to a CDN.',
+				'Next up: <b>Data Flow</b>. We look at data coming in and going out of a server (ingress and egress), and why heavy traffic jams up at one point (a bottleneck).',
 			restart: 'Start over'
 		}
 	}

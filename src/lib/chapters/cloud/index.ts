@@ -1,5 +1,7 @@
 import type { Chapter } from '../types';
 import { cloud } from './cloud';
+import { remoteAccess } from './remote-access';
+import { services } from './services';
 import { cable } from './cable';
 import { region } from './region';
 
@@ -7,13 +9,15 @@ export const cloudChapter: Chapter = {
 	id: 'cloud',
 	number: 2,
 	title: { id: 'Cloud', en: 'The Cloud' },
-	lessons: [cloud, cable, region],
+	lessons: [cloud, remoteAccess, services, cable, region],
 	summary: {
 		id: {
 			title: 'Bab 2 selesai',
 			sub: 'Kamu sudah paham apa itu cloud:',
 			items: [
 				'<b>Cloud</b> itu server di data center penyedia yang biasanya kamu sewa dan bayar sesuai pakai, bukan sesuatu yang ajaib di langit. Perusahaan besar bahkan bisa punya sendiri, namanya <b>private cloud</b>',
+				'Server cloud diakses dari jauh, lewat <b>SSH</b> (terminal untuk Linux) atau <b>RDP</b> (desktop untuk Windows)',
+				'Cloud itu katalog layanan. Yang paling dasar server virtual yang kamu sewa (<b>VPS</b>, di AWS namanya EC2), selain itu ada storage, database, jaringan, dan banyak lagi',
 				'Data menyeberang dunia lewat <b>kabel serat optik di dasar laut</b>, bukan satelit',
 				'<b>Region</b> itu lokasi data center, dan kamu pilih yang terdekat ke pengguna supaya <b>latensinya</b> kecil'
 			],
@@ -26,6 +30,8 @@ export const cloudChapter: Chapter = {
 			sub: 'You now understand the cloud:',
 			items: [
 				'<b>Cloud</b> is servers in a provider’s data center that you usually rent and pay as you go, not something magical in the sky. Big companies can even run their own, a <b>private cloud</b>',
+				'You reach a cloud server remotely, through <b>SSH</b> (a terminal for Linux) or <b>RDP</b> (a desktop for Windows)',
+				'The cloud is a catalog of services. The most basic is a virtual server you rent (a <b>VPS</b>, called EC2 on AWS), plus storage, databases, networking, and much more',
 				'Data crosses the world through <b>fiber optic cables on the seabed</b>, not satellites',
 				'<b>Region</b> is a data center location, and you pick the nearest one to your users to keep <b>latency</b> low'
 			],

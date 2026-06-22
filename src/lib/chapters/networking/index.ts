@@ -8,12 +8,12 @@ import { sharedResponsibility } from './shared-responsibility';
 
 export const networking: Chapter = {
 	id: 'networking',
-	number: 5,
+	number: 6,
 	title: { id: 'Jaringan & Keamanan', en: 'Networking & Security' },
 	lessons: [dns, vpc, firewall, iam, encryption, sharedResponsibility],
 	summary: {
 		id: {
-			title: 'Bab 5 selesai',
+			title: 'Bab 6 selesai',
 			sub: 'Kamu sudah paham jaringan dan keamanannya:',
 			items: [
 				'Setiap server punya <b>alamat IP</b>, dan <b>DNS</b> mengubah nama seperti nimbus.com jadi IP itu',
@@ -28,7 +28,7 @@ export const networking: Chapter = {
 			restart: 'Ulangi dari awal'
 		},
 		en: {
-			title: 'Chapter 5 complete',
+			title: 'Chapter 6 complete',
 			sub: 'You now understand the network and its security:',
 			items: [
 				'Every server has an <b>IP address</b>, and <b>DNS</b> turns a name like nimbus.com into that IP',

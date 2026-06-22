@@ -90,30 +90,42 @@ Next is disabled only on the last beat until the stage's interaction is complete
 (`oncomplete`). Teaching is woven into the beats/reactions; there is intentionally **no
 "Di dunia nyata" toggle**. Tone: detailed but compact, storytelling.
 
+Any beat or reaction string may start with the marker **`[fyi]`** to render as a "by the way"
+aside: the bubble looks the same but leads with a small amber **FYI** tag (handled in
+`SpeechBubble.svelte`, the marker is stripped from the shown text). Use it for optional, fun
+side facts that are not required to follow the lesson.
+
 ## Stage component contract
 
 A stage lives in `src/lib/components/stages/*Stage.svelte` and accepts:
 
 ```ts
-let { text, oncomplete, onstate }: {
-  text: LessonText;            // cast to your specific type: const tx = $derived(text as ServerText)
-  oncomplete?: () => void;     // call once the step is satisfied (unlocks "Next")
-  onstate?: (s: string) => void; // call with a dialog token on each meaningful action
+let {
+	text,
+	oncomplete,
+	onstate
+}: {
+	text: LessonText; // cast to your specific type: const tx = $derived(text as ServerText)
+	oncomplete?: () => void; // call once the step is satisfied (unlocks "Next")
+	onstate?: (s: string) => void; // call with a dialog token on each meaningful action
 } = $props();
 ```
 
 ## Recipes
 
 **Add a lesson to a chapter**
+
 1. `mkdir src/lib/chapters/<chapter>/<lesson>` with `index.ts`, `id.ts`, `en.ts`.
 2. Reuse a stage or add one in `src/lib/components/stages/`. Add its `*Text` interface in `types.ts`.
 3. Append the lesson to the chapter's `lessons[]` in `<chapter>/index.ts`. It gets a URL automatically.
 
 **Add a chapter**
+
 1. `mkdir src/lib/chapters/<chapter>/` with `index.ts` (Chapter meta) plus lesson folders.
 2. Register it in `src/lib/chapters/index.ts` (the `chapters` array, in order).
 
 **Add a language**
+
 1. Add the code to `Lang` and the `ui` dict in `src/lib/i18n.ts`.
 2. Add `<lang>.ts` to every lesson folder and a key in every chapter's `title` and `summary`.
 

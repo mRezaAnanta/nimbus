@@ -183,6 +183,57 @@ export interface VirtualMachineText extends LessonText {
 	prompt: string;
 }
 
+export interface CliGuiText extends LessonText {
+	taskLabel: string; // the shared goal chip, shown above both panels
+	guiTab: string; // toggle label
+	cliTab: string; // toggle label
+	// GUI: a small Windows desktop
+	homeCrumb: string; // breadcrumb root, e.g. "Home"
+	folderName: string; // the folder to open, e.g. "Documents"
+	files: string[]; // what is inside the folder
+	guiHint: string; // shown before the folder is opened
+	guiOpened: string; // caption once the folder is open
+	backLabel: string; // explorer back button
+	// CLI: a real, typeable terminal
+	promptUser: string; // user@host shown in the prompt, e.g. "nim@nimbus"
+	cliHint: string; // muted first line in the terminal
+}
+
+export interface RemoteAccessText extends LessonText {
+	serverLabel: string;
+	dcLabel: string;
+	homeLabel: string;
+	lockedNote: string;
+	idleNote: string;
+	pickSsh: string;
+	pickRdp: string;
+	sshHost: string;
+	sshPrompt: string;
+	sshCmd: string; // the connect command, typed first
+	sshConnecting: string;
+	sshOk: string;
+	/** Commands typed one by one once logged in. */
+	sshSession: { cmd: string; out: string[] }[];
+	rdpTitle: string;
+	rdpHost: string;
+	connecting: string;
+	rdpHint: string;
+}
+
+export interface CloudServicesText extends LessonText {
+	screenTitle: string; // shown on the screen, e.g. "Cloud services"
+	screenSub: string; // small subtitle under it
+	openBtn: string; // powers the screen on to reveal the catalog
+}
+
+export interface PortText extends LessonText {
+	addrLabel: string; // "one address"
+	address: string; // the server address shown on the building
+	tapHint: string; // shown before any door is opened
+	/** Each numbered door (port) and the service waiting behind it. */
+	ports: { port: string; name: string; desc: string }[];
+}
+
 export type Lesson = {
 	id: string;
 	mood: Mood;

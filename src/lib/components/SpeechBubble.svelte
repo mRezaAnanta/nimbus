@@ -25,6 +25,12 @@
 		onback?: () => void;
 	} = $props();
 
+	// Any line (a beat or a reaction) that starts with `[fyi]` is a "by the way" aside: the
+	// bubble looks the same but leads with a small FYI tag. Reusable across every lesson.
+	const FYI_MARK = '[fyi]';
+	const isFyi = $derived(nim.trimStart().toLowerCase().startsWith(FYI_MARK));
+	const body = $derived(isFyi ? nim.trimStart().slice(FYI_MARK.length).trimStart() : nim);
+
 	// Small screens only: that is where the bubble would otherwise cover the stage, so the
 	// moderator-style auto close applies there. On desktop the bubble stays in its corner.
 	let isMobile = $state(false);
@@ -50,6 +56,7 @@
 	// A brief, snappy peek scaled a little to length (markup stripped), then Nim ducks out.
 	function readMs(html: string) {
 		const words = html
+			.replace(/^\s*\[fyi\]\s*/i, '')
 			.replace(/<[^>]*>/g, '')
 			.trim()
 			.split(/\s+/)
@@ -78,33 +85,48 @@
 			class="pointer-events-auto order-1 w-[calc(100vw-1.5rem)] max-w-[360px] min-w-0 md:order-2 md:mb-12 md:w-auto md:max-w-[340px]"
 			style="filter: drop-shadow(0 10px 22px rgba(22,40,60,0.13));"
 		>
-			<div class="bg-card relative rounded-[26px]">
+			<div class="relative rounded-[26px] bg-card">
 				<!-- cloud bumps (top) -->
-				<span class="bg-card absolute -top-2.5 left-7 h-6 w-6 rounded-full"></span>
-				<span class="bg-card absolute -top-4 left-14 h-9 w-9 rounded-full"></span>
-				<span class="bg-card absolute -top-2 right-12 h-5 w-5 rounded-full"></span>
+				<span class="absolute -top-2.5 left-7 h-6 w-6 rounded-full bg-card"></span>
+				<span class="absolute -top-4 left-14 h-9 w-9 rounded-full bg-card"></span>
+				<span class="absolute -top-2 right-12 h-5 w-5 rounded-full bg-card"></span>
 				<!-- trailing dots going down to Nim -->
-				<span class="bg-card absolute -bottom-3 left-6 h-3.5 w-3.5 rounded-full"></span>
-				<span class="bg-card absolute -bottom-7 left-2 h-2.5 w-2.5 rounded-full"></span>
+				<span class="absolute -bottom-3 left-6 h-3.5 w-3.5 rounded-full bg-card"></span>
+				<span class="absolute -bottom-7 left-2 h-2.5 w-2.5 rounded-full bg-card"></span>
 
 				<div class="relative px-5 py-4">
 					<div class="flex items-center justify-between">
-						<p class="text-faint text-[11px] font-bold tracking-widest uppercase">Nim</p>
+						<p class="text-[11px] font-bold tracking-widest text-faint uppercase">Nim</p>
 						<!-- send Nim "out": collapse the bubble to give the stage room -->
 						<button
 							onclick={toggle}
 							aria-label={$t.hideNim}
-							class="text-faint hover:text-ink -mr-1.5 -mt-1 rounded-full p-1.5 transition-colors"
+							class="-mt-1 -mr-1.5 rounded-full p-1.5 text-faint transition-colors hover:text-ink"
 						>
 							<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-								<path d="M3 5.5l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+								<path
+									d="M3 5.5l4 4 4-4"
+									stroke="currentColor"
+									stroke-width="1.8"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								/>
 							</svg>
 						</button>
 					</div>
 
 					{#key nim}
-						<p in:fade={{ duration: 200 }} class="text-ink/90 mt-1 min-h-[3.5rem] text-[14.5px] leading-relaxed md:min-h-[4.5rem]">
-							{@html nim}
+						<p
+							in:fade={{ duration: 200 }}
+							class="mt-1 min-h-[3.5rem] text-[14.5px] leading-relaxed text-ink/90 md:min-h-[4.5rem]"
+						>
+							{#if isFyi}<span class="fyi-tag"
+									><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+										><path
+											d="M12 1.6l1.7 8.7 8.7 1.7-8.7 1.7L12 22.4l-1.7-8.7L1.6 12l8.7-1.7z"
+										/></svg
+									>FYI</span
+								>{/if}{@html body}
 						</p>
 					{/key}
 
@@ -112,7 +134,7 @@
 						{#if canBack}
 							<button
 								onclick={onback}
-								class="text-muted hover:text-ink rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+								class="rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:text-ink"
 							>
 								{$t.back}
 							</button>
@@ -120,14 +142,14 @@
 						<button
 							onclick={onnext}
 							disabled={!canNext}
-							class="bg-brand rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow-[0_3px_0_rgba(28,74,160,0.5)] transition-all enabled:hover:brightness-110 enabled:active:translate-y-0.5 enabled:active:shadow-[0_1px_0_rgba(28,74,160,0.5)] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+							class="rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-[0_3px_0_rgba(28,74,160,0.5)] transition-all enabled:hover:brightness-110 enabled:active:translate-y-0.5 enabled:active:shadow-[0_1px_0_rgba(28,74,160,0.5)] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
 						>
 							{final ? $t.finish : $t.next}
 						</button>
 					</div>
 
 					{#if !canNext}
-						<p class="text-faint mt-2 text-right text-[11px]">{$t.completeHint}</p>
+						<p class="mt-2 text-right text-[11px] text-faint">{$t.completeHint}</p>
 					{/if}
 				</div>
 			</div>
@@ -158,6 +180,55 @@
 	button {
 		position: relative;
 		-webkit-tap-highlight-color: transparent;
+	}
+	/* a lively "by the way" tag at the start of an FYI line */
+	.fyi-tag {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		vertical-align: 1px;
+		margin-right: 8px;
+		border-radius: 999px;
+		background: linear-gradient(135deg, #f3b94e, #dd9e36);
+		color: #fff;
+		font-size: 10px;
+		font-weight: 800;
+		letter-spacing: 0.1em;
+		padding: 3px 9px 3px 7px;
+		box-shadow: 0 3px 9px rgba(221, 158, 54, 0.42);
+		animation: fyi-pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.5) both;
+	}
+	.fyi-tag svg {
+		width: 11px;
+		height: 11px;
+		animation: fyi-twinkle 1.8s ease-in-out infinite;
+	}
+	@keyframes fyi-pop {
+		from {
+			opacity: 0;
+			transform: scale(0.5) rotate(-10deg);
+		}
+		to {
+			opacity: 1;
+			transform: scale(1) rotate(0);
+		}
+	}
+	@keyframes fyi-twinkle {
+		0%,
+		100% {
+			transform: scale(1) rotate(0);
+			opacity: 1;
+		}
+		50% {
+			transform: scale(0.78) rotate(45deg);
+			opacity: 0.8;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.fyi-tag,
+		.fyi-tag svg {
+			animation: none;
+		}
 	}
 	/* gentle bob to signal Nim is waiting when the bubble is out */
 	.nim-call {
