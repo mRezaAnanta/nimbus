@@ -24,6 +24,33 @@
 	--font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
 }
 
+/* Page background gradient stops */
+:root {
+	--bg-grad-1: #eef4fc;
+	--bg-grad-2: #f6f4ee;
+	--bg-grad-3: #faf9f6;
+	--header-bg: rgba(255, 255, 255, 0.7);
+}
+
+:root.dark {
+	--color-paper: #121a24;
+	--color-card: #1b2533;
+	--color-ink: #e0dcd4;
+	--color-muted: #97a3ae;
+	--color-faint: #6b7885;
+	--color-line: #2c3746;
+
+	--color-brand-soft: #1a2d4a;
+	--color-grass-soft: #142a1e;
+	--color-amber-soft: #2a2418;
+	--color-danger-soft: #2a1a1a;
+
+	--bg-grad-1: #0d1420;
+	--bg-grad-2: #141c2a;
+	--bg-grad-3: #121a24;
+	--header-bg: rgba(27, 37, 51, 0.7);
+}
+
 @layer base {
 	html,
 	body {
