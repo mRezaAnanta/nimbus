@@ -88,17 +88,19 @@
 			</button>
 			<div
 				class="flex items-center gap-0.5 rounded-full border border-line p-0.5 text-[11px] font-bold backdrop-blur"
-				style="background: var(--header-bg);"
+				style="background: var(--header-btn-bg);"
 			>
 				<button
 					onclick={() => setLang('id')}
-					class="rounded-full px-2 py-0.5 transition-colors {$lang === 'id' ? 'bg-ink text-white' : 'text-faint hover:text-ink'}"
+					class="rounded-full px-2 py-0.5 transition-colors {$lang === 'id' ? 'text-white' : 'text-faint hover:text-ink'}"
+					style={$lang === 'id' ? 'background: var(--toggle-active);' : ''}
 				>
 					ID
 				</button>
 				<button
 					onclick={() => setLang('en')}
-					class="rounded-full px-2 py-0.5 transition-colors {$lang === 'en' ? 'bg-ink text-white' : 'text-faint hover:text-ink'}"
+					class="rounded-full px-2 py-0.5 transition-colors {$lang === 'en' ? 'text-white' : 'text-faint hover:text-ink'}"
+					style={$lang === 'en' ? 'background: var(--toggle-active);' : ''}
 				>
 					EN
 				</button>

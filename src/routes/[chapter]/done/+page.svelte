@@ -41,7 +41,8 @@
 			<div class="mt-4 flex flex-col items-center gap-2 md:mt-6 md:gap-3">
 				<button
 					onclick={goNext}
-					class="bg-ink rounded-xl px-6 py-2.5 text-[13px] font-semibold text-white transition-all hover:brightness-125 md:py-3 md:text-sm"
+					class="rounded-xl px-6 py-2.5 text-[13px] font-semibold text-white transition-all hover:brightness-125 md:py-3 md:text-sm"
+					style="background: var(--btn-primary);"
 				>
 					{next.unnumbered ? next.title[$lang] : `${$t.chapter} ${next.number}: ${next.title[$lang]}`}
 				</button>
@@ -50,7 +51,8 @@
 		{:else}
 			<button
 				onclick={restart}
-				class="bg-ink mt-4 rounded-xl px-6 py-2.5 text-[13px] font-semibold text-white transition-all hover:brightness-125 md:mt-6 md:py-3 md:text-sm"
+				class="mt-4 rounded-xl px-6 py-2.5 text-[13px] font-semibold text-white transition-all hover:brightness-125 md:mt-6 md:py-3 md:text-sm"
+				style="background: var(--btn-primary);"
 			>
 				{s.restart}
 			</button>

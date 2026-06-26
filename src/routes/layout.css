@@ -30,6 +30,10 @@
 	--bg-grad-2: #f6f4ee;
 	--bg-grad-3: #faf9f6;
 	--header-bg: rgba(255, 255, 255, 0.7);
+	--header-btn-bg: rgba(255, 255, 255, 0.7);
+	--header-btn-hover: #ffffff;
+	--btn-primary: #16212b;
+	--toggle-active: #16212b;
 }
 
 :root.dark {
@@ -49,6 +53,10 @@
 	--bg-grad-2: #141c2a;
 	--bg-grad-3: #121a24;
 	--header-bg: rgba(27, 37, 51, 0.7);
+	--header-btn-bg: rgba(27, 37, 51, 0.85);
+	--header-btn-hover: rgba(255, 255, 255, 0.1);
+	--btn-primary: #2a3748;
+	--toggle-active: #2a3748;
 }
 
 @layer base {
