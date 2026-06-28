@@ -10,8 +10,17 @@ function save(value: Theme) {
 	}
 }
 
+function detectTheme(): Theme {
+	// On the client the pre-paint script in app.html already applied the dark class;
+	// read it so the store matches before any $effect runs.
+	if (typeof document !== 'undefined' && document.documentElement.classList.contains('dark')) {
+		return 'dark';
+	}
+	return 'light';
+}
+
 function createTheme() {
-	const { subscribe, set, update } = writable<Theme>('light');
+	const { subscribe, set, update } = writable<Theme>(detectTheme());
 
 	return {
 		subscribe,
