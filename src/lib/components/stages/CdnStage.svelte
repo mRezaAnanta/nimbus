@@ -297,9 +297,8 @@
 			<button
 				type="button"
 				onclick={toggle}
-				class="pointer-events-auto rounded-xl px-6 py-2.5 text-sm font-semibold transition-all hover:brightness-110 {cdnOn
-					? 'border border-line bg-white text-ink'
-					: 'bg-ink text-white cta'}"
+				class="pointer-events-auto rounded-xl px-6 py-2.5 text-sm font-semibold transition-all hover:brightness-110 {cdnOn ? 'border border-line bg-card text-ink' : 'text-white cta'}"
+			  style={cdnOn ? '' : 'background: var(--btn-primary);'}
 			>
 				{cdnOn ? tx.cdnOff : tx.cdnOn}
 			</button>

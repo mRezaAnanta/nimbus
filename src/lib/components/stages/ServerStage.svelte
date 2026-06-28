@@ -74,7 +74,8 @@
 		<button
 			onclick={visit}
 			disabled={busy}
-			class="bg-ink rounded-xl px-6 py-3 text-sm font-semibold text-white transition-all enabled:hover:brightness-125 disabled:opacity-50"
+			class="rounded-xl px-6 py-3 text-sm font-semibold text-white transition-all enabled:hover:brightness-125 disabled:opacity-50"
+		  style="background: var(--btn-primary);"
 		>
 			{tx.open}
 		</button>

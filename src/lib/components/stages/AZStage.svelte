@@ -434,7 +434,8 @@
 						type="button"
 						onclick={trigger}
 						disabled={striking || countHere === 0}
-						class="pointer-events-auto shrink-0 rounded-full bg-ink px-4 py-1.5 text-xs font-semibold text-white transition-all hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-40"
+						class="pointer-events-auto shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold text-white transition-all hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-40"
+						style="background: var(--btn-primary);"
 					>
 						{tx.trigger}
 					</button>

@@ -400,13 +400,15 @@
 				<div class="border-line absolute top-2 right-2 z-10 flex items-center gap-0.5 rounded-full border bg-white/85 p-0.5 text-[11px] font-semibold backdrop-blur">
 					<button
 						onclick={() => (mode = 'flat')}
-						class="rounded-full px-2.5 py-1 transition-colors {mode === 'flat' ? 'bg-ink text-white' : 'text-faint hover:text-ink'}"
+						class="rounded-full px-2.5 py-1 transition-colors {mode === 'flat' ? 'text-white' : 'text-faint hover:text-ink'}"
+						style={mode === 'flat' ? 'background: var(--toggle-active);' : ''}
 					>
 						{tx.flatLabel}
 					</button>
 					<button
 						onclick={() => (mode = 'globe')}
-						class="rounded-full px-2.5 py-1 transition-colors {mode === 'globe' ? 'bg-ink text-white' : 'text-faint hover:text-ink'}"
+						class="rounded-full px-2.5 py-1 transition-colors {mode === 'globe' ? 'text-white' : 'text-faint hover:text-ink'}"
+						style={mode === 'globe' ? 'background: var(--toggle-active);' : ''}
 					>
 						{tx.globeLabel}
 					</button>
