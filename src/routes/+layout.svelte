@@ -6,17 +6,8 @@
 
 	let { children } = $props();
 
-	// Restore persisted theme from localStorage on first client render
-	$effect(() => {
-		if (typeof document === 'undefined') return;
-		try {
-			const stored = localStorage.getItem('nimbus-theme') as string | null;
-			if (stored === 'light' || stored === 'dark') theme.set(stored);
-		} catch {
-			// localStorage unavailable
-		}
-	});
-
+	// Keep the dark class in sync with the store after Svelte hydrates.
+	// The initial class is already set before paint by the inline script in app.html.
 	$effect(() => {
 		if (typeof document === 'undefined') return;
 		document.documentElement.classList.toggle('dark', $theme === 'dark');
