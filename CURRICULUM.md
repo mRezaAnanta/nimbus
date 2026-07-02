@@ -40,6 +40,9 @@ The physical reality under the word "cloud".
       answers. Stage: open a site and watch the request and response travel between phone and server.
 - [x] **Request journey**. A request hops through phone, router, ISP, and the global network, and
       all the way back. Stage: follow the packet station by station.
+- [x] **API**. Besides a page for people, a server has an API that returns plain data (JSON) for
+      programs, so apps can ask each other for data. Stage: call nimbus.com for the web page (HTML
+      for humans) versus its API (real JSON for programs) and see how different the two answers look.
 - [x] **Port**. A server has one address but many numbered doors (ports), one per service, like
       web on 80 and 443, SSH on 22, RDP on 3389. Stage: a building with numbered doors, tap each to
       meet the service waiting behind it, so SSH and RDP ports are known before the cloud chapter.
@@ -130,6 +133,10 @@ How everything connects, is addressed, isolated, and kept safe.
 
 - [x] **IP and DNS**. Every server has an address (IP); DNS turns a name into that address. Stage:
       type a domain and watch it resolve to an IP, then connect.
+- [x] **Layers and packets**. Data travels in layers (the OSI stack), and the Transport layer
+      breaks it into packets, delivered reliably over TCP or fast but lossy over UDP. Stage: tap up
+      the OSI pyramid one layer at a time, then send four packets over TCP (all arrive, in order)
+      versus UDP (fast, but one is lost and never resent), and feel the trade off.
 - [x] **Private networks and subnets**. Public (internet facing) and private (internal only) areas
       of your own network. Stage: put a web server public and a database private, then test what is
       reachable.
@@ -149,12 +156,20 @@ The ways to run code, and running it well without overpaying.
 
 - [x] **Containers**. Package an app with everything it needs so it runs the same anywhere, and
       lighter than a VM. Stage: build an image and run the same container in several places.
+- [x] **Microservices**. An app can be one big monolith or many small services, each its own
+      container doing one job and talking over APIs, an architecture choice with real trade offs.
+      Stage: in monolith versus microservices, rush checkout and break search, and watch one shape
+      copy or fall as a whole while the other scales and fails one piece at a time.
 - [x] **Serverless**. Write a function; the platform runs it on demand and scales to zero, you pay
       per call. Stage: compare an always on server with serverless for rare, bursty traffic.
 - [x] **Monitoring**. Metrics, logs, and alarms so you know what is happening. Stage: watch the
       gauges and set an alarm.
 - [x] **Cost**. Pay as you go, and right sizing to save. Stage: a live bill; turn off an idle
       server and shrink an oversized one, and watch the number drop.
+- [x] **CI/CD**. A pipeline that builds, tests, and deploys every change automatically, and stops a
+      broken one before it reaches users, instead of deploying by hand. Stage: ship a good change
+      and watch it flow from commit to live, then ship a broken one and watch the test stage catch
+      it so production stays safe.
 
 ## Gateway: Provider Tracks (Jalur Provider) [shipped]
 

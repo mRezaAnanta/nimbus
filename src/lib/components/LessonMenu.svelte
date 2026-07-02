@@ -128,7 +128,7 @@
 
 					<!-- lessons, indented under a guide line -->
 					<div class="ml-3 border-l border-line pl-3">
-						{#each ch.lessons as l (l.id)}
+						{#each ch.lessons as l, i (l.id)}
 							{@const isDoneL = progress.isDone(ch.id, l.id)}
 							<!-- Lesson locking temporarily disabled so any lesson is reachable without
 							     finishing the previous one. To restore sequential unlocking, re-add the
@@ -136,64 +136,85 @@
 							     progress.isUnlocked(globalIndexOf(ch.id, l.id)) instead of true. -->
 							{@const unlocked = true}
 							{@const current = ch.id === curChapter && l.id === curLesson}
-							<button
-								type="button"
-								onclick={() => go(ch.id, l.id, unlocked)}
-								disabled={!unlocked && !current}
-								aria-current={current ? 'page' : undefined}
-								title={unlocked ? undefined : $t.locked}
-								class="my-0.5 flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] leading-snug transition-colors {current
-									? 'bg-brand-soft font-semibold text-brand'
-									: isDoneL
-										? 'text-muted hover:bg-white'
-										: unlocked
-											? 'text-ink hover:bg-white'
-											: 'cursor-not-allowed text-faint'}"
-							>
-								<span class="flex h-4 w-4 shrink-0 items-center justify-center">
-									{#if current}
-										<svg
-											width="9"
-											height="9"
-											viewBox="0 0 24 24"
-											fill="currentColor"
-											aria-hidden="true"><path d="M7 5l12 7-12 7Z" /></svg
-										>
-									{:else if isDoneL}
-										<svg
-											class="text-grass"
-											width="14"
-											height="14"
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="3"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg
-										>
-									{:else if unlocked}
-										<span class="h-2.5 w-2.5 rounded-full border-[1.5px] border-faint/70"></span>
-									{:else}
-										<svg
-											width="12"
-											height="12"
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="2"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											aria-hidden="true"
-											class="opacity-70"
-											><rect x="5" y="11" width="14" height="9" rx="2" /><path
-												d="M8 11V8a4 4 0 0 1 8 0v3"
-											/></svg
-										>
-									{/if}
-								</span>
-								<span class="truncate">{l.text[$lang].title}</span>
-							</button>
+							{@const newSection =
+								l.section && l.section !== (i > 0 ? ch.lessons[i - 1].section : undefined)}
+							{#if newSection}
+								<div
+									class="mt-2 mb-0.5 flex items-center gap-1.5 pl-0.5 text-[10.5px] font-bold tracking-wider text-faint uppercase"
+								>
+									<svg
+										width="11"
+										height="11"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2.4"
+										stroke-linecap="round"
+										aria-hidden="true"><path d="M7 4v7a4 4 0 0 0 4 4h7" /></svg
+									>
+									{l.section}
+								</div>
+							{/if}
+							<div class={l.section ? 'ml-1.5 border-l border-line pl-2.5' : ''}>
+								<button
+									type="button"
+									onclick={() => go(ch.id, l.id, unlocked)}
+									disabled={!unlocked && !current}
+									aria-current={current ? 'page' : undefined}
+									title={unlocked ? undefined : $t.locked}
+									class="my-0.5 flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] leading-snug transition-colors {current
+										? 'bg-brand-soft font-semibold text-brand'
+										: isDoneL
+											? 'text-muted hover:bg-white'
+											: unlocked
+												? 'text-ink hover:bg-white'
+												: 'cursor-not-allowed text-faint'}"
+								>
+									<span class="flex h-4 w-4 shrink-0 items-center justify-center">
+										{#if current}
+											<svg
+												width="9"
+												height="9"
+												viewBox="0 0 24 24"
+												fill="currentColor"
+												aria-hidden="true"><path d="M7 5l12 7-12 7Z" /></svg
+											>
+										{:else if isDoneL}
+											<svg
+												class="text-grass"
+												width="14"
+												height="14"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="3"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg
+											>
+										{:else if unlocked}
+											<span class="h-2.5 w-2.5 rounded-full border-[1.5px] border-faint/70"></span>
+										{:else}
+											<svg
+												width="12"
+												height="12"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												aria-hidden="true"
+												class="opacity-70"
+												><rect x="5" y="11" width="14" height="9" rx="2" /><path
+													d="M8 11V8a4 4 0 0 1 8 0v3"
+												/></svg
+											>
+										{/if}
+									</span>
+									<span class="truncate">{l.text[$lang].title}</span>
+								</button>
+							</div>
 						{/each}
 					</div>
 				</section>

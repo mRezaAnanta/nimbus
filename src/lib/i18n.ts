@@ -15,6 +15,10 @@ const ui = {
 		chapter: 'Bab',
 		lessons: 'Pelajaran',
 		locked: 'Selesaikan pelajaran sebelumnya dulu',
+		termSoon: 'Segera hadir',
+		termModule: 'Ini bagian dari modul {name}.',
+		termSub: 'Belum perlu kamu pelajari sekarang, cukup tahu istilahnya ada.',
+		termClose: 'Oke',
 		welcomeMobile:
 			'Oh iya, satu hal kecil. Kamu lagi pakai HP ya? Ini bakal jauh lebih enak di layar gede, laptop atau komputer, bahkan TV juga boleh sekalian ngajak sekeluarga nonton kamu belajar cloud haha. Tapi tenang, di HP tetap jalan kok.',
 		welcome: [
@@ -34,6 +38,10 @@ const ui = {
 		chapter: 'Chapter',
 		lessons: 'Lessons',
 		locked: 'Finish the earlier lessons first',
+		termSoon: 'Coming soon',
+		termModule: 'This is part of the {name} module.',
+		termSub: 'No need to learn it now, just good to know it exists.',
+		termClose: 'Got it',
 		welcomeMobile:
 			'Oh, one small thing. You are on a phone, right? This feels so much better on a big screen, a laptop or a computer, even a TV if you fancy, so the whole family can watch you learn cloud haha. No worries though, it runs fine on a phone too.',
 		welcome: [

@@ -1,6 +1,12 @@
 import type { Chapter } from '../types';
 import { server } from './server';
 import { requestJourney } from './request-journey';
+import { api } from './api';
+import { apiRest } from './apiRest';
+import { apiGraphql } from './apiGraphql';
+import { apiGrpc } from './apiGrpc';
+import { apiWebsocket } from './apiWebsocket';
+import { apiWebhook } from './apiWebhook';
 import { port } from './port';
 import { virtualMachine } from './virtual-machine';
 import { laptopServer } from './laptop-server';
@@ -11,7 +17,21 @@ export const foundations: Chapter = {
 	id: 'foundations',
 	number: 1,
 	title: { id: 'Client & Server', en: 'Client & Server' },
-	lessons: [server, requestJourney, port, virtualMachine, laptopServer, tunneling, cliGui],
+	lessons: [
+		server,
+		requestJourney,
+		api,
+		apiRest,
+		apiGraphql,
+		apiGrpc,
+		apiWebsocket,
+		apiWebhook,
+		port,
+		virtualMachine,
+		laptopServer,
+		tunneling,
+		cliGui
+	],
 	summary: {
 		id: {
 			title: 'Bab 1 selesai',
@@ -19,6 +39,7 @@ export const foundations: Chapter = {
 			items: [
 				'<b>Server</b> adalah komputer yang melayani permintaan dari <b>client</b> seperti HP-mu',
 				'Tiap permintaan menempuh perjalanan <b>HP, router, ISP, jaringan dunia</b>, lalu balik lagi',
+				'Selain halaman buat orang, server punya <b>API</b> yang mengembalikan data polos (<b>JSON</b>) buat program, jadi aplikasi bisa saling minta data',
 				'Satu server punya satu alamat tapi banyak <b>port</b> (pintu bernomor), tiap layanan punya sendiri, misalnya web di 80 dan 443, SSH di 22, RDP di 3389',
 				'Satu server fisik bisa dibelah jadi beberapa <b>virtual machine</b> yang terasa seperti komputer utuh',
 				'Laptopmu bisa jadi server, tapi <b>IP rumah berubah ubah</b>, harus nyala 24 jam, dan unggahannya kecil',
@@ -35,6 +56,7 @@ export const foundations: Chapter = {
 			items: [
 				'A <b>server</b> is a computer that answers requests from a <b>client</b> like your phone',
 				'Every request travels <b>phone, router, ISP, global network</b>, and all the way back',
+				'Besides a page for people, a server has an <b>API</b> that returns plain data (<b>JSON</b>) for programs, so apps can ask each other for data',
 				'A server has one address but many <b>ports</b> (numbered doors), one per service, like web on 80 and 443, SSH on 22, RDP on 3389',
 				'One physical server can be sliced into several <b>virtual machines</b> that each feel like a whole computer',
 				'Your laptop can be a server, but the <b>home IP keeps changing</b>, it must stay on 24 hours, and uploads are tiny',
