@@ -234,6 +234,30 @@ export interface PortText extends LessonText {
 	ports: { port: string; name: string; desc: string }[];
 }
 
+export interface ApiText extends LessonText {
+	frontendLabel: string; // column heading over the phone
+	frontendSub: string; // small caption, "what you see"
+	backendLabel: string; // column heading over the server
+	backendSub: string; // small caption, "where data lives"
+	apiLabel: string; // label over the wire between them
+	appTitle: string; // header inside the phone app
+	tableLabel: string; // the backend table name, e.g. "products"
+	emptyHint: string; // the phone screen before it has fetched anything
+	fetchBtn: string; // the button that asks the API for data
+	reqLabel: string; // the chip travelling to the backend
+	respLabel: string; // the chip coming back
+	/** The data, held by the backend and shown on the phone once it asks. */
+	products: { id: number; name: string; price: number }[];
+}
+
+export interface ApiStyleText extends LessonText {
+	/** Which API style this lesson focuses on, drives the animation in ApiStyleStage. */
+	style: 'rest' | 'graphql' | 'grpc' | 'websocket' | 'webhook';
+	clientLabel: string;
+	serverLabel: string;
+	replayBtn: string; // replays the style's animation on the last beat
+}
+
 export type Lesson = {
 	id: string;
 	mood: Mood;
@@ -241,6 +265,8 @@ export type Lesson = {
 	moods?: Mood[];
 	/** Optional mood per reaction token (e.g. a sad face when the site goes down). */
 	reactionMood?: Record<string, Mood>;
+	/** Optional sub-section label. Consecutive lessons sharing it group under a header in the menu. */
+	section?: string;
 	stage: Component<StageProps>;
 	/** Same shape per language. Resolve with `lesson.text[lang]`. */
 	text: { id: LessonText; en: LessonText };

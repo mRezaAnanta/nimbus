@@ -22,6 +22,37 @@ export interface ContainerText extends LessonText {
 	noteRan: string;
 }
 
+export interface MicroservicesText extends LessonText {
+	userLabel: string; // heading over the users
+	devLabel: string; // heading over the architecture
+	monoLabel: string; // title on the one big monolith box
+	oneProgram: string; // monolith sublabel, "one program"
+	sepPrograms: string; // microservices sublabel, "separate programs"
+	downTag: string; // chip on a part that is down
+	okTag: string; // a served request
+	failTag: string; // a failed request
+	/** The three requests users make; the last one (pay) is the one that breaks. */
+	requests: { label: string; service: string }[];
+	recapMono: string; // recap card, monolith in one line
+	recapMicro: string; // recap card, microservices in one line
+}
+
+export interface CicdText extends LessonText {
+	goodBtn: string; // ship a healthy change
+	badBtn: string; // ship a broken change
+	commitLabel: string;
+	buildLabel: string;
+	testLabel: string;
+	deployLabel: string;
+	liveLabel: string;
+	safeNote: string; // shown on production when a bad change is blocked
+	ciSub: string; // caption under the CI group (build and test)
+	cdSub: string; // caption under the CD group (deploy)
+	goodNote: string; // outcome caption after a good ship
+	badNote: string; // outcome caption after a blocked ship
+	tryBothHint: string; // shown until both have been tried
+}
+
 export interface ServerlessText extends LessonText {
 	fnLabel: string;
 	sleepTag: string;

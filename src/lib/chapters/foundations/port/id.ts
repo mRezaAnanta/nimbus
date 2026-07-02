@@ -13,8 +13,8 @@ export const id: PortText = {
 		'443': 'Port 443 itu pintu <b>web aman</b> (HTTPS), sama seperti 80 tapi terenkripsi.',
 		'3389': 'Port 3389 itu pintu <b>RDP</b>, buat remote desktop ke server Windows.',
 		'5432':
-			'Port 5432 itu pintu <b>database</b>, tempat aplikasi nyambung buat baca dan tulis data.',
-		all: 'Nah, satu alamat, banyak pintu, tiap layanan punya port sendiri. Makanya nanti pas masuk ke server cloud, <b>SSH lewat port 22</b> dan <b>RDP lewat port 3389</b>.'
+			'Port 5432 itu pintu <b>database Postgres</b>, tempat aplikasi baca dan tulis data. Tiap database beda portnya, MySQL misalnya di 3306.',
+		all: 'Nah, satu alamat, banyak pintu, tiap layanan punya port sendiri. Makanya nanti pas masuk ke server cloud, <b>SSH lewat port 22</b> dan <b>RDP lewat port 3389</b>. Angka angka ini cuma default yang umum dipakai, dan sebenarnya bisa kamu ganti sendiri.'
 	},
 	addrLabel: 'Satu alamat',
 	address: 'nimbus.com',
@@ -24,6 +24,6 @@ export const id: PortText = {
 		{ port: '80', name: 'Web', desc: 'pintu website biasa (HTTP).' },
 		{ port: '443', name: 'Web aman', desc: 'pintu website terenkripsi (HTTPS).' },
 		{ port: '3389', name: 'RDP', desc: 'pintu remote desktop buat server Windows.' },
-		{ port: '5432', name: 'Database', desc: 'pintu aplikasi nyambung ke database.' }
+		{ port: '5432', name: 'Postgres', desc: 'pintu aplikasi nyambung ke database Postgres.' }
 	]
 };

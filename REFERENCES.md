@@ -41,6 +41,19 @@ Links verified June 2026.
   [How the web works](https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_the_web_works),
   with Cloudflare [What is DNS](https://www.cloudflare.com/learning/dns/what-is-dns/) for the name
   lookup step.
+- **API.** MDN
+  [Introduction to web APIs](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Client-side_APIs/Introduction),
+  on a frontend asking a backend for data rather than a page, plus MDN
+  [HTTP request methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods)
+  and [Sending form data](https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_and_retrieving_form_data)
+  for GET, POST, PUT, DELETE and the fact that HTML forms only speak GET and POST.
+- **API styles (sub-section).** REST per Roy Fielding's
+  [2000 dissertation](https://ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm);
+  [GraphQL](https://en.wikipedia.org/wiki/GraphQL) (Facebook, internal 2012, open-sourced 2015);
+  [gRPC](https://en.wikipedia.org/wiki/GRPC) (Google, successor to Stubby, HTTP/2 plus Protocol Buffers);
+  MDN [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) for the open two-way
+  line that replaced polling; and
+  [webhooks](https://en.wikipedia.org/wiki/Webhook) for the server calling you on an event.
 - **Port.** The IANA
   [Service Name and Transport Protocol Port Number Registry](https://www.iana.org/assignments/service-names-port-numbers),
   the canonical owner of 22, 80, 443, 3389, and the rest.
@@ -122,6 +135,12 @@ Links verified June 2026.
   [What is the Internet Protocol](https://www.cloudflare.com/learning/network-layer/internet-protocol/)
   for IP, and [What is DNS](https://www.cloudflare.com/learning/dns/what-is-dns/) for the name to
   address lookup.
+- **Layers and packets.** Cloudflare
+  [What is the OSI model](https://www.cloudflare.com/learning/ddos/glossary/open-systems-interconnection-model-osi/)
+  for the layered stack,
+  [What is TCP/IP](https://www.cloudflare.com/learning/ddos/glossary/tcp-ip/) for reliable delivery,
+  and [What is UDP](https://www.cloudflare.com/learning/ddos/glossary/user-datagram-protocol-udp/)
+  for the fast, lossy alternative.
 - **Private networks and subnets.** AWS
   [What is Amazon VPC](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html),
   which defines subnets and public versus private.
@@ -143,6 +162,9 @@ Links verified June 2026.
   [What is a container](https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/),
   Kubernetes [Concepts](https://kubernetes.io/docs/concepts/), and the
   [CNCF](https://www.cncf.io/).
+- **Microservices.** AWS
+  [Monolithic vs microservices architecture](https://aws.amazon.com/compare/the-difference-between-monolithic-and-microservices-architecture/),
+  on splitting one app into small services that each do one job and talk over APIs.
 - **Serverless.** AWS [What is Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)
   and the [product page](https://aws.amazon.com/lambda/).
 - **Monitoring.** AWS Well-Architected
@@ -150,6 +172,9 @@ Links verified June 2026.
 - **Cost.** AWS Well-Architected
   [six pillars](https://docs.aws.amazon.com/wellarchitected/latest/framework/the-pillars-of-the-framework.html)
   (Cost Optimization), compared with each provider's pricing and cost tools.
+- **CI/CD.** GitLab
+  [CI/CD concepts](https://docs.gitlab.com/ee/ci/introduction/), a vendor neutral explanation of
+  building, testing, and deploying every change automatically.
 
 ## Licensing and responsible use
 

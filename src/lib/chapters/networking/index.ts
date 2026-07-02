@@ -1,5 +1,6 @@
 import type { Chapter } from '../types';
 import { dns } from './dns';
+import { layers } from './layers';
 import { vpc } from './vpc';
 import { firewall } from './firewall';
 import { iam } from './iam';
@@ -10,13 +11,14 @@ export const networking: Chapter = {
 	id: 'networking',
 	number: 6,
 	title: { id: 'Jaringan & Keamanan', en: 'Networking & Security' },
-	lessons: [dns, vpc, firewall, iam, encryption, sharedResponsibility],
+	lessons: [dns, layers, vpc, firewall, iam, encryption, sharedResponsibility],
 	summary: {
 		id: {
 			title: 'Bab 6 selesai',
 			sub: 'Kamu sudah paham jaringan dan keamanannya:',
 			items: [
 				'Setiap server punya <b>alamat IP</b>, dan <b>DNS</b> mengubah nama seperti nimbus.com jadi IP itu',
+				'Data dikirim berlapis, dan lapisan <b>Transport</b> memecahnya jadi <b>paket</b>, lewat <b>TCP</b> yang andal atau <b>UDP</b> yang cepat tapi rawan hilang',
 				'Sebuah <b>VPC</b> adalah private network milikmu, dengan <b>public subnet</b> untuk web dan <b>private subnet</b> untuk database',
 				'Aturan <b>firewall</b> mengizinkan atau menolak trafik per port dan sumber, dan paling aman dimulai dari <b>tolak semua</b> lalu izinkan yang perlu saja',
 				'<b>Autentikasi</b> membuktikan siapa kamu, <b>otorisasi</b> menentukan apa yang boleh, dan <b>least privilege</b> memberi akses seperlunya',
@@ -32,6 +34,7 @@ export const networking: Chapter = {
 			sub: 'You now understand the network and its security:',
 			items: [
 				'Every server has an <b>IP address</b>, and <b>DNS</b> turns a name like nimbus.com into that IP',
+				'Data travels in layers, and the <b>Transport</b> layer breaks it into <b>packets</b>, over reliable <b>TCP</b> or fast but lossy <b>UDP</b>',
 				'A <b>VPC</b> is your private network, with a <b>public subnet</b> for the web and a <b>private subnet</b> for the database',
 				'<b>Firewall</b> rules allow or deny traffic by port and source, and the safest setup starts by <b>denying everything</b> then allowing only what is needed',
 				'<b>Authentication</b> proves who you are, <b>authorization</b> decides what you may do, and <b>least privilege</b> grants only what is needed',
