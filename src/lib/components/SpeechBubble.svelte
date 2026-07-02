@@ -2,7 +2,8 @@
 	import { fade, fly } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import Nim from './Nim.svelte';
-	import { t } from '$lib/i18n';
+	import { t, lang } from '$lib/i18n';
+	import { renderTerms, topicName, topicColor } from '$lib/terms';
 	import type { Mood } from '$lib/chapters/types';
 
 	let {
@@ -75,7 +76,35 @@
 	function toggle() {
 		override = { line: nim, open: !open };
 	}
+
+	// Inline glossary chips: [[term|topic]] becomes a tappable chip (rendered inside {@html} so it
+	// composes with any existing markup), and a tap opens a small "coming soon" card for that module.
+	const html = $derived(renderTerms(body));
+	let activeTerm = $state<{ label: string; topic: string } | null>(null);
+	$effect(() => {
+		void nim; // a new line (beat or reaction) clears any open card
+		activeTerm = null;
+	});
+	function termClicks(node: HTMLElement) {
+		const onClick = (e: Event) => {
+			const btn = (e.target as HTMLElement).closest('button.term') as HTMLElement | null;
+			if (!btn || !node.contains(btn)) return;
+			e.preventDefault();
+			e.stopPropagation();
+			activeTerm = {
+				label: btn.dataset.label ?? btn.textContent ?? '',
+				topic: btn.dataset.topic ?? 'general'
+			};
+		};
+		node.addEventListener('click', onClick);
+		return { destroy: () => node.removeEventListener('click', onClick) };
+	}
+	function onTermKey(e: KeyboardEvent) {
+		if (e.key === 'Escape') activeTerm = null;
+	}
 </script>
+
+<svelte:window onkeydown={onTermKey} />
 
 <div class="flex flex-col items-start gap-1.5 md:flex-row md:items-end md:gap-2">
 	<!-- Cloud-shaped speech bubble: above Nim on mobile, beside (lifted) on desktop -->
@@ -117,6 +146,7 @@
 
 					{#key nim}
 						<p
+							use:termClicks
 							in:fade={{ duration: 200 }}
 							class="mt-1 min-h-[3.5rem] text-[14.5px] leading-relaxed text-ink/90 md:min-h-[4.5rem]"
 						>
@@ -126,7 +156,7 @@
 											d="M12 1.6l1.7 8.7 8.7 1.7-8.7 1.7L12 22.4l-1.7-8.7L1.6 12l8.7-1.7z"
 										/></svg
 									>FYI</span
-								>{/if}{@html body}
+								>{/if}{@html html}
 						</p>
 					{/key}
 
@@ -174,12 +204,152 @@
 			<span class="ping" aria-hidden="true"></span>
 		{/if}
 	</button>
+
+	<!-- "coming soon" card for a tapped glossary term: no detail, just a nudge that a whole module
+	     will cover it. Reused by any lesson that drops a [[term|topic]] into a line. -->
+	{#if activeTerm}
+		{@const tc = topicColor(activeTerm.topic)}
+		<div class="term-modal" transition:fade={{ duration: 140 }}>
+			<button class="term-backdrop" aria-label={$t.termClose} onclick={() => (activeTerm = null)}
+			></button>
+			<div
+				class="term-card"
+				role="dialog"
+				aria-modal="true"
+				transition:fly={{ y: 14, duration: 220, easing: cubicOut }}
+			>
+				<span class="term-soon" style="--tc:{tc}"><span class="dot"></span>{$t.termSoon}</span>
+				<p class="term-word" style="--tc:{tc}">{activeTerm.label}</p>
+				<p class="term-body">
+					{$t.termModule.replace('{name}', topicName(activeTerm.topic, $lang))}
+				</p>
+				<p class="term-note">{$t.termSub}</p>
+				<button class="term-ok" onclick={() => (activeTerm = null)}>{$t.termClose}</button>
+			</div>
+		</div>
+	{/if}
 </div>
 
 <style>
 	button {
 		position: relative;
 		-webkit-tap-highlight-color: transparent;
+	}
+
+	/* inline glossary chip (injected via {@html}, so the selector must be global). --tc is the
+	   topic's accent color, set inline on each chip. */
+	:global(.term) {
+		display: inline;
+		margin: 0;
+		border: none;
+		border-radius: 5px;
+		background: color-mix(in srgb, var(--tc) 13%, transparent);
+		padding: 0 4px;
+		font: inherit;
+		font-weight: 700;
+		color: var(--tc);
+		text-decoration: underline dotted var(--tc);
+		text-underline-offset: 2px;
+		cursor: pointer;
+		transition: background 0.15s;
+		-webkit-tap-highlight-color: transparent;
+	}
+	:global(.term:hover) {
+		background: color-mix(in srgb, var(--tc) 22%, transparent);
+	}
+
+	/* the "coming soon" card */
+	.term-modal {
+		position: fixed;
+		inset: 0;
+		z-index: 50;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 1rem;
+		pointer-events: auto;
+	}
+	.term-backdrop {
+		position: absolute;
+		inset: 0;
+		background: rgba(22, 40, 60, 0.42);
+		backdrop-filter: blur(1.5px);
+	}
+	.term-card {
+		position: relative;
+		width: min(92vw, 320px);
+		border-radius: 20px;
+		background: var(--color-card, #fff);
+		padding: 22px 20px 18px;
+		text-align: center;
+		box-shadow: 0 18px 50px rgba(22, 40, 60, 0.28);
+	}
+	.term-soon {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		border-radius: 999px;
+		background: color-mix(in srgb, var(--tc) 14%, transparent);
+		padding: 4px 11px;
+		font-size: 10.5px;
+		font-weight: 800;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--tc);
+	}
+	.term-soon .dot {
+		height: 6px;
+		width: 6px;
+		border-radius: 50%;
+		background: var(--tc);
+		animation: term-pulse 1.4s ease-in-out infinite;
+	}
+	.term-word {
+		margin: 13px 0 0;
+		font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+		font-size: 20px;
+		font-weight: 700;
+		color: var(--tc);
+	}
+	.term-body {
+		margin: 8px 0 0;
+		font-size: 14px;
+		font-weight: 600;
+		color: var(--color-ink, #1f2a37);
+	}
+	.term-note {
+		margin: 6px 0 0;
+		font-size: 12.5px;
+		line-height: 1.5;
+		color: #6b7682;
+	}
+	.term-ok {
+		margin-top: 16px;
+		width: 100%;
+		border-radius: 12px;
+		background: var(--color-brand, #2e6fe0);
+		padding: 10px;
+		font-size: 13.5px;
+		font-weight: 700;
+		color: #fff;
+		transition: filter 0.15s;
+	}
+	.term-ok:hover {
+		filter: brightness(1.08);
+	}
+	@keyframes term-pulse {
+		0%,
+		100% {
+			opacity: 0.4;
+		}
+		50% {
+			opacity: 1;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.term-soon .dot {
+			animation: none;
+		}
 	}
 	/* a lively "by the way" tag at the start of an FYI line */
 	.fyi-tag {

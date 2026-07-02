@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onDestroy } from 'svelte';
 	import { SvelteSet } from 'svelte/reactivity';
 	import type { LessonText, PortText } from '$lib/chapters/types';
 
@@ -12,18 +13,22 @@
 	let active = $state('');
 	const viewed = new SvelteSet<string>();
 	let done = false;
+	let summaryTimer: ReturnType<typeof setTimeout> | undefined;
 	const current = $derived(tx.ports.find((p) => p.port === active));
 
 	function pick(port: string) {
 		active = port;
-		onstate?.(port);
+		onstate?.(port); // always show this port's own service first
 		viewed.add(port);
 		if (viewed.size === tx.ports.length && !done) {
 			done = true;
-			onstate?.('all');
 			oncomplete?.();
+			// let the last port read for a moment, then Nim gives the wrap up
+			summaryTimer = setTimeout(() => onstate?.('all'), 1500);
 		}
 	}
+
+	onDestroy(() => clearTimeout(summaryTimer));
 </script>
 
 <div class="wrap">
