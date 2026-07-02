@@ -10,7 +10,6 @@ automatically from [Conventional Commits](https://www.conventionalcommits.org).
 
 ### Features
 
-* **lessons:** redesign OSI, API, microservices and CI/CD lessons ([0cbbb40](https://github.com/svviitzerland/nimbus/commit/0cbbb40ba09dcc970fd276acaec706e1a988ba0f))
 * **lessons:** redesign OSI, API, microservices and CI/CD lessons ([3e6553c](https://github.com/svviitzerland/nimbus/commit/3e6553cc203b5225a1c2e9b49f7057c24d32d277))
 
 ## 0.0.1 (2026-06-22)
