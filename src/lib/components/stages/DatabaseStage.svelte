@@ -2,7 +2,6 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { DatabaseText } from '$lib/chapters/resilience/types';
-	import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -14,7 +13,6 @@
 		onstate?: (s: string) => void;
 	} = $props();
 	const tx = $derived(text as DatabaseText);
-	let dark = $derived($theme === 'dark');
 
 	let extraCount = $state(0);
 	let docCount = $state(1);
@@ -45,17 +43,25 @@
 	const DOCC = ['#2e6fe0', '#3a9c64', '#dd9e36'];
 </script>
 
-<div class="flex h-full w-full items-center justify-center" class:dark>
+<div class="flex h-full w-full items-center justify-center">
 	<div class="grid w-full max-w-[680px] grid-cols-2 gap-3 md:gap-5">
 		<!-- SQL, the strict table -->
 		<section class="card">
 			<header>
 				<span class="ic" style="--a:#2e6fe0">
 					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-						<path d="M4 5h16M4 12h16M4 19h16M9 5v14" stroke="#2e6fe0" stroke-width="2" stroke-linecap="round" />
+						<path
+							d="M4 5h16M4 12h16M4 19h16M9 5v14"
+							stroke="#2e6fe0"
+							stroke-width="2"
+							stroke-linecap="round"
+						/>
 					</svg>
 				</span>
-				<div><h3>{tx.sqlTitle}</h3><p>{tx.sqlSub}</p></div>
+				<div>
+					<h3>{tx.sqlTitle}</h3>
+					<p>{tx.sqlSub}</p>
+				</div>
 			</header>
 
 			<div class="demo">
@@ -78,7 +84,12 @@
 				{#each tx.sqlWhen as w (w)}<span class="wchip blue">{w}</span>{/each}
 			</div>
 
-			<button class="act" class:pulse={!tried.has('sql')} onclick={addRow} disabled={extraCount >= tx.extraRows.length}>
+			<button
+				class="act"
+				class:pulse={!tried.has('sql')}
+				onclick={addRow}
+				disabled={extraCount >= tx.extraRows.length}
+			>
 				{tx.addRow}
 			</button>
 		</section>
@@ -88,11 +99,19 @@
 			<header>
 				<span class="ic" style="--a:#3a9c64">
 					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-						<path d="M5 4h9l5 5v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z" stroke="#3a9c64" stroke-width="2" stroke-linejoin="round" />
+						<path
+							d="M5 4h9l5 5v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"
+							stroke="#3a9c64"
+							stroke-width="2"
+							stroke-linejoin="round"
+						/>
 						<path d="M9 13h6M9 17h4" stroke="#3a9c64" stroke-width="2" stroke-linecap="round" />
 					</svg>
 				</span>
-				<div><h3>{tx.nosqlTitle}</h3><p>{tx.nosqlSub}</p></div>
+				<div>
+					<h3>{tx.nosqlTitle}</h3>
+					<p>{tx.nosqlSub}</p>
+				</div>
 			</header>
 
 			<div class="demo">
@@ -114,7 +133,12 @@
 				{#each tx.nosqlWhen as w (w)}<span class="wchip green">{w}</span>{/each}
 			</div>
 
-			<button class="act grass" class:pulse={!tried.has('nosql')} onclick={addDoc} disabled={docCount >= tx.docs.length}>
+			<button
+				class="act grass"
+				class:pulse={!tried.has('nosql')}
+				onclick={addDoc}
+				disabled={docCount >= tx.docs.length}
+			>
 				{tx.addDoc}
 			</button>
 		</section>
@@ -356,63 +380,63 @@
 		}
 	}
 	/* ---- Dark mode ---- */
-	.dark .card {
+	:global(.dark) .card {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		box-shadow: none;
 	}
-	.dark .ic {
+	:global(.dark) .ic {
 		background: color-mix(in srgb, var(--a) 20%, var(--color-card));
 	}
-	.dark header h3 {
+	:global(.dark) header h3 {
 		color: var(--color-ink);
 	}
-	.dark header p {
+	:global(.dark) header p {
 		color: var(--color-faint);
 	}
-	.dark .demo {
+	:global(.dark) .demo {
 		background: #1e2835;
 	}
-	.dark .tbl {
+	:global(.dark) .tbl {
 		background: var(--color-card);
 		border-color: #3a5a80;
 	}
-	.dark .tname {
+	:global(.dark) .tname {
 		background: var(--color-brand-soft);
 	}
-	.dark .trow {
+	:global(.dark) .trow {
 		border-top-color: var(--color-line);
 	}
-	.dark .trow span {
+	:global(.dark) .trow span {
 		color: var(--color-muted);
 		border-left-color: var(--color-line);
 	}
-	.dark .trow.head span {
+	:global(.dark) .trow.head span {
 		background: var(--color-brand-soft);
 	}
-	.dark .trow.fresh span {
+	:global(.dark) .trow.fresh span {
 		background: var(--color-grass-soft);
 	}
-	.dark .doc {
+	:global(.dark) .doc {
 		background: color-mix(in srgb, var(--a) 10%, var(--color-card));
 	}
-	.dark .dfield i {
+	:global(.dark) .dfield i {
 		color: var(--color-muted);
 	}
-	.dark .dfield em {
+	:global(.dark) .dfield em {
 		background: color-mix(in srgb, var(--a) 30%, var(--color-card));
 	}
-	.dark .snote {
+	:global(.dark) .snote {
 		color: var(--color-faint);
 	}
-	.dark .wtitle {
+	:global(.dark) .wtitle {
 		color: var(--color-ink);
 	}
-	.dark .wchip.blue {
+	:global(.dark) .wchip.blue {
 		background: var(--color-brand-soft);
 		border-color: #3a5a80;
 	}
-	.dark .wchip.green {
+	:global(.dark) .wchip.green {
 		background: var(--color-grass-soft);
 		border-color: #1f3d28;
 		color: var(--color-grass);

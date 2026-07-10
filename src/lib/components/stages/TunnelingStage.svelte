@@ -3,7 +3,6 @@
 	import Browser from '../Browser.svelte';
 	import Laptop from '../Laptop.svelte';
 	import type { LessonText, TunnelingText } from '$lib/chapters/types';
-	import { theme } from '$lib/theme.svelte';
 	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 
 	let {
@@ -17,8 +16,6 @@
 	} = $props();
 	const tx = $derived(text as TunnelingText);
 
-	let dark = $derived($theme === 'dark');
-
 	// the play: dial out, get a borrowed address, a friend walks in, then the lid closes
 	let tunnelOn = $state(false);
 	let closed = $state(false);
@@ -29,7 +26,13 @@
 	let timers: ReturnType<typeof setTimeout>[] = [];
 
 	const note = $derived(
-		closed ? tx.noteClosed : visiting || visitedOnce ? tx.noteVisit : tunnelOn ? tx.noteOn : tx.noteIdle
+		closed
+			? tx.noteClosed
+			: visiting || visitedOnce
+				? tx.noteVisit
+				: tunnelOn
+					? tx.noteOn
+					: tx.noteIdle
 	);
 
 	function start() {
@@ -106,7 +109,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
 	<div class="scene">
 		<!-- rails: laptop dials OUT to the relay; the friend enters through the relay -->
 		<svg class="rails" viewBox="0 0 {G.w} {G.h}" aria-hidden="true">
@@ -131,7 +134,12 @@
 		<!-- relay, the third party up top -->
 		<div class="relay" class:on={tunnelOn}>
 			<svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-				<path d="M7 18a4.5 4.5 0 0 1-.4-8.98 6 6 0 0 1 11.54 1.7A4 4 0 0 1 17.5 18Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+				<path
+					d="M7 18a4.5 4.5 0 0 1-.4-8.98 6 6 0 0 1 11.54 1.7A4 4 0 0 1 17.5 18Z"
+					stroke="currentColor"
+					stroke-width="1.8"
+					stroke-linejoin="round"
+				/>
 			</svg>
 			<div class="rtext">
 				<span class="rname">{tx.relayLabel}</span>
@@ -191,7 +199,7 @@
 	}
 	.seg {
 		fill: none;
-		stroke: #e8e2d8;
+		stroke: var(--color-line);
 		stroke-width: 2;
 		stroke-linecap: round;
 		stroke-dasharray: 3 5;
@@ -285,7 +293,7 @@
 		border-radius: 12px;
 		border: 1.5px solid #e8e2d8;
 		background: #fff;
-		color: #8a949d;
+		color: var(--color-faint);
 		padding: 6px 12px;
 		box-shadow: 0 6px 16px rgba(22, 40, 60, 0.07);
 		white-space: nowrap;
@@ -294,7 +302,7 @@
 	}
 	.relay.on {
 		border-color: #cdddf6;
-		background: #eaf1fc;
+		background: var(--color-brand-soft);
 		color: #2e6fe0;
 		box-shadow: 0 8px 18px rgba(46, 111, 224, 0.14);
 	}
@@ -358,7 +366,7 @@
 	.alabel {
 		font-size: 10px;
 		font-weight: 600;
-		color: #5e6b76;
+		color: var(--color-muted);
 		white-space: nowrap;
 	}
 	.chip {
@@ -368,7 +376,7 @@
 		padding: 1px 8px;
 		font-size: 8.5px;
 		font-weight: 700;
-		color: #5e6b76;
+		color: var(--color-muted);
 		white-space: nowrap;
 	}
 	.shrink {
@@ -387,7 +395,7 @@
 		gap: 7px;
 		font-size: 13px;
 		font-weight: 700;
-		color: #8a949d;
+		color: var(--color-faint);
 	}
 	.status i {
 		width: 8px;
@@ -421,11 +429,11 @@
 		padding: 11px 18px;
 		font-size: 13px;
 		font-weight: 600;
-		color: #16212b;
+		color: var(--color-ink);
 		transition: border-color 0.2s ease;
 	}
 	.line:hover {
-		border-color: #16212b;
+		border-color: var(--color-ink);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -470,58 +478,42 @@
 			max-width: 460px;
 		}
 	}
-	.dark .seg {
-		stroke: #2c3746;
-	}
-	.dark .seg.dead {
+	:global(.dark) .seg.dead {
 		stroke: #3a4a5c;
 	}
-	.dark .pkt {
+	:global(.dark) .pkt {
 		border-color: #1b2533;
 	}
-	.dark .relay {
+	:global(.dark) .relay {
 		border-color: #2c3746;
 		background: #1b2533;
-		color: #6b7885;
 	}
-	.dark .relay.on {
+	:global(.dark) .relay.on {
 		border-color: #2c4a6e;
-		background: #1a2d4a;
 		color: #7daae0;
 	}
-	.dark .url {
+	:global(.dark) .url {
 		background: #2a3748;
 		color: #e0dcd4;
 	}
-	.dark .url.dead {
+	:global(.dark) .url.dead {
 		background: #4a5560;
 	}
-	.dark .alabel {
-		color: #97a3ae;
-	}
-	.dark .chip {
+	:global(.dark) .chip {
 		border-color: #2c3746;
 		background: #1b2533;
-		color: #97a3ae;
 	}
-	.dark .status {
-		color: #6b7885;
-	}
-	.dark .status i {
+	:global(.dark) .status i {
 		background: #6b7885;
 	}
-	.dark .status.up {
+	:global(.dark) .status.up {
 		color: #5bb87e;
 	}
-	.dark .note {
+	:global(.dark) .note {
 		color: #97a3ae;
 	}
-	.dark .line {
+	:global(.dark) .line {
 		border-color: #2c3746;
 		background: #1b2533;
-		color: #e0dcd4;
-	}
-	.dark .line:hover {
-		border-color: #e0dcd4;
 	}
 </style>

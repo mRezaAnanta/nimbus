@@ -2,12 +2,14 @@
 	import { Tween } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import { SvelteSet } from 'svelte/reactivity';
-	import { theme } from '$lib/theme.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { CostText } from '$lib/chapters/compute/types';
 
-	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
-		$props();
+	let {
+		text,
+		oncomplete,
+		onstate
+	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as CostText);
 
 	let offDone = $state(false);
@@ -38,7 +40,13 @@
 		}
 	}
 	const note = $derived(
-		offDone && resizeDone ? tx.noteDone : resizeDone ? tx.noteResize : offDone ? tx.noteOff : tx.noteIdle
+		offDone && resizeDone
+			? tx.noteDone
+			: resizeDone
+				? tx.noteResize
+				: offDone
+					? tx.noteOff
+					: tx.noteIdle
 	);
 	const saved = $derived(90 - Math.round(bill.current));
 </script>
@@ -57,7 +65,8 @@
 	<div class="rows">
 		<div class="row" class:dead={offDone}>
 			<div class="mini" style="--c:{offDone ? '#cfd6dd' : '#d3584a'}">
-				{#if offDone}<span class="x">×</span>{:else}<span class="md"></span><span class="md"></span>{/if}
+				{#if offDone}<span class="x">×</span>{:else}<span class="md"></span><span class="md"
+					></span>{/if}
 			</div>
 			<div class="info">
 				<b>{tx.idleName}</b>
@@ -71,7 +80,11 @@
 			{/if}
 		</div>
 		<div class="row">
-			<div class="mini big" class:shrunk={resizeDone} style="--c:{resizeDone ? '#3a9c64' : '#dd9e36'}">
+			<div
+				class="mini big"
+				class:shrunk={resizeDone}
+				style="--c:{resizeDone ? '#3a9c64' : '#dd9e36'}"
+			>
 				<span class="md"></span><span class="md"></span>
 			</div>
 			<div class="info">

@@ -6,17 +6,16 @@
 	led    the small status light in the screen header
 -->
 <script lang="ts">
-	import { theme } from '$lib/theme.svelte';
-
-	let { phase = 'on', led = 'off' }: {
+	let {
+		phase = 'on',
+		led = 'off'
+	}: {
 		phase?: 'on' | 'closed';
 		led?: 'ok' | 'warn' | 'down' | 'off';
 	} = $props();
-
-	let dark = $derived($theme === 'dark');
 </script>
 
-<div class="laptop" class:dark>
+<div class="laptop">
 	{#if phase === 'closed'}
 		<div class="lid"></div>
 	{:else}
@@ -142,38 +141,38 @@
 		border-radius: 0 0 4px 4px;
 		background: #e8e2d8;
 	}
-	.dark .shell {
+	:global(.dark) .shell {
 		background: #1b2533;
 		border-color: #2c3746;
 	}
-	.dark .screen {
+	:global(.dark) .screen {
 		background: #141c2a;
 	}
-	.dark .head {
+	:global(.dark) .head {
 		background: #1b2533;
 		border-bottom-color: #2c3746;
 	}
-	.dark .led {
+	:global(.dark) .led {
 		background: #6b7885;
 	}
-	.dark .tab {
+	:global(.dark) .tab {
 		background: #3a4a5c;
 	}
-	.dark .bar {
+	:global(.dark) .bar {
 		background: #2c3746;
 	}
-	.dark .bar.title {
+	:global(.dark) .bar.title {
 		background: #1a2d4a;
 	}
-	.dark .lid {
+	:global(.dark) .lid {
 		background: #1b2533;
 		border-color: #2c3746;
 	}
-	.dark .base {
+	:global(.dark) .base {
 		background: #1b2533;
 		border-color: #2c3746;
 	}
-	.dark .pad {
+	:global(.dark) .pad {
 		background: #3a4a5c;
 	}
 </style>

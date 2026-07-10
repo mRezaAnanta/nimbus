@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { theme } from '$lib/theme.svelte';
 	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { SharedResponsibilityText } from '$lib/chapters/networking/types';
 
-	let dark = $derived($theme === 'dark');
-
-	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
-		$props();
+	let {
+		text,
+		oncomplete,
+		onstate
+	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as SharedResponsibilityText);
 
 	let revealed = $state(false);
@@ -28,36 +28,66 @@
 	{#if side === 'p' && i === 0}
 		<svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 			<rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="2.2" />
-			<path d="M9 21v-4h6v4M8 7h2m4 0h2M8 11h2m4 0h2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+			<path
+				d="M9 21v-4h6v4M8 7h2m4 0h2M8 11h2m4 0h2"
+				stroke="currentColor"
+				stroke-width="2.2"
+				stroke-linecap="round"
+			/>
 		</svg>
 	{:else if side === 'p' && i === 1}
 		<svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 			<rect x="6" y="6" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2.2" />
-			<path d="M9 2v3m6-3v3M9 19v3m6-3v3M2 9h3m-3 6h3m14-6h3m-3 6h3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+			<path
+				d="M9 2v3m6-3v3M9 19v3m6-3v3M2 9h3m-3 6h3m14-6h3m-3 6h3"
+				stroke="currentColor"
+				stroke-width="2.2"
+				stroke-linecap="round"
+			/>
 		</svg>
 	{:else if side === 'p'}
 		<svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-			<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+			<path
+				d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"
+				stroke="currentColor"
+				stroke-width="2.2"
+				stroke-linejoin="round"
+			/>
 		</svg>
 	{:else if i === 0}
 		<svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 			<ellipse cx="12" cy="5.5" rx="8" ry="3" stroke="currentColor" stroke-width="2.2" />
-			<path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" stroke="currentColor" stroke-width="2.2" />
+			<path
+				d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"
+				stroke="currentColor"
+				stroke-width="2.2"
+			/>
 		</svg>
 	{:else if i === 1}
 		<svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 			<circle cx="9" cy="8" r="3.6" stroke="currentColor" stroke-width="2.2" />
-			<path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 9.5l2 2 3.6-3.6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+			<path
+				d="M2.5 20a6.5 6.5 0 0 1 13 0M16 9.5l2 2 3.6-3.6"
+				stroke="currentColor"
+				stroke-width="2.2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
 		</svg>
 	{:else}
 		<svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 			<circle cx="8" cy="8" r="4.5" stroke="currentColor" stroke-width="2.2" />
-			<path d="M11 11.5 20 20m-3.5.5V17m-3 .5V14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+			<path
+				d="M11 11.5 20 20m-3.5.5V17m-3 .5V14"
+				stroke="currentColor"
+				stroke-width="2.2"
+				stroke-linecap="round"
+			/>
 		</svg>
 	{/if}
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
 	<div class="wrap">
 		<div class="cols">
 			<!-- the provider guards the building -->
@@ -66,7 +96,12 @@
 					<span class="medal">
 						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 							<rect x="4" y="3" width="16" height="18" rx="2" stroke="#2e6fe0" stroke-width="1.9" />
-							<path d="M9 21v-4h6v4M8 7h2m4 0h2M8 11h2m4 0h2" stroke="#2e6fe0" stroke-width="1.9" stroke-linecap="round" />
+							<path
+								d="M9 21v-4h6v4M8 7h2m4 0h2M8 11h2m4 0h2"
+								stroke="#2e6fe0"
+								stroke-width="1.9"
+								stroke-linecap="round"
+							/>
 						</svg>
 					</span>
 					<div><b>{tx.providerTitle}</b><span>{tx.providerSub}</span></div>
@@ -90,7 +125,12 @@
 					<span class="medal">
 						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 							<circle cx="12" cy="8" r="4" stroke="#3a9c64" stroke-width="1.9" />
-							<path d="M4 21a8 8 0 0 1 16 0" stroke="#3a9c64" stroke-width="1.9" stroke-linecap="round" />
+							<path
+								d="M4 21a8 8 0 0 1 16 0"
+								stroke="#3a9c64"
+								stroke-width="1.9"
+								stroke-linecap="round"
+							/>
 						</svg>
 					</span>
 					<div><b>{tx.youTitle}</b><span>{tx.youSub}</span></div>
@@ -112,7 +152,13 @@
 		<!-- the handshake in the middle -->
 		<span class="mid" class:lit={revealed}>
 			<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-				<path d="M8 7H3v6m13 4h5v-6M3 9l5.5 5.5M21 15l-5.5-5.5" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" />
+				<path
+					d="M8 7H3v6m13 4h5v-6M3 9l5.5 5.5M21 15l-5.5-5.5"
+					stroke="currentColor"
+					stroke-width="2.3"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
 			</svg>
 		</span>
 	</div>
@@ -263,49 +309,49 @@
 		color: #16212b;
 		font-weight: 700;
 	}
-	.dark .col {
+	:global(.dark) .col {
 		background: var(--color-card);
 		box-shadow: none;
 	}
-	.dark .col:first-child {
+	:global(.dark) .col:first-child {
 		--soft: color-mix(in srgb, var(--color-brand) 12%, transparent) !important;
 		--bord: color-mix(in srgb, var(--color-brand) 25%, transparent) !important;
 	}
-	.dark .col:last-child {
+	:global(.dark) .col:last-child {
 		--soft: color-mix(in srgb, var(--color-grass) 12%, transparent) !important;
 		--bord: color-mix(in srgb, var(--color-grass) 25%, transparent) !important;
 	}
-	.dark .medal {
+	:global(.dark) .medal {
 		background: var(--color-card);
 	}
-	.dark .chead b {
+	:global(.dark) .chead b {
 		color: var(--color-ink);
 	}
-	.dark .chead span {
+	:global(.dark) .chead span {
 		color: var(--color-faint);
 	}
-	.dark .item {
+	:global(.dark) .item {
 		color: var(--color-ink);
 	}
-	.dark .ghost {
+	:global(.dark) .ghost {
 		border-color: var(--color-line);
 		background: var(--color-paper);
 	}
-	.dark .mid {
+	:global(.dark) .mid {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		color: var(--color-faint);
 		box-shadow: none;
 	}
-	.dark .mid.lit {
+	:global(.dark) .mid.lit {
 		color: var(--color-amber);
 		border-color: color-mix(in srgb, var(--color-amber) 50%, transparent);
 		background: var(--color-amber-soft);
 	}
-	.dark .note {
+	:global(.dark) .note {
 		color: var(--color-muted);
 	}
-	.dark .note.strong {
+	:global(.dark) .note.strong {
 		color: var(--color-ink);
 	}
 	@media (prefers-reduced-motion: reduce) {

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { tick } from 'svelte';
 	import type { LessonText, CliGuiText } from '$lib/chapters/types';
-	import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -19,8 +18,6 @@
 		onshow?: (v: boolean) => void;
 	} = $props();
 	const tx = $derived(text as CliGuiText);
-
-	let dark = $derived($theme === 'dark');
 
 	let tab = $state<'gui' | 'cli'>('gui');
 
@@ -194,7 +191,7 @@
 	});
 </script>
 
-<div class="wrap" class:dark>
+<div class="wrap">
 	<div class="task">
 		<svg class="ti" viewBox="0 0 24 24" aria-hidden="true">
 			<circle cx="12" cy="12" r="9" fill="none" stroke="#c8842a" stroke-width="1.7" />
@@ -478,7 +475,7 @@
 		font-size: 13px;
 		font-weight: 800;
 		letter-spacing: 0.05em;
-		color: #8a949d;
+		color: var(--color-faint);
 		background: transparent;
 		transition:
 			background 0.25s ease,
@@ -487,7 +484,7 @@
 	}
 	.sgi.act {
 		background: #fff;
-		color: #16212b;
+		color: var(--color-ink);
 		box-shadow: 0 2px 7px rgba(22, 40, 60, 0.12);
 	}
 	.sgi.ok {
@@ -685,7 +682,7 @@
 		color: #7c8893;
 	}
 	.wpath b {
-		color: #16212b;
+		color: var(--color-ink);
 		font-weight: 800;
 	}
 	.wpath .sep {
@@ -911,7 +908,7 @@
 	}
 	.chip:hover {
 		border-color: #2e6fe0;
-		background: #eaf1fc;
+		background: var(--color-brand-soft);
 	}
 	.cplay {
 		width: 11px;
@@ -921,7 +918,7 @@
 	.ccmd {
 		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 		font-weight: 800;
-		color: #16212b;
+		color: var(--color-ink);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -956,97 +953,86 @@
 	}
 
 	/* ---- Dark mode ---- */
-	.dark .task {
+	:global(.dark) .task {
 		border-color: #5a4a2c;
 		background: #2a2418;
 		color: #c8942a;
 	}
-	.dark .seg {
+	:global(.dark) .seg {
 		background: #2c3746;
 	}
-	.dark .sgi {
-		color: #6b7885;
-	}
-	.dark .sgi.act {
+	:global(.dark) .sgi.act {
 		background: #1b2533;
-		color: #e0dcd4;
 		box-shadow: 0 2px 7px rgba(0, 0, 0, 0.3);
 	}
-	.dark .sgi.ok {
+	:global(.dark) .sgi.ok {
 		color: #5bb87e;
 	}
-	.dark .sgi.act.ok {
+	:global(.dark) .sgi.act.ok {
 		color: #5bb87e;
 	}
-	.dark .desktop {
+	:global(.dark) .desktop {
 		background: radial-gradient(135% 110% at 26% 16%, #1a3a5c, #142a44 46%, #0f1f33);
 		border-color: #1a3050;
 		box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
 	}
-	.dark .window {
+	:global(.dark) .window {
 		background: #1b2533;
 		border-color: #2c3746;
 		box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
 	}
-	.dark .wbar {
+	:global(.dark) .wbar {
 		background: #141c2a;
 		border-bottom-color: #2c3746;
 	}
-	.dark .wtitle {
+	:global(.dark) .wtitle {
 		color: #e0dcd4;
 	}
-	.dark .wbtn {
+	:global(.dark) .wbtn {
 		color: #97a3ae;
 	}
-	.dark .waddr {
+	:global(.dark) .waddr {
 		background: #141c2a;
 		border-bottom-color: #2c3746;
 	}
-	.dark .wpath {
+	:global(.dark) .wpath {
 		color: #97a3ae;
 	}
-	.dark .wpath b {
-		color: #e0dcd4;
-	}
-	.dark .wpath .sep {
+	:global(.dark) .wpath .sep {
 		color: #6b7885;
 	}
-	.dark .wfiles {
+	:global(.dark) .wfiles {
 		background: #1b2533;
 	}
-	.dark .wnote {
+	:global(.dark) .wnote {
 		color: #5bb87e;
 		background: #142a1e;
 		border-top-color: #2a4a38;
 	}
-	.dark .fname {
+	:global(.dark) .fname {
 		color: #e0dcd4;
 	}
-	.dark .fico svg {
+	:global(.dark) .fico svg {
 		fill: #1b2533;
 		stroke: #3a4a5c;
 	}
-	.dark .fico svg path:nth-child(2) {
+	:global(.dark) .fico svg path:nth-child(2) {
 		fill: none;
 		stroke: #3a4a5c;
 	}
-	.dark .taskbar {
+	:global(.dark) .taskbar {
 		background: rgba(14, 22, 33, 0.86);
 		border-top-color: rgba(255, 255, 255, 0.08);
 	}
-	.dark .tclock {
+	:global(.dark) .tclock {
 		color: #97a3ae;
 	}
-	.dark .chip {
+	:global(.dark) .chip {
 		border-color: #3a4a5c;
 		background: #1b2533;
 		color: #97a3ae;
 	}
-	.dark .chip:hover {
+	:global(.dark) .chip:hover {
 		border-color: #2e6fe0;
-		background: #1a2d4a;
-	}
-	.dark .ccmd {
-		color: #e0dcd4;
 	}
 </style>

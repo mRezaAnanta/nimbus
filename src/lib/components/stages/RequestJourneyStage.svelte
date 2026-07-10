@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import type { LessonText, RequestJourneyText } from '$lib/chapters/types';
-	import { theme } from '$lib/theme.svelte';
 	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 
 	let {
@@ -18,8 +17,6 @@
 		onshow?: (v: boolean) => void;
 	} = $props();
 	const tx = $derived(text as RequestJourneyText);
-
-	let dark = $derived($theme === 'dark');
 
 	const KEYS = ['phone', 'router', 'isp', 'net', 'server'] as const;
 
@@ -84,7 +81,15 @@
 {#snippet icon(key: string)}
 	{#if key === 'phone'}
 		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-			<rect x="7" y="2.5" width="10" height="19" rx="2.5" stroke="currentColor" stroke-width="1.8" />
+			<rect
+				x="7"
+				y="2.5"
+				width="10"
+				height="19"
+				rx="2.5"
+				stroke="currentColor"
+				stroke-width="1.8"
+			/>
 			<circle cx="12" cy="18" r="1.1" fill="currentColor" />
 		</svg>
 	{:else if key === 'router'}
@@ -92,32 +97,59 @@
 			<rect x="3" y="13" width="18" height="7" rx="2" stroke="currentColor" stroke-width="1.8" />
 			<circle cx="7.5" cy="16.5" r="1" fill="currentColor" />
 			<circle cx="11.5" cy="16.5" r="1" fill="currentColor" />
-			<path d="M17 13V7m0 0 2.5 2.5M17 7l-2.5 2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+			<path
+				d="M17 13V7m0 0 2.5 2.5M17 7l-2.5 2.5"
+				stroke="currentColor"
+				stroke-width="1.8"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
 		</svg>
 	{:else if key === 'isp'}
 		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-			<path d="M12 21V9m0 0 -5 12m5-12 5 12M8 6.5a6 6 0 0 1 8 0M5.8 4a9.4 9.4 0 0 1 12.4 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+			<path
+				d="M12 21V9m0 0 -5 12m5-12 5 12M8 6.5a6 6 0 0 1 8 0M5.8 4a9.4 9.4 0 0 1 12.4 0"
+				stroke="currentColor"
+				stroke-width="1.7"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
 		</svg>
 	{:else if key === 'net'}
 		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 			<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7" />
-			<path d="M3 12h18M12 3c2.6 2.5 2.6 15.5 0 18M12 3c-2.6 2.5-2.6 15.5 0 18" stroke="currentColor" stroke-width="1.4" />
+			<path
+				d="M3 12h18M12 3c2.6 2.5 2.6 15.5 0 18M12 3c-2.6 2.5-2.6 15.5 0 18"
+				stroke="currentColor"
+				stroke-width="1.4"
+			/>
 		</svg>
 	{:else}
 		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 			<rect x="4" y="4" width="16" height="6.5" rx="2" stroke="currentColor" stroke-width="1.8" />
-			<rect x="4" y="13.5" width="16" height="6.5" rx="2" stroke="currentColor" stroke-width="1.8" />
+			<rect
+				x="4"
+				y="13.5"
+				width="16"
+				height="6.5"
+				rx="2"
+				stroke="currentColor"
+				stroke-width="1.8"
+			/>
 			<circle cx="8" cy="7.2" r="1" fill="currentColor" />
 			<circle cx="8" cy="16.7" r="1" fill="currentColor" />
 		</svg>
 	{/if}
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-6" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-6">
 	<!-- the road, five stations and one traveling packet -->
 	<div class="road">
 		<div class="rail"></div>
-		<div class="rail glow" style="width:calc(86% * {pos / 4}); background:{returning ? '#3a9c64' : '#2e6fe0'}"></div>
+		<div
+			class="rail glow"
+			style="width:calc(86% * {pos / 4}); background:{returning ? '#3a9c64' : '#2e6fe0'}"
+		></div>
 		{#if seq >= 0}
 			<div class="packet" class:res={returning} style="left:calc(7% + 86% * {pos / 4})">
 				<span class="ptag">{returning ? tx.responseTag : tx.requestTag}</span>
@@ -127,7 +159,11 @@
 		<div class="stations">
 			{#each KEYS as k, i (k)}
 				{@const on = activeKey === k || (seq < 0 && !lastBeat && focused.includes(k))}
-				<div class="station" class:on style="--c:{on ? (returning ? '#3a9c64' : '#2e6fe0') : '#8a949d'}">
+				<div
+					class="station"
+					class:on
+					style="--c:{on ? (returning ? '#3a9c64' : '#2e6fe0') : '#8a949d'}"
+				>
 					<div class="box" class:visited={seq >= 0 && (returning ? true : i <= pos)}>
 						{@render icon(k)}
 					</div>
@@ -158,7 +194,7 @@
 		right: 7%;
 		height: 3px;
 		border-radius: 2px;
-		background: #e8e2d8;
+		background: var(--color-line);
 	}
 	.rail.glow {
 		right: auto;
@@ -228,7 +264,7 @@
 		border-radius: 14px;
 		border: 2px solid #e8e2d8;
 		background: #fff;
-		color: #8a949d;
+		color: var(--color-faint);
 		box-shadow: 0 6px 14px rgba(22, 40, 60, 0.06);
 		transition: all 0.3s ease;
 	}
@@ -241,13 +277,13 @@
 	.slabel {
 		font-size: 9px;
 		font-weight: 600;
-		color: #8a949d;
+		color: var(--color-faint);
 		text-align: center;
 		line-height: 1.15;
 		transition: color 0.3s ease;
 	}
 	.station.on .slabel {
-		color: #16212b;
+		color: var(--color-ink);
 		font-weight: 700;
 	}
 	.note {
@@ -290,21 +326,11 @@
 			top: 44px;
 		}
 	}
-	.dark .rail {
-		background: #2c3746;
-	}
-	.dark .pdot {
+	:global(.dark) .pdot {
 		border-color: #1b2533;
 	}
-	.dark .box {
+	:global(.dark) .box {
 		border-color: #2c3746;
 		background: #1b2533;
-		color: #6b7885;
-	}
-	.dark .slabel {
-		color: #6b7885;
-	}
-	.dark .station.on .slabel {
-		color: #e0dcd4;
 	}
 </style>

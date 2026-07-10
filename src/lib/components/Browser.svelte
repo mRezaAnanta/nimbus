@@ -4,17 +4,17 @@
 	// loading = spinner
 	// loaded  = content skeleton appears, as if real data arrived
 	// offline = loaded content dimmed + an outage mask
-	import { theme } from '$lib/theme.svelte';
 
-	let { phase = 'idle', offlineText = '' }: {
+	let {
+		phase = 'idle',
+		offlineText = ''
+	}: {
 		phase?: 'idle' | 'loading' | 'loaded' | 'offline';
 		offlineText?: string;
 	} = $props();
-
-	let dark = $derived($theme === 'dark');
 </script>
 
-<div class="phone" class:dark>
+<div class="phone">
 	<div class="screen">
 		<div class="addr">
 			<span class="led" class:on={phase === 'loaded'} class:off={phase === 'offline'}></span>
@@ -201,22 +201,22 @@
 		font-size: 12px;
 		font-weight: 600;
 	}
-	.dark .hero {
+	:global(.dark) .hero {
 		background: linear-gradient(120deg, #1a2d4a, #162a44);
 	}
-	.dark .bar {
+	:global(.dark) .bar {
 		background: #2c3746;
 	}
-	.dark .bar.title {
+	:global(.dark) .bar.title {
 		background: #1a2d4a;
 	}
-	.dark .cardlet {
+	:global(.dark) .cardlet {
 		background: #2c3746;
 	}
-	.dark .spinner {
+	:global(.dark) .spinner {
 		border-color: #2c3746;
 	}
-	.dark .mask {
+	:global(.dark) .mask {
 		background: rgba(18, 26, 36, 0.82);
 	}
 </style>

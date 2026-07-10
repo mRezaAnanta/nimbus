@@ -3,7 +3,6 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import Terminal from '../Terminal.svelte';
 	import type { LessonText, RemoteAccessText } from '$lib/chapters/types';
-	import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -11,8 +10,6 @@
 		onstate
 	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as RemoteAccessText);
-
-	let dark = $derived($theme === 'dark');
 
 	let view = $state<'' | 'ssh' | 'rdp'>('');
 	let connecting = $state(false);
@@ -96,7 +93,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="wrap" class:dark>
+<div class="wrap">
 	<!-- the faraway server, in a data center -->
 	<div class="dc" class:live={connected}>
 		<span class="rack"><i></i><i></i><i></i></span>
@@ -237,7 +234,7 @@
 	.dcsub {
 		font-size: 9.5px;
 		font-weight: 600;
-		color: #8a949d;
+		color: var(--color-faint);
 	}
 	.link {
 		position: relative;
@@ -567,7 +564,7 @@
 	.hlabel {
 		font-size: 10.5px;
 		font-weight: 600;
-		color: #8a949d;
+		color: var(--color-faint);
 	}
 	.acts {
 		display: flex;
@@ -593,14 +590,14 @@
 		border-radius: 12px;
 		border: 1px solid #e8e2d8;
 		background: #fff;
-		color: #16212b;
+		color: var(--color-ink);
 		padding: 10px 16px;
 		font-size: 13px;
 		font-weight: 600;
 		transition: border-color 0.2s ease;
 	}
 	.line:enabled:hover {
-		border-color: #16212b;
+		border-color: var(--color-ink);
 	}
 	.cta:disabled,
 	.line:disabled {
@@ -647,131 +644,121 @@
 	}
 
 	/* ---- Dark mode ---- */
-	.dark .dc {
+	:global(.dark) .dc {
 		border-color: #2c3746;
 		background: #1b2533;
 		box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
 	}
-	.dark .dc.live {
+	:global(.dark) .dc.live {
 		border-color: #3a9c64;
 	}
-	.dark .rack i {
+	:global(.dark) .rack i {
 		background: #2c3746;
 	}
-	.dark .dc.live .rack i {
+	:global(.dark) .dc.live .rack i {
 		background: #3a9c64;
 	}
-	.dark .dctext {
+	:global(.dark) .dctext {
 		color: #e0dcd4;
 	}
-	.dark .dcsub {
-		color: #6b7885;
-	}
-	.dark .link {
+	:global(.dark) .link {
 		border-color: #3a4a5c;
 	}
-	.dark .link.flow {
+	:global(.dark) .link.flow {
 		border-color: #2e6fe0;
 	}
-	.dark .screen {
+	:global(.dark) .screen {
 		background: #0f1720;
 	}
-	.dark .screen.lit {
+	:global(.dark) .screen.lit {
 		background: #141c28;
 	}
-	.dark .locked {
+	:global(.dark) .locked {
 		color: #6b7885;
 	}
-	.dark .conn {
+	:global(.dark) .conn {
 		color: #6b7885;
 	}
-	.dark .spin {
+	:global(.dark) .spin {
 		border-color: rgba(255, 255, 255, 0.12);
 		border-top-color: #6fd39a;
 	}
-	.dark .dwin {
+	:global(.dark) .dwin {
 		background: #1b2533;
 		box-shadow: 0 12px 26px rgba(0, 0, 0, 0.4);
 	}
-	.dark .dwbar {
+	:global(.dark) .dwbar {
 		background: #141c2a;
 		border-bottom-color: #2c3746;
 	}
-	.dark .dwtitle {
+	:global(.dark) .dwtitle {
 		color: #e0dcd4;
 	}
-	.dark .dwctrls i,
-	.dark .dwctrls b {
+	:global(.dark) .dwctrls i,
+	:global(.dark) .dwctrls b {
 		background: #6b7885;
 	}
-	.dark .dwctrls i:nth-child(2) {
+	:global(.dark) .dwctrls i:nth-child(2) {
 		background: none;
 		border-color: #6b7885;
 	}
-	.dark .dwside {
+	:global(.dark) .dwside {
 		background: #121a24;
 		border-right-color: #2c3746;
 	}
-	.dark .dwside span {
+	:global(.dark) .dwside span {
 		background: #2c3746;
 	}
-	.dark .dwside span:first-child {
+	:global(.dark) .dwside span:first-child {
 		background: #1a2d4a;
 	}
-	.dark .dwl {
+	:global(.dark) .dwl {
 		background: #2c3746;
 	}
-	.dark .dwl.s {
+	:global(.dark) .dwl.s {
 		background: #1a2d4a;
 	}
-	.dark .dwfiles i {
+	:global(.dark) .dwfiles i {
 		background: linear-gradient(160deg, #8a6a20, #7a5a18);
 		box-shadow: inset 0 4px 0 #a08030;
 	}
-	.dark .rhint {
+	:global(.dark) .rhint {
 		color: #97a3ae;
 		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 	}
-	.dark .taskbar {
+	:global(.dark) .taskbar {
 		background: rgba(14, 22, 33, 0.72);
 		border-top-color: rgba(255, 255, 255, 0.08);
 	}
-	.dark .tsearch {
+	:global(.dark) .tsearch {
 		background: #1b2533;
 		border-color: #2c3746;
 	}
-	.dark .tapp {
+	:global(.dark) .tapp {
 		background: #2c3746;
 	}
-	.dark .tclock {
+	:global(.dark) .tclock {
 		color: #e0dcd4;
 	}
-	.dark .tclock small {
+	:global(.dark) .tclock small {
 		color: #97a3ae;
 	}
-	.dark .neck {
+	:global(.dark) .neck {
 		background: linear-gradient(#141c28, #0f1720);
 	}
-	.dark .base {
+	:global(.dark) .base {
 		background: #0f1720;
 	}
-	.dark .hlabel {
-		color: #6b7885;
-	}
-	.dark .cta {
+	:global(.dark) .cta {
 		background: #2a3748;
 		color: #e0dcd4;
 		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 	}
-	.dark .line {
+	:global(.dark) .line {
 		border-color: #2c3746;
 		background: #1b2533;
-		color: #e0dcd4;
 	}
-	.dark .line:enabled:hover {
-		border-color: #e0dcd4;
-	}
-	.dark .cta.dim::after {
+	:global(.dark) .cta.dim::after {
 		color: #5bb87e;
 	}
 </style>

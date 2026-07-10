@@ -1,14 +1,15 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import { theme } from '$lib/theme.svelte';
 	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 
-	let dark = $derived($theme === 'dark');
 	import type { MonitoringText } from '$lib/chapters/compute/types';
 
-	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
-		$props();
+	let {
+		text,
+		oncomplete,
+		onstate
+	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as MonitoringText);
 
 	let surging = $state(false);
@@ -53,12 +54,14 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-3" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-3">
 	<!-- the dashboard, three live health numbers -->
 	<div class="dash" class:ringing={alarm}>
 		<div class="metric">
 			<span class="mname">{tx.cpuLabel}</span>
-			<span class="track"><i style="width:{cpu}%; background:{color(cpu, 80)}"></i><em style="left:80%"></em></span>
+			<span class="track"
+				><i style="width:{cpu}%; background:{color(cpu, 80)}"></i><em style="left:80%"></em></span
+			>
 			<span class="mval" style="color:{color(cpu, 80)}">{cpu}%</span>
 		</div>
 		<div class="metric">
@@ -68,12 +71,19 @@
 		</div>
 		<div class="metric">
 			<span class="mname">{tx.errorsLabel}</span>
-			<span class="track"><i style="width:{errs * 8}%; background:{errs ? '#d3584a' : '#3a9c64'}"></i></span>
+			<span class="track"
+				><i style="width:{errs * 8}%; background:{errs ? '#d3584a' : '#3a9c64'}"></i></span
+			>
 			<span class="mval" style="color:{errs ? '#b8392c' : '#2f7d54'}">{errs}</span>
 		</div>
 		<div class="rule" class:hot={alarm}>
 			<svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-				<path d="M12 3a6 6 0 0 0-6 6v4l-1.7 3.2c-.3.6.1 1.3.8 1.3h13.8c.7 0 1.1-.7.8-1.3L18 13V9a6 6 0 0 0-6-6ZM10 20a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" />
+				<path
+					d="M12 3a6 6 0 0 0-6 6v4l-1.7 3.2c-.3.6.1 1.3.8 1.3h13.8c.7 0 1.1-.7.8-1.3L18 13V9a6 6 0 0 0-6-6ZM10 20a2 2 0 0 0 4 0"
+					stroke="currentColor"
+					stroke-width="1.9"
+					stroke-linejoin="round"
+				/>
 			</svg>
 			{tx.ruleLabel}
 		</div>
@@ -262,46 +272,46 @@
 	.line:hover {
 		border-color: #16212b;
 	}
-	.dark .dash {
+	:global(.dark) .dash {
 		border-color: var(--color-line);
 		background: var(--color-card);
 		box-shadow: none;
 	}
-	.dark .mname {
+	:global(.dark) .mname {
 		color: var(--color-muted);
 	}
-	.dark .track {
+	:global(.dark) .track {
 		background: var(--color-line);
 	}
-	.dark .track em {
+	:global(.dark) .track em {
 		background: rgba(255, 255, 255, 0.3);
 	}
-	.dark .rule {
+	:global(.dark) .rule {
 		border-color: var(--color-line);
 		background: var(--color-paper);
 		color: var(--color-muted);
 	}
-	.dark .rule.hot {
+	:global(.dark) .rule.hot {
 		border-color: color-mix(in srgb, var(--color-danger) 30%, transparent);
 		background: var(--color-danger-soft);
 		color: var(--color-danger);
 	}
-	.dark .notif {
+	:global(.dark) .notif {
 		background: var(--color-brand);
 		box-shadow: none;
 	}
-	.dark .okpill {
+	:global(.dark) .okpill {
 		color: var(--color-grass);
 	}
-	.dark .note {
+	:global(.dark) .note {
 		color: var(--color-muted);
 	}
-	.dark .line {
+	:global(.dark) .line {
 		border-color: var(--color-line);
 		background: var(--color-card);
 		color: var(--color-ink);
 	}
-	.dark .line:hover {
+	:global(.dark) .line:hover {
 		border-color: var(--color-ink);
 	}
 

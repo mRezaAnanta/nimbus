@@ -70,7 +70,7 @@
 					type="button"
 					onclick={() => (menuOpen = false)}
 					aria-label="Close"
-					class="-mr-1 flex h-8 w-8 items-center justify-center rounded-full text-faint transition-colors header-btn hover:text-ink"
+					class="header-btn -mr-1 flex h-8 w-8 items-center justify-center rounded-full text-faint transition-colors hover:text-ink"
 				>
 					<svg
 						width="16"
@@ -165,9 +165,9 @@
 									class="my-0.5 flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] leading-snug transition-colors {current
 										? 'bg-brand-soft font-semibold text-brand'
 										: isDoneL
-											? 'text-muted hover:bg-white'
+											? 'text-muted hover:bg-card'
 											: unlocked
-												? 'text-ink hover:bg-white'
+												? 'text-ink hover:bg-card'
 												: 'cursor-not-allowed text-faint'}"
 								>
 									<span class="flex h-4 w-4 shrink-0 items-center justify-center">

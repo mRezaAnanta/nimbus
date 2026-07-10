@@ -5,9 +5,9 @@
 	import { geoDistance, geoInterpolate } from 'd3-geo';
 	import Browser from '../Browser.svelte';
 	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
-  import WorldMap from '../WorldMap.svelte';
+	import WorldMap from '../WorldMap.svelte';
 	import Globe from '../Globe.svelte';
-import LocationComparisonCard from '../LocationComparisonCard.svelte';
+	import LocationComparisonCard from '../LocationComparisonCard.svelte';
 	import type { GlobeView } from '../Globe.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { CdnText } from '$lib/chapters/traffic/types';
@@ -136,11 +136,17 @@ import LocationComparisonCard from '../LocationComparisonCard.svelte';
 	}
 
 	type VKey = 'fast' | 'ok' | 'slow';
-	const verdict = $derived<VKey | null>(ms === null ? null : ms <= 60 ? 'fast' : ms <= 170 ? 'ok' : 'slow');
+	const verdict = $derived<VKey | null>(
+		ms === null ? null : ms <= 60 ? 'fast' : ms <= 170 ? 'ok' : 'slow'
+	);
 	const verdictText = $derived(
 		verdict === 'fast' ? tx.verdictFast : verdict === 'ok' ? tx.verdictOk : tx.verdictSlow
 	);
-	const toneText: Record<VKey, string> = { fast: 'text-grass', ok: 'text-amber', slow: 'text-danger' };
+	const toneText: Record<VKey, string> = {
+		fast: 'text-grass',
+		ok: 'text-amber',
+		slow: 'text-danger'
+	};
 	const toneBg: Record<VKey, string> = {
 		fast: 'bg-grass-soft text-grass',
 		ok: 'bg-amber-soft text-amber',
@@ -167,14 +173,20 @@ import LocationComparisonCard from '../LocationComparisonCard.svelte';
 	}
 	// the sender draws the line, origin or the nearest green point, flowing toward the visitor
 	const mainArc = $derived(
-		!selected || !served ? '' : served.kind === 'origin' ? arc(ORIGIN, selected) : arc(served.edge, selected)
+		!selected || !served
+			? ''
+			: served.kind === 'origin'
+				? arc(ORIGIN, selected)
+				: arc(served.edge, selected)
 	);
 	const activeEdgeCode = $derived(served?.kind === 'edge' ? served.edge.code : null);
 	const ox = fx(ORIGIN.lon);
 	const oy = fy(ORIGIN.lat);
 
 	// who is sending (origin or the chosen edge), used to draw the globe delivery line
-	const servedFrom = $derived<Spot | null>(!served ? null : served.kind === 'origin' ? ORIGIN : served.edge);
+	const servedFrom = $derived<Spot | null>(
+		!served ? null : served.kind === 'origin' ? ORIGIN : served.edge
+	);
 	// great-circle midpoint of the delivery line, where the latency tag sits on the globe
 	function cdnTagPt(v: GlobeView): [number, number] | null {
 		if (!selected || !servedFrom) return null;
@@ -187,11 +199,24 @@ import LocationComparisonCard from '../LocationComparisonCard.svelte';
 	{@const c = verdict ? toneHex[verdict] : '#5e6b76'}
 	<g transform="translate({px}, {py})" pointer-events="none">
 		<g class="ltag">
-			<rect x="-45" y="-26" width="90" height="44" rx="13" fill="#fff" stroke={c} stroke-width="2" />
+			<rect
+				x="-45"
+				y="-26"
+				width="90"
+				height="44"
+				rx="13"
+				fill="#fff"
+				stroke={c}
+				stroke-width="2"
+			/>
 			<text x="0" y="-4" text-anchor="middle" font-weight="800" font-size="19" fill={c}
-				>{Math.round(latency.current)}<tspan font-size="11" font-weight="600" fill="#5e6b76"> {tx.ms}</tspan></text
+				>{Math.round(latency.current)}<tspan font-size="11" font-weight="600" fill="#5e6b76">
+					{tx.ms}</tspan
+				></text
 			>
-			<text x="0" y="12" text-anchor="middle" font-size="10.5" font-weight="700" fill={c}>{verdictText}</text>
+			<text x="0" y="12" text-anchor="middle" font-size="10.5" font-weight="700" fill={c}
+				>{verdictText}</text
+			>
 		</g>
 	</g>
 {/snippet}
@@ -200,16 +225,44 @@ import LocationComparisonCard from '../LocationComparisonCard.svelte';
 	{#if cdnOn}
 		{#each VISITORS as vv (vv.code)}
 			{@const ne = nearestEdge(vv)}
-			{@const d = v.path({ type: 'LineString', coordinates: [[ne.lon, ne.lat], [vv.lon, vv.lat]] })}
-			{#if d}<path {d} fill="none" stroke="#3a9c64" stroke-width="1.3" stroke-dasharray="4 5" stroke-linecap="round" opacity="0.32" />{/if}
+			{@const d = v.path({
+				type: 'LineString',
+				coordinates: [
+					[ne.lon, ne.lat],
+					[vv.lon, vv.lat]
+				]
+			})}
+			{#if d}<path
+					{d}
+					fill="none"
+					stroke="#3a9c64"
+					stroke-width="1.3"
+					stroke-dasharray="4 5"
+					stroke-linecap="round"
+					opacity="0.32"
+				/>{/if}
 		{/each}
 	{/if}
 
 	{#if selected && servedFrom}
-		{@const d = v.path({ type: 'LineString', coordinates: [[servedFrom.lon, servedFrom.lat], [selected.lon, selected.lat]] })}
+		{@const d = v.path({
+			type: 'LineString',
+			coordinates: [
+				[servedFrom.lon, servedFrom.lat],
+				[selected.lon, selected.lat]
+			]
+		})}
 		{#if d}
 			{#key `${selected.code}-${cdnOn}-${activeEdgeCode}`}
-				<path {d} fill="none" stroke={served?.kind === 'edge' ? '#3a9c64' : '#2e6fe0'} stroke-width="2.5" stroke-dasharray="7 6" stroke-linecap="round" class="arcflow" />
+				<path
+					{d}
+					fill="none"
+					stroke={served?.kind === 'edge' ? '#3a9c64' : '#2e6fe0'}
+					stroke-width="2.5"
+					stroke-dasharray="7 6"
+					stroke-linecap="round"
+					class="arcflow"
+				/>
 			{/key}
 		{/if}
 	{/if}
@@ -218,7 +271,15 @@ import LocationComparisonCard from '../LocationComparisonCard.svelte';
 		{#each EDGES as e (e.code)}
 			{@const p = v.project(e.lon, e.lat)}
 			{#if p}
-				{#if activeEdgeCode === e.code}<circle cx={p[0]} cy={p[1]} r="9.5" fill="none" stroke="#3a9c64" stroke-width="2" opacity="0.55" />{/if}
+				{#if activeEdgeCode === e.code}<circle
+						cx={p[0]}
+						cy={p[1]}
+						r="9.5"
+						fill="none"
+						stroke="#3a9c64"
+						stroke-width="2"
+						opacity="0.55"
+					/>{/if}
 				<circle cx={p[0]} cy={p[1]} r="3.6" fill="#3a9c64" stroke="#fff" stroke-width="1.4" />
 			{/if}
 		{/each}
@@ -227,10 +288,26 @@ import LocationComparisonCard from '../LocationComparisonCard.svelte';
 	{@const op = v.project(ORIGIN.lon, ORIGIN.lat)}
 	{#if op}
 		<g pointer-events="none">
-			<rect x={op[0] - 7} y={op[1] - 7} width="14" height="14" rx="4" fill="#2e6fe0" stroke="#fff" stroke-width="1.6" />
+			<rect
+				x={op[0] - 7}
+				y={op[1] - 7}
+				width="14"
+				height="14"
+				rx="4"
+				fill="#2e6fe0"
+				stroke="#fff"
+				stroke-width="1.6"
+			/>
 			<rect x={op[0] - 3.5} y={op[1] - 3} width="7" height="1.8" rx="0.9" fill="#fff" />
 			<rect x={op[0] - 3.5} y={op[1] + 0.8} width="7" height="1.8" rx="0.9" fill="#fff" />
-			<text x={op[0]} y={op[1] + 24} text-anchor="middle" fill="#2e6fe0" font-size="11.5" font-weight="700">{tx.originLabel}</text>
+			<text
+				x={op[0]}
+				y={op[1] + 24}
+				text-anchor="middle"
+				fill="#2e6fe0"
+				font-size="11.5"
+				font-weight="700">{tx.originLabel}</text
+			>
 		</g>
 	{/if}
 
@@ -238,14 +315,35 @@ import LocationComparisonCard from '../LocationComparisonCard.svelte';
 		{@const p = v.project(vv.lon, vv.lat)}
 		{#if p}
 			{@const on = selected?.code === vv.code}
-			<g class="pin" role="button" tabindex="0" aria-label={tx.cities[vv.code]} onclick={v.tap(() => pick(vv))} onkeydown={(e) => e.key === 'Enter' && pick(vv)}>
+			<g
+				class="pin"
+				role="button"
+				tabindex="0"
+				aria-label={tx.cities[vv.code]}
+				onclick={v.tap(() => pick(vv))}
+				onkeydown={(e) => e.key === 'Enter' && pick(vv)}
+			>
 				<circle cx={p[0]} cy={p[1]} r="20" fill="transparent" />
-				{#if !on}<circle cx={p[0]} cy={p[1]} r="10" fill="#dd9e36" opacity="0.3" class="breathe" />{/if}
+				{#if !on}<circle
+						cx={p[0]}
+						cy={p[1]}
+						r="10"
+						fill="#dd9e36"
+						opacity="0.3"
+						class="breathe"
+					/>{/if}
 				<g transform="translate({p[0] - 8}, {p[1] - 9}) scale(0.7)" pointer-events="none">
 					<circle cx="12" cy="8" r="4" fill={on ? '#2e6fe0' : '#16212b'} />
 					<path d="M4 21a8 8 0 0 1 16 0Z" fill={on ? '#2e6fe0' : '#16212b'} />
 				</g>
-				<text x={p[0]} y={p[1] + 21} text-anchor="middle" fill={on ? '#16212b' : '#5e6b76'} font-size={on ? 11.5 : 10} font-weight={on ? 700 : 600}>{tx.cities[vv.code]}</text>
+				<text
+					x={p[0]}
+					y={p[1] + 21}
+					text-anchor="middle"
+					fill={on ? '#16212b' : '#5e6b76'}
+					font-size={on ? 11.5 : 10}
+					font-weight={on ? 700 : 600}>{tx.cities[vv.code]}</text
+				>
 			</g>
 		{/if}
 	{/each}
@@ -260,20 +358,64 @@ import LocationComparisonCard from '../LocationComparisonCard.svelte';
 
 <!-- small screens: a draggable globe with the CDN switch floating below -->
 <div class="h-full w-full md:hidden">
-	<div class="border-line relative h-full w-full overflow-hidden rounded-2xl border" style="background: #f1f6fc;">
-		<div class="absolute top-2 left-2 z-10 flex items-center gap-1.5 rounded-full border border-line bg-white/85 px-2.5 py-1 text-[10.5px] font-bold backdrop-blur {cdnOn ? 'text-grass' : 'text-faint'}">
+	<div
+		class="relative h-full w-full overflow-hidden rounded-2xl border border-line"
+		style="background: #f1f6fc;"
+	>
+		<div
+			class="absolute top-2 left-2 z-10 flex items-center gap-1.5 rounded-full border border-line bg-card/85 px-2.5 py-1 text-[10.5px] font-bold backdrop-blur {cdnOn
+				? 'text-grass'
+				: 'text-faint'}"
+		>
 			<span class="inline-block h-2 w-2 rounded-full {cdnOn ? 'bg-grass' : 'bg-[#cfd6dd]'}"></span>
 			{cdnOn ? tx.statusOn.replace('{n}', String(EDGES.length)) : tx.statusOff}
 		</div>
 		<Globe overlay={cdnOverlay} />
 		{#if !compareDone}
-			<div class="pointer-events-none absolute top-12 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1">
+			<div
+				class="pointer-events-none absolute top-12 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1"
+			>
 				<div class="flex items-center justify-center gap-1.5">
-					<span class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold backdrop-blur transition-colors {sawOrigin ? 'border-transparent bg-grass-soft text-grass' : 'border-line bg-white/85 text-faint'}">{#if sawOrigin}<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>{:else}<span class="h-1.5 w-1.5 rounded-full border border-current opacity-60"></span>{/if}{tx.compare.off}</span>
-					<span class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold backdrop-blur transition-colors {sawEdge ? 'border-transparent bg-grass-soft text-grass' : 'border-line bg-white/85 text-faint'}">{#if sawEdge}<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>{:else}<span class="h-1.5 w-1.5 rounded-full border border-current opacity-60"></span>{/if}{tx.compare.on}</span>
+					<span
+						class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold backdrop-blur transition-colors {sawOrigin
+							? 'border-transparent bg-grass-soft text-grass'
+							: 'border-line bg-card/85 text-faint'}"
+						>{#if sawOrigin}<svg
+								width="11"
+								height="11"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="3.4"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg
+							>{:else}<span class="h-1.5 w-1.5 rounded-full border border-current opacity-60"
+							></span>{/if}{tx.compare.off}</span
+					>
+					<span
+						class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold backdrop-blur transition-colors {sawEdge
+							? 'border-transparent bg-grass-soft text-grass'
+							: 'border-line bg-card/85 text-faint'}"
+						>{#if sawEdge}<svg
+								width="11"
+								height="11"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="3.4"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg
+							>{:else}<span class="h-1.5 w-1.5 rounded-full border border-current opacity-60"
+							></span>{/if}{tx.compare.on}</span
+					>
 				</div>
 				{#if !selected}
-					<span class="border-line text-muted rounded-full border bg-white/85 px-2.5 py-0.5 text-[10px] font-medium backdrop-blur">{tx.compare.hint}</span>
+					<span
+						class="rounded-full border border-line bg-card/85 px-2.5 py-0.5 text-[10px] font-medium text-muted backdrop-blur"
+						>{tx.compare.hint}</span
+					>
 				{/if}
 			</div>
 		{/if}
@@ -298,28 +440,57 @@ import LocationComparisonCard from '../LocationComparisonCard.svelte';
 <!-- tablet and up: the full flat map with the phone preview, readout, and CDN switch -->
 <div class="hidden h-full w-full flex-col gap-3 md:flex md:flex-row md:gap-4">
 	<!-- World map, origin + CDN points + clickable visitors -->
-	<div class="border-line relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl border" style="background: #f1f6fc;">
+	<div
+		class="relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl border border-line"
+		style="background: #f1f6fc;"
+	>
 		<!-- network status -->
-		<div class="absolute top-2 left-2 z-10 flex items-center gap-1.5 rounded-full border border-line bg-white/85 px-2.5 py-1 text-[10.5px] font-bold backdrop-blur {cdnOn ? 'text-grass' : 'text-faint'}">
+		<div
+			class="absolute top-2 left-2 z-10 flex items-center gap-1.5 rounded-full border border-line bg-card/85 px-2.5 py-1 text-[10.5px] font-bold backdrop-blur {cdnOn
+				? 'text-grass'
+				: 'text-faint'}"
+		>
 			<span class="inline-block h-2 w-2 rounded-full {cdnOn ? 'bg-grass' : 'bg-[#cfd6dd]'}"></span>
 			{cdnOn ? tx.statusOn.replace('{n}', String(EDGES.length)) : tx.statusOff}
 		</div>
 
-		<svg viewBox="0 0 {FLAT_W} {FLAT_H}" class="h-full w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label="map">
+		<svg
+			viewBox="0 0 {FLAT_W} {FLAT_H}"
+			class="h-full w-full"
+			preserveAspectRatio="xMidYMid meet"
+			role="img"
+			aria-label="map"
+		>
 			<rect width={FLAT_W} height={FLAT_H} fill="#f1f6fc" />
 			<WorldMap />
 
 			<!-- the network at a glance: every person wired to their nearest green point -->
 			{#if cdnOn}
 				{#each VISITORS as v (v.code)}
-					<path d={arc(nearestEdge(v), v)} fill="none" stroke="#3a9c64" stroke-width="1.3" stroke-dasharray="4 5" stroke-linecap="round" opacity="0.32" />
+					<path
+						d={arc(nearestEdge(v), v)}
+						fill="none"
+						stroke="#3a9c64"
+						stroke-width="1.3"
+						stroke-dasharray="4 5"
+						stroke-linecap="round"
+						opacity="0.32"
+					/>
 				{/each}
 			{/if}
 
 			<!-- the delivery: drawn from the sender, flowing toward the visitor -->
 			{#if mainArc}
 				{#key `${selected?.code}-${cdnOn}-${activeEdgeCode}`}
-					<path d={mainArc} fill="none" stroke={served?.kind === 'edge' ? '#3a9c64' : '#2e6fe0'} stroke-width="2.5" stroke-dasharray="7 6" stroke-linecap="round" class="arcflow" />
+					<path
+						d={mainArc}
+						fill="none"
+						stroke={served?.kind === 'edge' ? '#3a9c64' : '#2e6fe0'}
+						stroke-width="2.5"
+						stroke-dasharray="7 6"
+						stroke-linecap="round"
+						class="arcflow"
+					/>
 				{/key}
 			{/if}
 
@@ -330,7 +501,15 @@ import LocationComparisonCard from '../LocationComparisonCard.svelte';
 					{@const y = fy(e.lat)}
 					<g class="edge" style="animation-delay:{i * 28}ms">
 						{#if activeEdgeCode === e.code}
-							<circle cx={x} cy={y} r="9.5" fill="none" stroke="#3a9c64" stroke-width="2" opacity="0.55" />
+							<circle
+								cx={x}
+								cy={y}
+								r="9.5"
+								fill="none"
+								stroke="#3a9c64"
+								stroke-width="2"
+								opacity="0.55"
+							/>
 						{/if}
 						<circle cx={x} cy={y} r="3.6" fill="#3a9c64" stroke="#fff" stroke-width="1.4" />
 					</g>
@@ -339,10 +518,26 @@ import LocationComparisonCard from '../LocationComparisonCard.svelte';
 
 			<!-- the origin server -->
 			<g pointer-events="none">
-				<rect x={ox - 7} y={oy - 7} width="14" height="14" rx="4" fill="#2e6fe0" stroke="#fff" stroke-width="1.6" />
+				<rect
+					x={ox - 7}
+					y={oy - 7}
+					width="14"
+					height="14"
+					rx="4"
+					fill="#2e6fe0"
+					stroke="#fff"
+					stroke-width="1.6"
+				/>
 				<rect x={ox - 3.5} y={oy - 3} width="7" height="1.8" rx="0.9" fill="#fff" />
 				<rect x={ox - 3.5} y={oy + 0.8} width="7" height="1.8" rx="0.9" fill="#fff" />
-				<text x={ox} y={oy + 24} text-anchor="middle" fill="#2e6fe0" font-size="11.5" font-weight="700">{tx.originLabel}</text>
+				<text
+					x={ox}
+					y={oy + 24}
+					text-anchor="middle"
+					fill="#2e6fe0"
+					font-size="11.5"
+					font-weight="700">{tx.originLabel}</text
+				>
 			</g>
 
 			<!-- the visitors, people you can click -->
@@ -379,11 +574,20 @@ import LocationComparisonCard from '../LocationComparisonCard.svelte';
 		</svg>
 
 		<!-- legend -->
-		<div class="pointer-events-none absolute bottom-2 left-2 z-10 flex items-center gap-3 rounded-full border border-line bg-white/85 px-3 py-1 text-[9.5px] font-semibold text-muted backdrop-blur">
-			<span class="flex items-center gap-1"><span class="inline-block h-2.5 w-2.5 rounded-full border-2 border-[#16212b] bg-white"></span>{tx.visitorsLabel}</span>
-			<span class="flex items-center gap-1"><span class="inline-block h-2.5 w-2.5 rounded-[3px] bg-brand"></span>{tx.originLabel}</span>
+		<div
+			class="pointer-events-none absolute bottom-2 left-2 z-10 flex items-center gap-3 rounded-full border border-line bg-card/85 px-3 py-1 text-[9.5px] font-semibold text-muted backdrop-blur"
+		>
+			<span class="flex items-center gap-1"
+				><span class="inline-block h-2.5 w-2.5 rounded-full border-2 border-ink bg-card"
+				></span>{tx.visitorsLabel}</span
+			>
+			<span class="flex items-center gap-1"
+				><span class="inline-block h-2.5 w-2.5 rounded-[3px] bg-brand"></span>{tx.originLabel}</span
+			>
 			{#if cdnOn}
-				<span class="flex items-center gap-1"><span class="inline-block h-2 w-2 rounded-full bg-grass"></span>{tx.edgeLabel}</span>
+				<span class="flex items-center gap-1"
+					><span class="inline-block h-2 w-2 rounded-full bg-grass"></span>{tx.edgeLabel}</span
+				>
 			{/if}
 		</div>
 	</div>
@@ -394,29 +598,35 @@ import LocationComparisonCard from '../LocationComparisonCard.svelte';
 			<Browser phase={browser} />
 			<LocationComparisonCard
 				tx={{ compare: { near: tx.compare.off, far: tx.compare.on, hint: tx.compare.hint } }}
-				compareDone={compareDone}
+				{compareDone}
 				nearTested={sawOrigin}
 				farTested={sawEdge}
 				hintCompact={!!selected}
 			>
 				{#if selected && served && ms !== null && verdict}
-					<p class="text-ink text-sm font-semibold">{tx.cities[selected.code]}</p>
-					<p class="text-faint text-[10.5px] leading-snug">
+					<p class="text-sm font-semibold text-ink">{tx.cities[selected.code]}</p>
+					<p class="text-[10.5px] leading-snug text-faint">
 						{served.kind === 'origin'
 							? tx.servedOrigin
 							: tx.servedEdge.replace('{city}', tx.cities[served.edge.code])}
 					</p>
 					<p class="mt-2 text-3xl font-bold tabular-nums {toneText[verdict]}">
-						{Math.round(latency.current)}<span class="text-muted text-sm font-medium"> {tx.ms}</span>
+						{Math.round(latency.current)}<span class="text-sm font-medium text-muted">
+							{tx.ms}</span
+						>
 					</p>
-					<span class="mt-1 inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold {toneBg[verdict]}">
+					<span
+						class="mt-1 inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold {toneBg[
+							verdict
+						]}"
+					>
 						{verdictText}
 					</span>
 					{#if served.kind === 'edge'}
-						<p class="text-grass mt-1.5 text-[10px] font-semibold">{tx.hitChip}</p>
+						<p class="mt-1.5 text-[10px] font-semibold text-grass">{tx.hitChip}</p>
 					{/if}
 				{:else if compareDone}
-					<p class="text-faint text-sm">{tx.readoutPrompt}</p>
+					<p class="text-sm text-faint">{tx.readoutPrompt}</p>
 				{/if}
 			</LocationComparisonCard>
 		</div>

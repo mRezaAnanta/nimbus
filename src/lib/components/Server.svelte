@@ -1,15 +1,14 @@
 <script lang="ts">
-	import { theme } from '$lib/theme.svelte';
-
-	let { slots = 3, active = false }: {
+	let {
+		slots = 3,
+		active = false
+	}: {
 		slots?: number;
 		active?: boolean;
 	} = $props();
-
-	let dark = $derived($theme === 'dark');
 </script>
 
-<div class="server" class:dark>
+<div class="server">
 	{#each Array(slots) as _, i (i)}
 		<div class="slot">
 			<span class="dot" class:active></span>
@@ -29,7 +28,7 @@
 		padding: 10px;
 		box-shadow: 0 8px 20px rgba(22, 40, 60, 0.07);
 	}
-	.server.dark {
+	:global(.dark) .server {
 		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 	}
 	.slot {

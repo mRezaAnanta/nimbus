@@ -1,7 +1,6 @@
 <script lang="ts">
 	import ProviderLogo from '../ProviderLogo.svelte';
 	import type { LessonText, CloudServicesText } from '$lib/chapters/types';
-	import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -20,7 +19,6 @@
 	} = $props();
 	const tx = $derived(text as CloudServicesText);
 
-	let dark = $derived($theme === 'dark');
 	// The "turn on" beat is second to last; the final beat is an FYI aside that keeps the
 	// catalog on screen. Show the monitor from the turn on beat, and lock Next until it is on.
 	const turnOn = $derived(Math.max(0, tx.intro.length - 2));
@@ -107,7 +105,7 @@
 	}
 </script>
 
-<div class="wrap" class:dark>
+<div class="wrap">
 	<div class="monitor">
 		<div class="bezel" class:on>
 			<div class="screen">
@@ -263,7 +261,7 @@
 		margin-left: auto;
 		font-size: 10px;
 		font-weight: 600;
-		color: #8a949d;
+		color: var(--color-faint);
 	}
 	.marquee {
 		flex: 1;
@@ -297,7 +295,7 @@
 		width: 92px;
 		font-size: 9px;
 		font-weight: 800;
-		color: #5e6b76;
+		color: var(--color-muted);
 		white-space: nowrap;
 	}
 	.rlabel span {
@@ -399,46 +397,40 @@
 	}
 
 	/* ---- Dark mode ---- */
-	.dark .bezel {
+	:global(.dark) .bezel {
 		background: #0f1720;
 		box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
 	}
-	.dark .screen {
+	:global(.dark) .screen {
 		background: #0a0f16;
 	}
-	.dark .bezel.on .screen {
+	:global(.dark) .bezel.on .screen {
 		background: #1b2533;
 	}
-	.dark .neck {
+	:global(.dark) .neck {
 		background: linear-gradient(#141c28, #0f1720);
 	}
-	.dark .base {
+	:global(.dark) .base {
 		background: #0f1720;
 	}
-	.dark .power {
+	:global(.dark) .power {
 		color: #6b7885;
 	}
-	.dark .pring {
+	:global(.dark) .pring {
 		border-color: #2c3746;
 		background: #121a24;
 	}
-	.dark .power:hover .pring {
+	:global(.dark) .power:hover .pring {
 		border-color: #6fd39a;
 	}
-	.dark .shead {
+	:global(.dark) .shead {
 		background: #141c2a;
 		border-bottom-color: #2c3746;
 	}
-	.dark .stitle {
+	:global(.dark) .stitle {
 		color: #e0dcd4;
 	}
-	.dark .ssub {
-		color: #6b7885;
-	}
-	.dark .rlabel {
-		color: #97a3ae;
-	}
-	.dark .chip {
+	:global(.dark) .chip {
 		background: #1b2533;
 		border-color: #2c3746;
 		color: #e0dcd4;

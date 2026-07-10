@@ -3,10 +3,8 @@
 	import Browser from '../Browser.svelte';
 	import Server from '$lib/components/Server.svelte';
 	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
-	import { theme } from '$lib/theme.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 
-	let dark = $derived($theme === 'dark');
 	import type { ServerlessText } from '$lib/chapters/compute/types';
 
 	let {
@@ -26,7 +24,9 @@
 
 	// the architecture narrates along with Nim, one view per beat
 	const lastBeat = $derived(beat >= tx.intro.length - 1);
-	const view = $derived(lastBeat ? 'demo' : (['always', 'flow', 'sandbox'][Math.min(beat, 2)] as string));
+	const view = $derived(
+		lastBeat ? 'demo' : (['always', 'flow', 'sandbox'][Math.min(beat, 2)] as string)
+	);
 	$effect(() => {
 		void beat;
 		onshow?.(true);
@@ -77,9 +77,10 @@
 	const note = $derived(
 		!lastBeat ? ' ' : fnState !== 'sleep' ? tx.noteRun : calls > 0 ? tx.noteZero : tx.noteIdle
 	);
-	const phonePhase = $derived(
-		fnState !== 'sleep' ? 'loading' : calls > 0 ? 'loaded' : 'idle'
-	) as 'idle' | 'loading' | 'loaded';
+	const phonePhase = $derived(fnState !== 'sleep' ? 'loading' : calls > 0 ? 'loaded' : 'idle') as
+		| 'idle'
+		| 'loading'
+		| 'loaded';
 
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
@@ -92,16 +93,35 @@
 		</svg>
 	{:else if i === 1}
 		<svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-			<path d="M4 21V7l8-4 8 4v14M4 12h16M10 21v-5h4v5" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" />
+			<path
+				d="M4 21V7l8-4 8 4v14M4 12h16M10 21v-5h4v5"
+				stroke="currentColor"
+				stroke-width="1.9"
+				stroke-linejoin="round"
+			/>
 		</svg>
 	{:else if i === 2}
 		<svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-			<rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.9" stroke-dasharray="3.5 3" />
+			<rect
+				x="4"
+				y="4"
+				width="16"
+				height="16"
+				rx="3"
+				stroke="currentColor"
+				stroke-width="1.9"
+				stroke-dasharray="3.5 3"
+			/>
 			<circle cx="12" cy="12" r="2.2" fill="currentColor" />
 		</svg>
 	{:else if i === 3}
 		<svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-			<path d="M11 3 5 13h5l-2 8 7-11h-5l3-7Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" />
+			<path
+				d="M11 3 5 13h5l-2 8 7-11h-5l3-7Z"
+				stroke="currentColor"
+				stroke-width="1.9"
+				stroke-linejoin="round"
+			/>
 		</svg>
 	{:else}
 		<svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -111,7 +131,7 @@
 	{/if}
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
 	<div class="panel">
 		{#key view}
 			{#if view === 'always'}
@@ -133,7 +153,11 @@
 					<div class="steps">
 						{#each tx.archSteps as s, i (s)}
 							{@const on = hop === i}
-							<div class="step" class:on style="--c:{i === 2 ? '#dd9e36' : i === 3 ? '#3a9c64' : '#5e6b76'}">
+							<div
+								class="step"
+								class:on
+								style="--c:{i === 2 ? '#dd9e36' : i === 3 ? '#3a9c64' : '#5e6b76'}"
+							>
 								<span class="sic" class:lit={on}>{@render stepIcon(i)}</span>
 								<span class="stxt">{s}</span>
 							</div>
@@ -164,12 +188,25 @@
 					</div>
 					<div class="fnwrap">
 						<div class="fn" class:awake={fnState !== 'sleep'} class:working={fnState === 'run'}>
-							{#if fnState === 'sleep'}<span class="zzz">z z z</span>{:else}<span class="spark">⚡</span>{/if}
+							{#if fnState === 'sleep'}<span class="zzz">z z z</span>{:else}<span class="spark"
+									>⚡</span
+								>{/if}
 							<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-								<path d="M11 3 5 13h5l-2 8 7-11h-5l3-7Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" />
+								<path
+									d="M11 3 5 13h5l-2 8 7-11h-5l3-7Z"
+									stroke="currentColor"
+									stroke-width="1.9"
+									stroke-linejoin="round"
+								/>
 							</svg>
 							<b>{tx.fnLabel}</b>
-							<span class="stag">{fnState === 'sleep' ? tx.sleepTag : fnState === 'wake' ? tx.wakeTag : tx.runTag}</span>
+							<span class="stag"
+								>{fnState === 'sleep'
+									? tx.sleepTag
+									: fnState === 'wake'
+										? tx.wakeTag
+										: tx.runTag}</span
+							>
 						</div>
 						<span class="mnum">{tx.callsLabel.replace('{n}', String(calls))}</span>
 					</div>
@@ -508,72 +545,72 @@
 		font-weight: 600;
 		color: #6a7681;
 	}
-	.dark .panel {
+	:global(.dark) .panel {
 		border-color: var(--color-line);
 		background: var(--color-card);
 		box-shadow: none;
 	}
-	.dark .always b {
+	:global(.dark) .always b {
 		color: var(--color-ink);
 	}
-	.dark .meter24 {
+	:global(.dark) .meter24 {
 		border-color: color-mix(in srgb, var(--color-danger) 40%, transparent);
 		background: var(--color-danger-soft);
 		color: var(--color-danger);
 	}
-	.dark .frail {
+	:global(.dark) .frail {
 		border-color: var(--color-line);
 	}
-	.dark .fpkt {
+	:global(.dark) .fpkt {
 		border-color: var(--color-card);
 		box-shadow: none;
 	}
-	.dark .sic {
+	:global(.dark) .sic {
 		border-color: var(--color-line);
 		background: var(--color-card);
 		color: var(--color-faint);
 	}
-	.dark .stxt {
+	:global(.dark) .stxt {
 		color: var(--color-faint);
 	}
-	.dark .step.on .stxt {
+	:global(.dark) .step.on .stxt {
 		color: var(--color-ink);
 	}
-	.dark .vchip {
+	:global(.dark) .vchip {
 		border-color: color-mix(in srgb, var(--color-amber) 40%, transparent);
 		background: var(--color-amber-soft);
 		color: var(--color-amber);
 	}
-	.dark .alabel {
+	:global(.dark) .alabel {
 		color: var(--color-muted);
 	}
-	.dark .svcrail {
+	:global(.dark) .svcrail {
 		background: var(--color-line);
 	}
-	.dark .fn {
+	:global(.dark) .fn {
 		border-color: var(--color-line);
 		background: var(--color-paper);
 		color: var(--color-faint);
 	}
-	.dark .fn.awake {
+	:global(.dark) .fn.awake {
 		border-color: var(--color-amber);
 		background: var(--color-amber-soft);
 		color: var(--color-amber);
 		box-shadow: none;
 	}
-	.dark .fn.working {
+	:global(.dark) .fn.working {
 		border-color: var(--color-grass);
 		background: var(--color-grass-soft);
 		color: var(--color-grass);
 		box-shadow: none;
 	}
-	.dark .zzz {
+	:global(.dark) .zzz {
 		color: var(--color-faint);
 	}
-	.dark .mnum {
+	:global(.dark) .mnum {
 		color: var(--color-muted);
 	}
-	.dark .note {
+	:global(.dark) .note {
 		color: var(--color-muted);
 	}
 	@media (prefers-reduced-motion: reduce) {

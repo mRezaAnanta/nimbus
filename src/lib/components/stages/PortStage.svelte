@@ -2,7 +2,6 @@
 	import { onDestroy } from 'svelte';
 	import { SvelteSet } from 'svelte/reactivity';
 	import type { LessonText, PortText } from '$lib/chapters/types';
-	import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -10,8 +9,6 @@
 		onstate
 	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as PortText);
-
-	let dark = $derived($theme === 'dark');
 
 	let active = $state('');
 	const viewed = new SvelteSet<string>();
@@ -34,7 +31,7 @@
 	onDestroy(() => clearTimeout(summaryTimer));
 </script>
 
-<div class="wrap" class:dark>
+<div class="wrap">
 	<div class="addr">
 		<span class="alabel">{tx.addrLabel}</span>
 		<span class="achip">{tx.address}</span>
@@ -90,12 +87,12 @@
 	.alabel {
 		font-size: 11px;
 		font-weight: 700;
-		color: #8a949d;
+		color: var(--color-faint);
 	}
 	.achip {
 		border-radius: 999px;
 		border: 1px solid #cdddf6;
-		background: #eaf1fc;
+		background: var(--color-brand-soft);
 		color: #2e6fe0;
 		font-size: 12px;
 		font-weight: 800;
@@ -236,46 +233,42 @@
 			max-width: 400px;
 		}
 	}
-	.dark .alabel {
-		color: #6b7885;
-	}
-	.dark .achip {
+	:global(.dark) .achip {
 		border-color: #2c4a6e;
-		background: #1a2d4a;
 		color: #7daae0;
 	}
-	.dark .building {
+	:global(.dark) .building {
 		border-color: #2c3746;
 		background: linear-gradient(#1b2533, #141c2a);
 	}
-	.dark .facade span {
+	:global(.dark) .facade span {
 		background: #2c3746;
 		border-color: #3a4a5c;
 	}
-	.dark .leaf {
+	:global(.dark) .leaf {
 		border-color: #3a4a5c;
 		background: #2c3746;
 	}
-	.dark .door.open .leaf {
+	:global(.dark) .door.open .leaf {
 		border-color: #3a5a8e;
 		background: #1a2d4a;
 	}
-	.dark .knob {
+	:global(.dark) .knob {
 		background: #6b7885;
 	}
-	.dark .svc {
+	:global(.dark) .svc {
 		color: #7daae0;
 	}
-	.dark .pnum {
+	:global(.dark) .pnum {
 		color: #97a3ae;
 	}
-	.dark .door.open .pnum {
+	:global(.dark) .door.open .pnum {
 		color: #e0dcd4;
 	}
-	.dark .desc {
+	:global(.dark) .desc {
 		color: #97a3ae;
 	}
-	.dark .dport {
+	:global(.dark) .dport {
 		background: #2a3748;
 		color: #e0dcd4;
 	}

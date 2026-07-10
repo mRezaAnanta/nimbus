@@ -4,7 +4,6 @@
 	import type { LessonText } from '$lib/chapters/types';
 	import type { ReverseProxyText } from '$lib/chapters/traffic/types';
 	import Server from '$lib/components/Server.svelte';
-import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -16,7 +15,6 @@ import { theme } from '$lib/theme.svelte';
 		onstate?: (s: string) => void;
 	} = $props();
 	const tx = $derived(text as ReverseProxyText);
-	let dark = $derived($theme === 'dark');
 
 	// One stable colour per backend, shared by the button, the packet, and the rack.
 	const COLORS: Record<string, string> = { web: '#2e6fe0', api: '#3a9c64', static: '#dd9e36' };
@@ -70,10 +68,10 @@ import { theme } from '$lib/theme.svelte';
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
 	<!-- The action, kept obvious and up top, clear of Nim -->
 	<div class="flex flex-col items-center gap-2">
-		<p class="text-faint text-[11px] font-semibold md:text-[13px]">{tx.promptLabel}</p>
+		<p class="text-[11px] font-semibold text-faint md:text-[13px]">{tx.promptLabel}</p>
 		<div class="flex flex-wrap items-center justify-center gap-2">
 			{#each tx.routes as route, i (route.path)}
 				<button
@@ -128,9 +126,22 @@ import { theme } from '$lib/theme.svelte';
 								{#each [0, 1, 2, 3] as n (n)}
 									<div class="ph">
 										<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-											<rect x="3" y="5" width="18" height="14" rx="2" stroke="#c9881f" stroke-width="1.4" />
+											<rect
+												x="3"
+												y="5"
+												width="18"
+												height="14"
+												rx="2"
+												stroke="#c9881f"
+												stroke-width="1.4"
+											/>
 											<circle cx="8.5" cy="10" r="1.6" fill="#dd9e36" />
-											<path d="M5 17l4.5-4 3 2.5L16 12l3 3.5" stroke="#dd9e36" stroke-width="1.4" fill="none" />
+											<path
+												d="M5 17l4.5-4 3 2.5L16 12l3 3.5"
+												stroke="#dd9e36"
+												stroke-width="1.4"
+												fill="none"
+											/>
 										</svg>
 									</div>
 								{/each}
@@ -139,7 +150,7 @@ import { theme } from '$lib/theme.svelte';
 					</div>
 				</div>
 			</div>
-			<span class="text-muted text-xs font-semibold md:text-sm">{tx.youLabel}</span>
+			<span class="text-xs font-semibold text-muted md:text-sm">{tx.youLabel}</span>
 		</div>
 
 		<!-- the mechanism: proxy out front, three hidden servers behind -->
@@ -165,27 +176,42 @@ import { theme } from '$lib/theme.svelte';
 					<path d="M5 21V9a7 7 0 0 1 14 0v12Z" fill="#eaf1fc" stroke="#2e6fe0" stroke-width="1.6" />
 					<circle cx="15" cy="13" r="1.1" fill="#2e6fe0" />
 				</svg>
-				<div class="text-ink text-[11px] font-bold md:text-[13.5px]">{tx.proxyLabel}</div>
+				<div class="text-[11px] font-bold text-ink md:text-[13.5px]">{tx.proxyLabel}</div>
 				<div class="addr-chip">{tx.publicAddr}</div>
-				<div class="text-faint text-[9px] md:text-[10.5px]">{tx.proxySub}</div>
+				<div class="text-[9px] text-faint md:text-[10.5px]">{tx.proxySub}</div>
 			</div>
 
 			{#each tx.routes as route, i (route.backend)}
 				<div class="rackwrap" style="left:{LANES[i]}">
-					<div class="server-wrap" class:lit={routed.has(route.backend)} class:hot={active === route.backend} style="--c:{COLORS[route.backend]}">
+					<div
+						class="server-wrap"
+						class:lit={routed.has(route.backend)}
+						class:hot={active === route.backend}
+						style="--c:{COLORS[route.backend]}"
+					>
 						<Server slots={3} active={routed.has(route.backend)} />
 					</div>
-					<span class="rlabel" style={routed.has(route.backend) ? `color:${COLORS[route.backend]}` : ''}>{route.label}</span>
+					<span
+						class="rlabel"
+						style={routed.has(route.backend) ? `color:${COLORS[route.backend]}` : ''}
+						>{route.label}</span
+					>
 				</div>
 			{/each}
 
 			{#each flights as f (f.id)}
-				<div class="packet" class:out={f.phase === 'out'} style="--lx:{f.lane}; background:{COLORS[f.backend]}">{f.path}</div>
+				<div
+					class="packet"
+					class:out={f.phase === 'out'}
+					style="--lx:{f.lane}; background:{COLORS[f.backend]}"
+				>
+					{f.path}
+				</div>
 			{/each}
 		</div>
 	</div>
 
-	<p class="text-grass h-5 text-sm font-semibold">
+	<p class="h-5 text-sm font-semibold text-grass">
 		{#if routed.size > 0}✓ {tx.routedNote.replace('{n}', String(routed.size))}{/if}
 	</p>
 </div>
@@ -593,76 +619,76 @@ import { theme } from '$lib/theme.svelte';
 		}
 	}
 	/* ---- Dark mode ---- */
-	.dark .req-btn {
+	:global(.dark) .req-btn {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		color: var(--color-ink);
 		box-shadow: none;
 	}
-	.dark .req-btn .path {
+	:global(.dark) .req-btn .path {
 		color: var(--color-faint);
 	}
-	.dark .phone {
+	:global(.dark) .phone {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		box-shadow: none;
 	}
-	.dark .screen {
+	:global(.dark) .screen {
 		background: #1e2835;
 	}
-	.dark .addr {
+	:global(.dark) .addr {
 		background: var(--color-card);
 		border-bottom-color: var(--color-line);
 	}
-	.dark .led {
+	:global(.dark) .led {
 		background: var(--color-faint);
 	}
-	.dark .url {
+	:global(.dark) .url {
 		color: var(--color-muted);
 	}
-	.dark .idle {
+	:global(.dark) .idle {
 		color: var(--color-faint);
 	}
-	.dark .spinner {
+	:global(.dark) .spinner {
 		border-color: #2c3746;
 	}
-	.dark .hero {
+	:global(.dark) .hero {
 		background: linear-gradient(120deg, #1a2d4a, #2e6fe0);
 	}
-	.dark .bar {
+	:global(.dark) .bar {
 		background: #2c3746;
 	}
-	.dark .cards span {
+	:global(.dark) .cards span {
 		background: #1a2d4a;
 	}
-	.dark .json .v {
+	:global(.dark) .json .v {
 		background: var(--color-grass-soft);
 	}
-	.dark .img .ph {
+	:global(.dark) .img .ph {
 		background: var(--color-amber-soft);
 		border-color: #3d3522;
 	}
-	.dark .proxy {
+	:global(.dark) .proxy {
 		background: var(--color-card);
 		border-color: #3a5a80;
 		box-shadow: none;
 	}
-	.dark .addr-chip {
+	:global(.dark) .addr-chip {
 		background: var(--color-brand-soft);
 	}
-	.dark .proxy svg path[fill="#eaf1fc"] {
+	:global(.dark) .proxy svg path[fill='#eaf1fc'] {
 		fill: var(--color-brand-soft);
 	}
-	.dark .rails line {
+	:global(.dark) .rails line {
 		stroke: var(--color-line);
 	}
-	.dark .server-wrap :global(.server) {
+	:global(.dark) .server-wrap :global(.server) {
 		box-shadow: none;
 	}
-	.dark .rlabel {
+	:global(.dark) .rlabel {
 		color: var(--color-muted);
 	}
-	.dark .packet {
+	:global(.dark) .packet {
 		box-shadow: none;
 	}
 

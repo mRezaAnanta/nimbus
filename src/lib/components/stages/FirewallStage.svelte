@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { SvelteSet } from 'svelte/reactivity';
-	import { theme } from '$lib/theme.svelte';
 	import Server from '$lib/components/Server.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { FirewallText } from '$lib/chapters/networking/types';
 
-	let dark = $derived($theme === 'dark');
-
-	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
-		$props();
+	let {
+		text,
+		oncomplete,
+		onstate
+	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as FirewallText);
 
 	let guest = $state<'' | 'web' | 'bad'>('');
@@ -62,7 +62,7 @@
 	</svg>
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
 	<div class="scene">
 		<!-- the guest list the guard holds -->
 		<div class="rules">
@@ -83,8 +83,20 @@
 				</span>
 				<div class="gatehole" class:busy={checking}>
 					<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-						<path d="M12 2 4 5.5v5.2c0 5 3.4 9 8 11.3 4.6-2.3 8-6.3 8-11.3V5.5Z" stroke="#2e6fe0" stroke-width="1.9" stroke-linejoin="round" fill="#eaf1fc" />
-						<path d="m8.8 12 2.2 2.2 4.4-4.4" stroke="#2e6fe0" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" />
+						<path
+							d="M12 2 4 5.5v5.2c0 5 3.4 9 8 11.3 4.6-2.3 8-6.3 8-11.3V5.5Z"
+							stroke="#2e6fe0"
+							stroke-width="1.9"
+							stroke-linejoin="round"
+							fill="#eaf1fc"
+						/>
+						<path
+							d="m8.8 12 2.2 2.2 4.4-4.4"
+							stroke="#2e6fe0"
+							stroke-width="1.9"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
 					</svg>
 				</div>
 				<span class="brickcol bot">
@@ -113,7 +125,9 @@
 				<span class="check">?</span>
 			{/if}
 			{#if verdict}
-				<span class="vtag" class:no={verdict === 'deny'}>{verdict === 'allow' ? tx.allowedTag : tx.deniedTag}</span>
+				<span class="vtag" class:no={verdict === 'deny'}
+					>{verdict === 'allow' ? tx.allowedTag : tx.deniedTag}</span
+				>
 			{/if}
 
 			<!-- the server safe behind the wall -->
@@ -127,8 +141,20 @@
 	<p class="note">{note}</p>
 
 	<div class="acts">
-		<button type="button" class="cta" class:dim={tried.has('web')} onclick={() => send('web')} disabled={guest !== ''}>{tx.sendWeb}</button>
-		<button type="button" class="line" class:dim={tried.has('bad')} onclick={() => send('bad')} disabled={guest !== ''}>{tx.sendBad}</button>
+		<button
+			type="button"
+			class="cta"
+			class:dim={tried.has('web')}
+			onclick={() => send('web')}
+			disabled={guest !== ''}>{tx.sendWeb}</button
+		>
+		<button
+			type="button"
+			class="line"
+			class:dim={tried.has('bad')}
+			onclick={() => send('bad')}
+			disabled={guest !== ''}>{tx.sendBad}</button
+		>
 	</div>
 </div>
 
@@ -450,61 +476,61 @@
 		color: #3a9c64;
 	}
 
-	.dark .rules {
+	:global(.dark) .rules {
 		border-color: var(--color-line);
 		background: var(--color-card);
 		box-shadow: none;
 	}
-	.dark .rules b {
+	:global(.dark) .rules b {
 		color: var(--color-faint);
 	}
-	.dark .r.ok {
+	:global(.dark) .r.ok {
 		color: var(--color-grass);
 	}
-	.dark .r.no {
+	:global(.dark) .r.no {
 		color: var(--color-danger);
 	}
-	.dark .ruletail {
+	:global(.dark) .ruletail {
 		background: var(--color-card);
 		border-right-color: var(--color-line);
 		border-bottom-color: var(--color-line);
 	}
-	.dark .ground {
+	:global(.dark) .ground {
 		border-color: var(--color-line);
 	}
-	.dark .brickcol i {
+	:global(.dark) .brickcol i {
 		background: color-mix(in srgb, var(--color-brand) 25%, transparent);
 		border-color: color-mix(in srgb, var(--color-brand) 35%, transparent);
 	}
-	.dark .gatehole {
+	:global(.dark) .gatehole {
 		background: var(--color-card);
 		border-color: color-mix(in srgb, var(--color-brand) 25%, transparent);
 	}
-	.dark .gatehole svg path {
+	:global(.dark) .gatehole svg path {
 		fill: var(--color-brand-soft);
 	}
-	.dark .wlabel b {
+	:global(.dark) .wlabel b {
 		color: var(--color-brand);
 	}
-	.dark .wlabel span {
+	:global(.dark) .wlabel span {
 		color: var(--color-faint);
 	}
-	.dark .alabel {
+	:global(.dark) .alabel {
 		color: var(--color-muted);
 	}
-	.dark .note {
+	:global(.dark) .note {
 		color: var(--color-muted);
 	}
-	.dark .cta {
+	:global(.dark) .cta {
 		background: var(--color-brand);
 		box-shadow: none;
 	}
-	.dark .line {
+	:global(.dark) .line {
 		border-color: var(--color-line);
 		background: var(--color-card);
 		color: var(--color-ink);
 	}
-	.dark .line:enabled:hover {
+	:global(.dark) .line:enabled:hover {
 		border-color: var(--color-ink);
 	}
 

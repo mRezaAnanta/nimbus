@@ -19,7 +19,10 @@
 	// One combined path for every cable (each line is its own M-subpath), so the stage
 	// mounts as a couple of DOM nodes instead of ~1900.
 	const cableD = cableLines
-		.map((line) => 'M' + line.map(([lon, lat]) => `${fx(lon).toFixed(1)} ${fy(lat).toFixed(1)}`).join('L'))
+		.map(
+			(line) =>
+				'M' + line.map(([lon, lat]) => `${fx(lon).toFixed(1)} ${fy(lat).toFixed(1)}`).join('L')
+		)
 		.join(' ');
 	// Same cables as a geometry, projected live onto the globe (drawn only when the globe is still).
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -55,12 +58,15 @@
 	import Browser from '../Browser.svelte';
 	import WorldMap from '../WorldMap.svelte';
 	import Globe from '../Globe.svelte';
-  import LocationComparisonCard from '../LocationComparisonCard.svelte';
+	import LocationComparisonCard from '../LocationComparisonCard.svelte';
 	import type { GlobeView } from '../Globe.svelte';
 	import type { LessonText, CableText } from '$lib/chapters/types';
 
-	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
-		$props();
+	let {
+		text,
+		oncomplete,
+		onstate
+	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as CableText);
 
 	const users = { lon: -58.4, lat: -34.6 }; // Buenos Aires, Argentina
@@ -87,7 +93,9 @@
 	const compareDone = $derived(nearTested && farTested);
 
 	const route = $derived(selected ? (routeGeom[selected.code] ?? null) : null);
-	const routePath = $derived(route ? 'M' + route.flat.map((p) => `${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join('L') : '');
+	const routePath = $derived(
+		route ? 'M' + route.flat.map((p) => `${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join('L') : ''
+	);
 	// position along the real route by arc length, so the packet hugs the cables
 	function pointAt(g: RouteGeom, frac: number): [number, number] {
 		const target = frac * g.total;
@@ -152,12 +160,27 @@
 	<!-- the real undersea cables, the highlight of this lesson; skipped mid-spin to stay smooth -->
 	{#if !v.dragging}
 		{@const cd = v.path(CABLE_GEO)}
-		{#if cd}<path d={cd} fill="none" stroke="#3f7fd6" stroke-width="0.45" stroke-linecap="round" stroke-linejoin="round" opacity="0.4" />{/if}
+		{#if cd}<path
+				d={cd}
+				fill="none"
+				stroke="#3f7fd6"
+				stroke-width="0.45"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				opacity="0.4"
+			/>{/if}
 	{/if}
 
 	{#if selected}
 		{@const d = v.path({ type: 'LineString', coordinates: ROUTES[selected.code] ?? [] })}
-		{#if d}<path {d} fill="none" stroke="#2e6fe0" stroke-width="2.5" stroke-linecap="round" opacity="0.9" />{/if}
+		{#if d}<path
+				{d}
+				fill="none"
+				stroke="#2e6fe0"
+				stroke-width="2.5"
+				stroke-linecap="round"
+				opacity="0.9"
+			/>{/if}
 	{/if}
 	{#if packetLL}
 		{@const pp = v.project(packetLL[0], packetLL[1])}
@@ -169,10 +192,31 @@
 	{#each dests as d (d.code)}
 		{@const p = v.project(d.lon, d.lat)}
 		{#if p}
-			<g class="pin" role="button" tabindex="0" aria-label={tx.dests[d.code]} onclick={v.tap(() => send(d))} onkeydown={(e) => e.key === 'Enter' && send(d)}>
+			<g
+				class="pin"
+				role="button"
+				tabindex="0"
+				aria-label={tx.dests[d.code]}
+				onclick={v.tap(() => send(d))}
+				onkeydown={(e) => e.key === 'Enter' && send(d)}
+			>
 				<circle cx={p[0]} cy={p[1]} r="13" fill="transparent" />
-				<circle cx={p[0]} cy={p[1]} r="6" fill={selected?.code === d.code ? '#2e6fe0' : '#fff'} stroke="#2e6fe0" stroke-width="2.5" />
-				<text x={p[0]} y={p[1] - 11} text-anchor="middle" fill="#16212b" font-size="12.5" font-weight="600">{tx.dests[d.code]}</text>
+				<circle
+					cx={p[0]}
+					cy={p[1]}
+					r="6"
+					fill={selected?.code === d.code ? '#2e6fe0' : '#fff'}
+					stroke="#2e6fe0"
+					stroke-width="2.5"
+				/>
+				<text
+					x={p[0]}
+					y={p[1] - 11}
+					text-anchor="middle"
+					fill="#16212b"
+					font-size="12.5"
+					font-weight="600">{tx.dests[d.code]}</text
+				>
 			</g>
 		{/if}
 	{/each}
@@ -180,7 +224,14 @@
 	{#if upt}
 		<circle cx={upt[0]} cy={upt[1]} r="12" fill="#dd9e36" opacity="0.25" class="pulse" />
 		<circle cx={upt[0]} cy={upt[1]} r="6.5" fill="#16212b" />
-		<text x={upt[0]} y={upt[1] + 26} text-anchor="middle" fill="#16212b" font-size="13" font-weight="700">{tx.users}</text>
+		<text
+			x={upt[0]}
+			y={upt[1] + 26}
+			text-anchor="middle"
+			fill="#16212b"
+			font-size="13"
+			font-weight="700">{tx.users}</text
+		>
 	{/if}
 {/snippet}
 
@@ -192,7 +243,17 @@
 			: 'border-line bg-card text-faint'}"
 	>
 		{#if done}
-			<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>
+			<svg
+				width="11"
+				height="11"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="3.4"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg
+			>
 		{:else}
 			<span class="h-1.5 w-1.5 rounded-full border border-current opacity-60"></span>
 		{/if}
@@ -209,39 +270,86 @@
 
 <!-- small screens: a draggable globe instead of the tiny wide map -->
 <div class="h-full w-full md:hidden">
-	<div class="border-line relative h-full w-full overflow-hidden rounded-2xl border" style="background: #eef4fb;">
+	<div
+		class="relative h-full w-full overflow-hidden rounded-2xl border border-line"
+		style="background: #eef4fb;"
+	>
 		<Globe overlay={cableOverlay} />
-		<div class="pointer-events-none absolute top-2 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1">
+		<div
+			class="pointer-events-none absolute top-2 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1"
+		>
 			{#if !compareDone}{@render compareChips()}{/if}
 			{#if selected}
-				<div class="border-line text-ink rounded-full border bg-white/85 px-3 py-1 text-[11px] font-semibold backdrop-blur">
-					{#if phase === 'leaving'}{tx.phases.leaving}{:else if phase === 'undersea'}{tx.phases.undersea}{:else}{tx.phases.arrived}{/if}
+				<div
+					class="rounded-full border border-line bg-card/85 px-3 py-1 text-[11px] font-semibold text-ink backdrop-blur"
+				>
+					{#if phase === 'leaving'}{tx.phases.leaving}{:else if phase === 'undersea'}{tx.phases
+							.undersea}{:else}{tx.phases.arrived}{/if}
 				</div>
 			{:else if !compareDone}
-				<div class="border-line text-muted rounded-full border bg-white/85 px-2.5 py-0.5 text-[10px] font-medium backdrop-blur">{tx.compare.hint}</div>
+				<div
+					class="rounded-full border border-line bg-card/85 px-2.5 py-0.5 text-[10px] font-medium text-muted backdrop-blur"
+				>
+					{tx.compare.hint}
+				</div>
 			{/if}
 		</div>
-		<p class="text-faint pointer-events-none absolute inset-x-0 bottom-1.5 text-center text-[10px] opacity-75">* {tx.routeNote}</p>
+		<p
+			class="pointer-events-none absolute inset-x-0 bottom-1.5 text-center text-[10px] text-faint opacity-75"
+		>
+			* {tx.routeNote}
+		</p>
 	</div>
 </div>
 
 <!-- tablet and up: the full flat cable map with the phone preview -->
 <div class="hidden h-full w-full flex-col gap-4 md:flex md:flex-row">
 	<!-- Map -->
-	<div class="border-line relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl border" style="background: #eef4fb;">
-		<svg viewBox="0 0 {FLAT_W} {FLAT_H}" class="h-full w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label="undersea cable map">
+	<div
+		class="relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl border border-line"
+		style="background: #eef4fb;"
+	>
+		<svg
+			viewBox="0 0 {FLAT_W} {FLAT_H}"
+			class="h-full w-full"
+			preserveAspectRatio="xMidYMid meet"
+			role="img"
+			aria-label="undersea cable map"
+		>
 			<rect width={FLAT_W} height={FLAT_H} fill="#eef4fb" />
 			<WorldMap />
 
 			<!-- real undersea cables (one combined path) -->
-			<path d={cableD} fill="none" stroke="#3f7fd6" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.4" />
+			<path
+				d={cableD}
+				fill="none"
+				stroke="#3f7fd6"
+				stroke-width="0.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				opacity="0.4"
+			/>
 
 			<!-- landing stations (one combined path of dots) -->
-			<path d={landingD} fill="none" stroke="#6f86a6" stroke-width="1.4" stroke-linecap="round" opacity="0.5" />
+			<path
+				d={landingD}
+				fill="none"
+				stroke="#6f86a6"
+				stroke-width="1.4"
+				stroke-linecap="round"
+				opacity="0.5"
+			/>
 
 			<!-- active route + travelling packet -->
 			{#if routePath}
-				<path d={routePath} fill="none" stroke="#2e6fe0" stroke-width="2.5" stroke-linecap="round" opacity="0.9" />
+				<path
+					d={routePath}
+					fill="none"
+					stroke="#2e6fe0"
+					stroke-width="2.5"
+					stroke-linecap="round"
+					opacity="0.9"
+				/>
 			{/if}
 			{#if packet}
 				<circle cx={packet[0]} cy={packet[1]} r="9" fill="#2e6fe0" opacity="0.2" />
@@ -259,38 +367,68 @@
 					onkeydown={(e) => e.key === 'Enter' && send(d)}
 				>
 					<circle cx={fx(d.lon)} cy={fy(d.lat)} r="12" fill="transparent" />
-					<circle cx={fx(d.lon)} cy={fy(d.lat)} r="6" fill={selected?.code === d.code ? '#2e6fe0' : '#fff'} stroke="#2e6fe0" stroke-width="2.5" />
-					<text x={fx(d.lon)} y={fy(d.lat) - 11} text-anchor="middle" fill="#16212b" font-size="12.5" font-weight="600">{tx.dests[d.code]}</text>
+					<circle
+						cx={fx(d.lon)}
+						cy={fy(d.lat)}
+						r="6"
+						fill={selected?.code === d.code ? '#2e6fe0' : '#fff'}
+						stroke="#2e6fe0"
+						stroke-width="2.5"
+					/>
+					<text
+						x={fx(d.lon)}
+						y={fy(d.lat) - 11}
+						text-anchor="middle"
+						fill="#16212b"
+						font-size="12.5"
+						font-weight="600">{tx.dests[d.code]}</text
+					>
 				</g>
 			{/each}
 
 			<!-- user -->
 			<circle cx={userPt[0]} cy={userPt[1]} r="12" fill="#dd9e36" opacity="0.25" class="pulse" />
 			<circle cx={userPt[0]} cy={userPt[1]} r="6.5" fill="#16212b" />
-			<text x={userPt[0]} y={userPt[1] + 26} text-anchor="middle" fill="#16212b" font-size="13" font-weight="700">{tx.users}</text>
+			<text
+				x={userPt[0]}
+				y={userPt[1] + 26}
+				text-anchor="middle"
+				fill="#16212b"
+				font-size="13"
+				font-weight="700">{tx.users}</text
+			>
 		</svg>
 
 		<!-- route disclaimer + attribution -->
-		<p class="text-faint pointer-events-none absolute inset-x-0 bottom-1.5 text-center text-[10px] opacity-75">* {tx.routeNote}</p>
-		<p class="text-faint pointer-events-none absolute right-2 bottom-1.5 text-[10px] opacity-70">{tx.credit}</p>
+		<p
+			class="pointer-events-none absolute inset-x-0 bottom-1.5 text-center text-[10px] text-faint opacity-75"
+		>
+			* {tx.routeNote}
+		</p>
+		<p class="pointer-events-none absolute right-2 bottom-1.5 text-[10px] text-faint opacity-70">
+			{tx.credit}
+		</p>
 	</div>
 
 	<!-- Phone + readout (desktop only; small screens use the globe above) -->
-	<div class="flex shrink-0 flex-row items-center justify-center gap-4 md:w-[200px] md:flex-col md:justify-center">
+	<div
+		class="flex shrink-0 flex-row items-center justify-center gap-4 md:w-[200px] md:flex-col md:justify-center"
+	>
 		<Browser phase={browser} />
-    <LocationComparisonCard {tx} {compareDone} {nearTested} {farTested} hintCompact={!!selected}>
-        {#if selected}
-            <p class="text-ink text-sm font-semibold">{tx.dests[selected.code]}</p>
-            <p class="text-faint text-[11px]">{selected.code}</p>
-            <p class="text-ink mt-2 text-sm font-medium">
-                {#if phase === 'leaving'}{tx.phases.leaving}{:else if phase === 'undersea'}{tx.phases.undersea}{:else}{tx.phases.arrived}{/if}
-            </p>
-            {#if !sending}<p class="text-faint mt-2 text-[11px]">{tx.again}</p>{/if}
-        {:else if compareDone}
-            <p class="text-faint text-sm">{tx.prompt}</p>
-            <p class="text-faint mt-3 text-[11px]">{tx.cablesNote}</p>
-        {/if}
-    </LocationComparisonCard>
+		<LocationComparisonCard {tx} {compareDone} {nearTested} {farTested} hintCompact={!!selected}>
+			{#if selected}
+				<p class="text-sm font-semibold text-ink">{tx.dests[selected.code]}</p>
+				<p class="text-[11px] text-faint">{selected.code}</p>
+				<p class="mt-2 text-sm font-medium text-ink">
+					{#if phase === 'leaving'}{tx.phases.leaving}{:else if phase === 'undersea'}{tx.phases
+							.undersea}{:else}{tx.phases.arrived}{/if}
+				</p>
+				{#if !sending}<p class="mt-2 text-[11px] text-faint">{tx.again}</p>{/if}
+			{:else if compareDone}
+				<p class="text-sm text-faint">{tx.prompt}</p>
+				<p class="mt-3 text-[11px] text-faint">{tx.cablesNote}</p>
+			{/if}
+		</LocationComparisonCard>
 	</div>
 </div>
 

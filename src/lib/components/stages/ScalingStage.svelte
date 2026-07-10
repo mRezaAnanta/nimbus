@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { SvelteSet } from 'svelte/reactivity';
-import type { LessonText } from '$lib/chapters/types';
-import type { ScalingText } from '$lib/chapters/traffic/types';
-import { theme } from '$lib/theme.svelte';
+	import type { LessonText } from '$lib/chapters/types';
+	import type { ScalingText } from '$lib/chapters/traffic/types';
 
 	let {
 		text,
@@ -15,7 +14,6 @@ import { theme } from '$lib/theme.svelte';
 		onstate?: (s: string) => void;
 	} = $props();
 	const tx = $derived(text as ScalingText);
-	let dark = $derived($theme === 'dark');
 
 	// One shared crowd feeds both columns, so the two strategies face the same traffic.
 	const LEVELS = [150, 450, 800];
@@ -44,7 +42,9 @@ import { theme } from '$lib/theme.svelte';
 	const visitors = $derived(LEVELS[level]);
 	const vOver = $derived(visitors > spec.cap || downtime);
 	const hOver = $derived(visitors > hCap);
-	const prompt = $derived(level === 0 ? tx.promptRaise : vOver || hOver ? tx.promptRescue : tx.promptDone);
+	const prompt = $derived(
+		level === 0 ? tx.promptRaise : vOver || hOver ? tx.promptRescue : tx.promptDone
+	);
 
 	function shade(load: number, cap: number) {
 		const u = load / cap;
@@ -115,7 +115,12 @@ import { theme } from '$lib/theme.svelte';
 			const h: Drop = { id: ++did, lane, routed: false };
 			hDrops = [...hDrops.slice(-12), h];
 			if (n > 1)
-				timers.push(setTimeout(() => (hDrops = hDrops.map((d) => (d.id === h.id ? { ...d, routed: true } : d))), 220));
+				timers.push(
+					setTimeout(
+						() => (hDrops = hDrops.map((d) => (d.id === h.id ? { ...d, routed: true } : d))),
+						220
+					)
+				);
 			timers.push(setTimeout(() => (hDrops = hDrops.filter((d) => d.id !== h.id)), 760));
 		}, gap);
 		return () => clearInterval(iv);
@@ -140,7 +145,7 @@ import { theme } from '$lib/theme.svelte';
 	</svg>
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-3 md:gap-4" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-3 md:gap-4">
 	<!-- guidance + the shared crowd both columns must survive -->
 	<p class="prompt">{prompt}</p>
 	<div class="traffic">
@@ -167,10 +172,19 @@ import { theme } from '$lib/theme.svelte';
 			<header>
 				<span class="ic" style="--a:#2e6fe0">
 					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-						<path d="M12 20V4m0 0l-6 6m6-6 6 6" stroke="#2e6fe0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+						<path
+							d="M12 20V4m0 0l-6 6m6-6 6 6"
+							stroke="#2e6fe0"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
 					</svg>
 				</span>
-				<div><h3>{tx.tabVertical}</h3><p>{tx.hintVertical}</p></div>
+				<div>
+					<h3>{tx.tabVertical}</h3>
+					<p>{tx.hintVertical}</p>
+				</div>
 			</header>
 
 			<div class="scene">
@@ -188,7 +202,8 @@ import { theme } from '$lib/theme.svelte';
 				<div class="stack">
 					{#if vOver && !downtime}
 						<div class="queue">
-							{#each Array(3) as _, k (k)}<span class="hd">{@render person(9, '#d3584a')}</span>{/each}
+							{#each Array(3) as _, k (k)}<span class="hd">{@render person(9, '#d3584a')}</span
+								>{/each}
 						</div>
 					{/if}
 					<div
@@ -215,8 +230,15 @@ import { theme } from '$lib/theme.svelte';
 			</div>
 
 			<div class="ctrls">
-				<button class="act act-brand" class:pulse={vOver && !atCeiling} onclick={upgrade} disabled={atCeiling}>{tx.upgrade}</button>
-				<button class="act act-line" onclick={downgrade} disabled={tier === 0 || downtime}>{tx.downgrade}</button>
+				<button
+					class="act act-brand"
+					class:pulse={vOver && !atCeiling}
+					onclick={upgrade}
+					disabled={atCeiling}>{tx.upgrade}</button
+				>
+				<button class="act act-line" onclick={downgrade} disabled={tier === 0 || downtime}
+					>{tx.downgrade}</button
+				>
 			</div>
 		</section>
 
@@ -225,10 +247,19 @@ import { theme } from '$lib/theme.svelte';
 			<header>
 				<span class="ic" style="--a:#3a9c64">
 					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-						<path d="M4 12h16m0 0l-6-6m6 6-6 6" stroke="#3a9c64" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+						<path
+							d="M4 12h16m0 0l-6-6m6 6-6 6"
+							stroke="#3a9c64"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
 					</svg>
 				</span>
-				<div><h3>{tx.tabHorizontal}</h3><p>{tx.hintHorizontal}</p></div>
+				<div>
+					<h3>{tx.tabHorizontal}</h3>
+					<p>{tx.hintHorizontal}</p>
+				</div>
 			</header>
 
 			<div class="scene">
@@ -250,13 +281,24 @@ import { theme } from '$lib/theme.svelte';
 				{#if machines > 1}
 					<div class="balmini">
 						<svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-							<path d="M12 4v6m0 0L6 18m6-8 6 8" stroke="#2e6fe0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+							<path
+								d="M12 4v6m0 0L6 18m6-8 6 8"
+								stroke="#2e6fe0"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
 						</svg>
 						{tx.balancerLabel}
 					</div>
 				{/if}
 				{#each hDrops as d (d.id)}
-					<span class="dropper" class:two={machines > 1} class:routed={d.routed} style="--lx:{d.lane}%">
+					<span
+						class="dropper"
+						class:two={machines > 1}
+						class:routed={d.routed}
+						style="--lx:{d.lane}%"
+					>
 						{@render person(11, LCOLOR[level])}
 					</span>
 				{/each}
@@ -265,10 +307,13 @@ import { theme } from '$lib/theme.svelte';
 						<div class="hcol">
 							{#if hOver}
 								<div class="queue">
-									{#each Array(2) as _, k (k)}<span class="hd">{@render person(8, '#d3584a')}</span>{/each}
+									{#each Array(2) as _, k (k)}<span class="hd">{@render person(8, '#d3584a')}</span
+										>{/each}
 								</div>
 							{/if}
-							<div class="hmachine" class:over={hOver} style="--c:{hColor}">{@render rackIcon(14)}</div>
+							<div class="hmachine" class:over={hOver} style="--c:{hColor}">
+								{@render rackIcon(14)}
+							</div>
 						</div>
 					{/each}
 				</div>
@@ -281,8 +326,15 @@ import { theme } from '$lib/theme.svelte';
 			</div>
 
 			<div class="ctrls">
-				<button class="act act-grass" class:pulse={hOver} onclick={addMachine} disabled={machines >= 4}>{tx.addMachine}</button>
-				<button class="act act-line" onclick={removeMachine} disabled={machines <= 1}>{tx.removeMachine}</button>
+				<button
+					class="act act-grass"
+					class:pulse={hOver}
+					onclick={addMachine}
+					disabled={machines >= 4}>{tx.addMachine}</button
+				>
+				<button class="act act-line" onclick={removeMachine} disabled={machines <= 1}
+					>{tx.removeMachine}</button
+				>
 			</div>
 		</section>
 	</div>
@@ -754,75 +806,75 @@ import { theme } from '$lib/theme.svelte';
 	}
 
 	/* ---- Dark mode ---- */
-	.dark .prompt {
+	:global(.dark) .prompt {
 		color: var(--color-muted);
 	}
-	.dark .tlabel {
+	:global(.dark) .tlabel {
 		color: var(--color-muted);
 	}
-	.dark .seg {
+	:global(.dark) .seg {
 		background: var(--color-card);
 		border-color: var(--color-line);
 	}
-	.dark .tbtn b {
+	:global(.dark) .tbtn b {
 		color: var(--color-ink);
 	}
-	.dark .tbtn span {
+	:global(.dark) .tbtn span {
 		color: var(--color-faint);
 	}
-	.dark .tbtn.on {
+	:global(.dark) .tbtn.on {
 		background: var(--btn-primary);
 	}
-	.dark .card {
+	:global(.dark) .card {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		box-shadow: none;
 	}
-	.dark header h3 {
+	:global(.dark) header h3 {
 		color: var(--color-ink);
 	}
-	.dark header p {
+	:global(.dark) header p {
 		color: var(--color-faint);
 	}
-	.dark .ic {
+	:global(.dark) .ic {
 		background: color-mix(in srgb, var(--a) 20%, var(--color-card));
 	}
-	.dark .scene {
+	:global(.dark) .scene {
 		background: #1e2835;
 	}
-	.dark .rail {
+	:global(.dark) .rail {
 		stroke: var(--color-line);
 	}
-	.dark .balmini {
+	:global(.dark) .balmini {
 		background: var(--color-card);
 		border-color: #3a5a80;
 		color: var(--color-brand);
 	}
-	.dark .machine {
+	:global(.dark) .machine {
 		background: color-mix(in srgb, var(--c) 20%, var(--color-card));
 	}
-	.dark .downmask {
+	:global(.dark) .downmask {
 		background: rgba(27, 37, 51, 0.92);
 		color: var(--color-danger);
 	}
-	.dark .hmachine {
+	:global(.dark) .hmachine {
 		background: color-mix(in srgb, var(--c) 20%, var(--color-card));
 	}
-	.dark .chips span {
+	:global(.dark) .chips span {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		color: var(--color-muted);
 	}
-	.dark .cap {
+	:global(.dark) .cap {
 		color: var(--color-grass);
 	}
-	.dark .status {
+	:global(.dark) .status {
 		color: var(--color-grass);
 	}
-	.dark .status.bad {
+	:global(.dark) .status.bad {
 		color: var(--color-danger);
 	}
-	.dark .act-line {
+	:global(.dark) .act-line {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		color: var(--color-ink);

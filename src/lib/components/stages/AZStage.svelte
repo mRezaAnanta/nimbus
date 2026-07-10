@@ -60,7 +60,11 @@
 			]
 		}
 	};
-	const pins = (Object.keys(REGIONS) as RegionKey[]).map((k) => ({ key: k, x: wx(REGIONS[k].lon), y: wy(REGIONS[k].lat) }));
+	const pins = (Object.keys(REGIONS) as RegionKey[]).map((k) => ({
+		key: k,
+		x: wx(REGIONS[k].lon),
+		y: wy(REGIONS[k].lat)
+	}));
 
 	const RW = 600;
 	const RH = 360;
@@ -269,7 +273,16 @@
 </script>
 
 {#snippet serverIcon()}
-	<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+	<svg
+		width="26"
+		height="26"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="1.7"
+		stroke-linecap="round"
+		aria-hidden="true"
+	>
 		<rect x="3.5" y="5" width="17" height="6" rx="1.6" />
 		<rect x="3.5" y="13" width="17" height="6" rx="1.6" />
 		<circle cx="7" cy="8" r="1" fill="currentColor" stroke="none" />
@@ -295,19 +308,37 @@
 {/snippet}
 
 <div class="flex h-full w-full flex-col gap-4 md:flex-row">
-	<div class="border-line relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl border" style="background:#f1f6fc;">
+	<div
+		class="relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl border border-line"
+		style="background:#f1f6fc;"
+	>
 		<!-- world view (intro strike or region pins) -->
 		<div
 			class="absolute inset-0 transition-all duration-500 ease-out"
-			style="opacity:{inRegion ? 0 : 1}; transform:scale({inRegion ? 1.4 : 1}); {inRegion ? 'pointer-events:none;' : ''}"
+			style="opacity:{inRegion ? 0 : 1}; transform:scale({inRegion ? 1.4 : 1}); {inRegion
+				? 'pointer-events:none;'
+				: ''}"
 		>
-			<svg viewBox="0 0 {FLAT_W} {FLAT_H}" class="h-full w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label="world map">
+			<svg
+				viewBox="0 0 {FLAT_W} {FLAT_H}"
+				class="h-full w-full"
+				preserveAspectRatio="xMidYMid meet"
+				role="img"
+				aria-label="world map"
+			>
 				<rect width={FLAT_W} height={FLAT_H} fill="#f1f6fc" />
 				<WorldMap />
 
 				{#if introMode}
 					<rect x={meX - 7} y={meY - 7} width="14" height="14" rx="2.5" fill="#16212b" />
-					<text x={meX} y={meY - 13} text-anchor="middle" fill="#16212b" font-size="12" font-weight="700">{tx.strikeLabel}</text>
+					<text
+						x={meX}
+						y={meY - 13}
+						text-anchor="middle"
+						fill="#16212b"
+						font-size="12"
+						font-weight="700">{tx.strikeLabel}</text
+					>
 					{#if introMissile}
 						<g transform="translate({meX} {meY})"><g class="incoming"><Plane /></g></g>
 					{/if}
@@ -326,7 +357,14 @@
 						>
 							<circle cx={p.x} cy={p.y} r="13" fill="#2e6fe0" opacity="0.18" class="pulse" />
 							<circle cx={p.x} cy={p.y} r="6.5" fill="#2e6fe0" stroke="#fff" stroke-width="2" />
-							<text x={p.x} y={p.y - 12} text-anchor="middle" fill="#16212b" font-size="13" font-weight="700">{tx.regions[p.key]}</text>
+							<text
+								x={p.x}
+								y={p.y - 12}
+								text-anchor="middle"
+								fill="#16212b"
+								font-size="13"
+								font-weight="700">{tx.regions[p.key]}</text
+							>
 						</g>
 					{/each}
 				{/if}
@@ -341,7 +379,8 @@
 								href={n.url}
 								target="_blank"
 								rel="noopener noreferrer"
-								style="left:{NEWS_POS[i % NEWS_POS.length].l}%; top:{NEWS_POS[i % NEWS_POS.length].t}%; animation-delay:{i * 0.45 + 0.1}s"
+								style="left:{NEWS_POS[i % NEWS_POS.length].l}%; top:{NEWS_POS[i % NEWS_POS.length]
+									.t}%; animation-delay:{i * 0.45 + 0.1}s"
 							>
 								<p class="src">{n.src}</p>
 								<p class="head">{n.head}</p>
@@ -350,19 +389,38 @@
 					</div>
 				{/if}
 			{:else}
-				<p class="text-faint pointer-events-none absolute inset-x-0 bottom-2 text-center text-[11px]">{tx.worldHint}</p>
+				<p
+					class="pointer-events-none absolute inset-x-0 bottom-2 text-center text-[11px] text-faint"
+				>
+					{tx.worldHint}
+				</p>
 			{/if}
 		</div>
 
 		<!-- region close-up -->
 		<div
 			class="absolute inset-0 transition-all duration-500 ease-out"
-			style="opacity:{inRegion ? 1 : 0}; transform:scale({inRegion ? 1 : 0.96}); {inRegion ? '' : 'pointer-events:none;'}"
+			style="opacity:{inRegion ? 1 : 0}; transform:scale({inRegion ? 1 : 0.96}); {inRegion
+				? ''
+				: 'pointer-events:none;'}"
 		>
 			{#if cfg && region && detail}
-				<svg viewBox="0 0 {RW} {RH}" class="h-full w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label={tx.regions[region]}>
+				<svg
+					viewBox="0 0 {RW} {RH}"
+					class="h-full w-full"
+					preserveAspectRatio="xMidYMid meet"
+					role="img"
+					aria-label={tx.regions[region]}
+				>
 					<rect width={RW} height={RH} fill="#eaf2fc" />
-					<path d={detail.path} fill="#cdddef" stroke="#4d82c9" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+					<path
+						d={detail.path}
+						fill="#cdddef"
+						stroke="#4d82c9"
+						stroke-width="1.4"
+						stroke-linejoin="round"
+						stroke-linecap="round"
+					/>
 					<text
 						x={RW / 2}
 						y={RH * 0.5}
@@ -399,16 +457,32 @@
 									stroke={isDown ? '#e03131' : has ? '#2f9e44' : '#8a949d'}
 									stroke-width="2.2"
 								/>
-								<text x={p[0]} y={p[1] - 12} text-anchor="middle" fill="#16212b" font-size="11" font-weight="600">{azId}</text>
+								<text
+									x={p[0]}
+									y={p[1] - 12}
+									text-anchor="middle"
+									fill="#16212b"
+									font-size="11"
+									font-weight="600">{azId}</text
+								>
 								{#if isDown}
-									<text x={p[0]} y={p[1] + 20} text-anchor="middle" fill="#e03131" font-size="10" font-weight="700">{tx.statusDown}</text>
+									<text
+										x={p[0]}
+										y={p[1] + 20}
+										text-anchor="middle"
+										fill="#e03131"
+										font-size="10"
+										font-weight="700">{tx.statusDown}</text
+									>
 								{/if}
 							</g>
 						{/if}
 					{/each}
 					{#key strikeKey}
 						{#if strikeTo && striking && downAz === null}
-							<g transform="translate({strikeTo[0]} {strikeTo[1]})"><g class="incoming"><Plane /></g></g>
+							<g transform="translate({strikeTo[0]} {strikeTo[1]})"
+								><g class="incoming"><Plane /></g></g
+							>
 						{/if}
 					{/key}
 					{#if victimPt}
@@ -416,20 +490,37 @@
 					{/if}
 				</svg>
 
-				<div class="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between p-3">
+				<div
+					class="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between p-3"
+				>
 					<button
 						type="button"
 						onclick={back}
-						class="text-faint hover:text-ink pointer-events-auto flex items-center gap-1 rounded-full bg-white/80 px-2.5 py-1 text-[12px] font-medium backdrop-blur transition-colors"
+						class="pointer-events-auto flex items-center gap-1 rounded-full bg-card/80 px-2.5 py-1 text-[12px] font-medium text-faint backdrop-blur transition-colors hover:text-ink"
 					>
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6 L9 12 L15 18" /></svg>
+						<svg
+							width="14"
+							height="14"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2.4"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"><path d="M15 6 L9 12 L15 18" /></svg
+						>
 						{tx.back}
 					</button>
-					<span class="text-ink rounded-full bg-white/80 px-2.5 py-1 text-[13px] font-semibold backdrop-blur">{cfg.code} ({tx.regions[region]})</span>
+					<span
+						class="rounded-full bg-card/80 px-2.5 py-1 text-[13px] font-semibold text-ink backdrop-blur"
+						>{cfg.code} ({tx.regions[region]})</span
+					>
 				</div>
 
-				<div class="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 p-3">
-					<p class="text-faint text-[11px]">{tx.place}</p>
+				<div
+					class="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 p-3"
+				>
+					<p class="text-[11px] text-faint">{tx.place}</p>
 					<button
 						type="button"
 						onclick={trigger}
@@ -440,20 +531,23 @@
 						{tx.trigger}
 					</button>
 				</div>
-
 			{/if}
 		</div>
 	</div>
 
 	<!-- Phone + readout, desktop only. Small screens hide it so the map gets the whole space. -->
-	<div class="hidden shrink-0 items-center justify-center gap-4 md:flex md:w-[200px] md:flex-col md:justify-center">
+	<div
+		class="hidden shrink-0 items-center justify-center gap-4 md:flex md:w-[200px] md:flex-col md:justify-center"
+	>
 		<Browser phase={browser} />
-		<div class="border-line bg-card w-[150px] rounded-2xl border p-4 text-center md:w-full">
+		<div class="w-[150px] rounded-2xl border border-line bg-card p-4 text-center md:w-full">
 			{#if inRegion && cfg}
-				<p class="text-lg font-bold {siteDown ? 'text-danger' : 'text-grass'}">{siteDown ? tx.statusDown : tx.statusUp}</p>
-				<p class="text-faint mt-1 text-[11px]">{tx.activeZones}: {countHere}/{cfg.azs.length}</p>
+				<p class="text-lg font-bold {siteDown ? 'text-danger' : 'text-grass'}">
+					{siteDown ? tx.statusDown : tx.statusUp}
+				</p>
+				<p class="mt-1 text-[11px] text-faint">{tx.activeZones}: {countHere}/{cfg.azs.length}</p>
 			{:else}
-				<p class="text-faint text-sm">{tx.worldHint}</p>
+				<p class="text-sm text-faint">{tx.worldHint}</p>
 			{/if}
 		</div>
 	</div>

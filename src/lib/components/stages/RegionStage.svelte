@@ -11,8 +11,11 @@
 	import LocationComparisonCard from '../LocationComparisonCard.svelte';
 	import type { LessonText, RegionText } from '$lib/chapters/types';
 
-	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
-		$props();
+	let {
+		text,
+		oncomplete,
+		onstate
+	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as RegionText);
 
 	const users = { lon: -58.4, lat: -34.6 }; // Buenos Aires, Argentina
@@ -212,8 +215,18 @@
 		if (ms <= 180) return 'slow';
 		return 'laggy';
 	}
-	const tone: Record<VKey, string> = { instant: 'grass', fast: 'grass', ok: 'amber', slow: 'amber', laggy: 'danger' };
-	const toneText: Record<string, string> = { grass: 'text-grass', amber: 'text-amber', danger: 'text-danger' };
+	const tone: Record<VKey, string> = {
+		instant: 'grass',
+		fast: 'grass',
+		ok: 'amber',
+		slow: 'amber',
+		laggy: 'danger'
+	};
+	const toneText: Record<string, string> = {
+		grass: 'text-grass',
+		amber: 'text-amber',
+		danger: 'text-danger'
+	};
 	const toneBg: Record<string, string> = {
 		grass: 'bg-grass-soft text-grass',
 		amber: 'bg-amber-soft text-amber',
@@ -268,18 +281,37 @@
 	{@const c = toneHex[tone[vk]]}
 	<g transform="translate({px}, {py})" pointer-events="none">
 		<g class="ltag">
-			<rect x="-45" y="-26" width="90" height="44" rx="13" fill="#fff" stroke={c} stroke-width="2" />
+			<rect
+				x="-45"
+				y="-26"
+				width="90"
+				height="44"
+				rx="13"
+				fill="#fff"
+				stroke={c}
+				stroke-width="2"
+			/>
 			<text x="0" y="-4" text-anchor="middle" font-weight="800" font-size="19" fill={c}
-				>{Math.round(latency.current)}<tspan font-size="11" font-weight="600" fill="#5e6b76"> {tx.ms}</tspan></text
+				>{Math.round(latency.current)}<tspan font-size="11" font-weight="600" fill="#5e6b76">
+					{tx.ms}</tspan
+				></text
 			>
-			<text x="0" y="12" text-anchor="middle" font-size="10.5" font-weight="700" fill={c}>{tx.verdicts[vk]}</text>
+			<text x="0" y="12" text-anchor="middle" font-size="10.5" font-weight="700" fill={c}
+				>{tx.verdicts[vk]}</text
+			>
 		</g>
 	</g>
 {/snippet}
 
 {#snippet globeBase(v: GlobeView)}
 	{#if selected}
-		{@const d = v.path({ type: 'LineString', coordinates: [[users.lon, users.lat], [selected.lon, selected.lat]] })}
+		{@const d = v.path({
+			type: 'LineString',
+			coordinates: [
+				[users.lon, users.lat],
+				[selected.lon, selected.lat]
+			]
+		})}
 		{#if d}<path {d} fill="none" stroke="#2e6fe0" stroke-width="2.5" stroke-linecap="round" />{/if}
 	{/if}
 
@@ -298,7 +330,14 @@
 				onpointerleave={() => hovered === r && (hovered = null)}
 			>
 				<circle cx={p[0]} cy={p[1]} r="11" fill="transparent" />
-				<circle cx={p[0]} cy={p[1]} r={on ? 6.5 : 4} fill={selected?.code === r.code ? '#2e6fe0' : '#fff'} stroke="#2e6fe0" stroke-width="2.5" />
+				<circle
+					cx={p[0]}
+					cy={p[1]}
+					r={on ? 6.5 : 4}
+					fill={selected?.code === r.code ? '#2e6fe0' : '#fff'}
+					stroke="#2e6fe0"
+					stroke-width="2.5"
+				/>
 			</g>
 		{/if}
 	{/each}
@@ -307,8 +346,17 @@
 		{@const p = v.project(active.lon, active.lat)}
 		{#if p}
 			<g pointer-events="none">
-				<text x={p[0]} y={p[1] - 13} text-anchor="middle" fill="#16212b" font-size="12" font-weight="700">{active.city}</text>
-				<text x={p[0]} y={p[1] + 22} text-anchor="middle" fill="#5e6b76" font-size="10">{active.code}</text>
+				<text
+					x={p[0]}
+					y={p[1] - 13}
+					text-anchor="middle"
+					fill="#16212b"
+					font-size="12"
+					font-weight="700">{active.city}</text
+				>
+				<text x={p[0]} y={p[1] + 22} text-anchor="middle" fill="#5e6b76" font-size="10"
+					>{active.code}</text
+				>
 			</g>
 		{/if}
 	{/if}
@@ -317,7 +365,14 @@
 	{#if up}
 		<circle cx={up[0]} cy={up[1]} r="11" fill="#dd9e36" opacity="0.25" class="pulse" />
 		<circle cx={up[0]} cy={up[1]} r="5.5" fill="#16212b" />
-		<text x={up[0]} y={up[1] + 21} text-anchor="middle" fill="#16212b" font-size="11" font-weight="700">{tx.users}</text>
+		<text
+			x={up[0]}
+			y={up[1] + 21}
+			text-anchor="middle"
+			fill="#16212b"
+			font-size="11"
+			font-weight="700">{tx.users}</text
+		>
 	{/if}
 {/snippet}
 
@@ -333,10 +388,20 @@
 	<span
 		class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold backdrop-blur transition-colors {done
 			? 'border-transparent bg-grass-soft text-grass'
-			: 'border-line bg-white/85 text-faint'}"
+			: 'border-line bg-card/85 text-faint'}"
 	>
 		{#if done}
-			<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>
+			<svg
+				width="11"
+				height="11"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="3.4"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg
+			>
 		{:else}
 			<span class="h-1.5 w-1.5 rounded-full border border-current opacity-60"></span>
 		{/if}
@@ -358,10 +423,13 @@
 			<button
 				type="button"
 				onclick={() => setProvider(p.id)}
-				class="flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[12.5px] font-semibold transition-all {provider === p.id
+				class="flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[12.5px] font-semibold transition-all {provider ===
+				p.id
 					? ''
 					: 'border-line bg-card text-faint hover:text-ink'}"
-				style={provider === p.id ? `border-color:${p.color};color:${p.color};background:${p.color}14` : ''}
+				style={provider === p.id
+					? `border-color:${p.color};color:${p.color};background:${p.color}14`
+					: ''}
 			>
 				<ProviderLogo id={p.id} size={20} />
 				<span>{p.short}</span>
@@ -371,19 +439,29 @@
 
 	<div class="flex min-h-0 w-full flex-1 flex-col gap-4 md:flex-row">
 		<!-- Map / Globe -->
-		<div class="border-line relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl border" style="background: #f1f6fc;">
+		<div
+			class="relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl border border-line"
+			style="background: #f1f6fc;"
+		>
 			{#if !provider}
-				<div class="text-muted absolute inset-0 z-10 flex items-center justify-center px-6 text-center text-sm font-medium">
+				<div
+					class="absolute inset-0 z-10 flex items-center justify-center px-6 text-center text-sm font-medium text-muted"
+				>
 					{tx.pickProvider}
 				</div>
 			{/if}
 
 			<!-- small-screen progress + hint, over the globe -->
 			{#if provider && !compareDone}
-				<div class="pointer-events-none absolute top-2 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1 md:hidden">
+				<div
+					class="pointer-events-none absolute top-2 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1 md:hidden"
+				>
 					{@render compareChips()}
 					{#if !selected}
-						<span class="border-line text-muted max-w-[15rem] rounded-2xl border bg-white/85 px-3 py-1 text-center text-[10px] font-medium leading-snug backdrop-blur">{tx.compare.hint}</span>
+						<span
+							class="max-w-[15rem] rounded-2xl border border-line bg-card/85 px-3 py-1 text-center text-[10px] leading-snug font-medium text-muted backdrop-blur"
+							>{tx.compare.hint}</span
+						>
 					{/if}
 				</div>
 			{/if}
@@ -392,23 +470,33 @@
 			<div class="absolute inset-0 md:hidden">
 				<Globe overlay={globeWithTag} />
 				{#if provider}
-					<p class="text-faint pointer-events-none absolute inset-x-0 bottom-1 text-center text-[11px]">{tx.drag}</p>
+					<p
+						class="pointer-events-none absolute inset-x-0 bottom-1 text-center text-[11px] text-faint"
+					>
+						{tx.drag}
+					</p>
 				{/if}
 			</div>
 
 			<!-- tablet and up: flat / globe toggle -->
 			<div class="absolute inset-0 hidden md:block">
-				<div class="border-line absolute top-2 right-2 z-10 flex items-center gap-0.5 rounded-full border bg-white/85 p-0.5 text-[11px] font-semibold backdrop-blur">
+				<div
+					class="absolute top-2 right-2 z-10 flex items-center gap-0.5 rounded-full border border-line bg-card/85 p-0.5 text-[11px] font-semibold backdrop-blur"
+				>
 					<button
 						onclick={() => (mode = 'flat')}
-						class="rounded-full px-2.5 py-1 transition-colors {mode === 'flat' ? 'text-white' : 'text-faint hover:text-ink'}"
+						class="rounded-full px-2.5 py-1 transition-colors {mode === 'flat'
+							? 'text-white'
+							: 'text-faint hover:text-ink'}"
 						style={mode === 'flat' ? 'background: var(--toggle-active);' : ''}
 					>
 						{tx.flatLabel}
 					</button>
 					<button
 						onclick={() => (mode = 'globe')}
-						class="rounded-full px-2.5 py-1 transition-colors {mode === 'globe' ? 'text-white' : 'text-faint hover:text-ink'}"
+						class="rounded-full px-2.5 py-1 transition-colors {mode === 'globe'
+							? 'text-white'
+							: 'text-faint hover:text-ink'}"
 						style={mode === 'globe' ? 'background: var(--toggle-active);' : ''}
 					>
 						{tx.globeLabel}
@@ -416,13 +504,26 @@
 				</div>
 
 				{#if mode === 'flat'}
-					<svg viewBox="0 0 {FLAT_W} {FLAT_H}" class="h-full w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label="map">
+					<svg
+						viewBox="0 0 {FLAT_W} {FLAT_H}"
+						class="h-full w-full"
+						preserveAspectRatio="xMidYMid meet"
+						role="img"
+						aria-label="map"
+					>
 						<rect width={FLAT_W} height={FLAT_H} fill="#f1f6fc" />
 						<WorldMap />
 
 						{#if flatArc}
 							{#key selected?.code}
-								<path d={flatArc} fill="none" stroke="#2e6fe0" stroke-width="2.5" stroke-linecap="round" class="arc" />
+								<path
+									d={flatArc}
+									fill="none"
+									stroke="#2e6fe0"
+									stroke-width="2.5"
+									stroke-linecap="round"
+									class="arc"
+								/>
 							{/key}
 						{/if}
 
@@ -441,49 +542,84 @@
 								onpointerleave={() => hovered === r && (hovered = null)}
 							>
 								<circle cx={x} cy={y} r="11" fill="transparent" />
-								<circle cx={x} cy={y} r={on ? 6.5 : 4.5} fill={selected?.code === r.code ? '#2e6fe0' : '#fff'} stroke="#2e6fe0" stroke-width="2.5" />
+								<circle
+									cx={x}
+									cy={y}
+									r={on ? 6.5 : 4.5}
+									fill={selected?.code === r.code ? '#2e6fe0' : '#fff'}
+									stroke="#2e6fe0"
+									stroke-width="2.5"
+								/>
 							</g>
 						{/each}
 
 						{#if active}
 							{@const lp = flatLabel(active)}
 							<g class="lbl" pointer-events="none">
-								<text x={lp.lx} y={lp.nameY} text-anchor={lp.anchor} fill="#16212b" font-size="13" font-weight="700">{active.city}</text>
-								<text x={lp.lx} y={lp.codeY} text-anchor={lp.anchor} fill="#8a949d" font-size="10.5">{active.code}</text>
+								<text
+									x={lp.lx}
+									y={lp.nameY}
+									text-anchor={lp.anchor}
+									fill="#16212b"
+									font-size="13"
+									font-weight="700">{active.city}</text
+								>
+								<text x={lp.lx} y={lp.codeY} text-anchor={lp.anchor} fill="#8a949d" font-size="10.5"
+									>{active.code}</text
+								>
 							</g>
 						{/if}
 
 						{#if provider}
 							<circle cx={userFx} cy={userFy} r="12" fill="#dd9e36" opacity="0.25" class="pulse" />
 							<circle cx={userFx} cy={userFy} r="6.5" fill="#16212b" />
-							<text x={userFx} y={userFy + 26} text-anchor="middle" fill="#16212b" font-size="13" font-weight="700">{tx.users}</text>
+							<text
+								x={userFx}
+								y={userFy + 26}
+								text-anchor="middle"
+								fill="#16212b"
+								font-size="13"
+								font-weight="700">{tx.users}</text
+							>
 						{/if}
 					</svg>
 				{:else}
 					<Globe overlay={globeBase} />
 					{#if provider}
-						<p class="text-faint pointer-events-none absolute inset-x-0 bottom-1 text-center text-[11px]">{tx.drag}</p>
+						<p
+							class="pointer-events-none absolute inset-x-0 bottom-1 text-center text-[11px] text-faint"
+						>
+							{tx.drag}
+						</p>
 					{/if}
 				{/if}
 			</div>
 		</div>
 
 		<!-- Phone + readout (desktop only; small screens read the latency off the line) -->
-		<div class="hidden shrink-0 md:flex md:w-[200px] md:flex-col md:items-center md:justify-center md:gap-4">
+		<div
+			class="hidden shrink-0 md:flex md:w-[200px] md:flex-col md:items-center md:justify-center md:gap-4"
+		>
 			<Browser phase={browser} />
 			<LocationComparisonCard {tx} {compareDone} {nearTested} {farTested} hintCompact={!!selected}>
 				{#if selected}
 					{@const vk = verdictKey(selected.ms)}
-					<p class="text-ink text-sm font-semibold">{selected.city}</p>
-					<p class="text-faint text-[11px]">{selected.code}</p>
+					<p class="text-sm font-semibold text-ink">{selected.city}</p>
+					<p class="text-[11px] text-faint">{selected.code}</p>
 					<p class="mt-2 text-3xl font-bold tabular-nums {toneText[tone[vk]]}">
-						{Math.round(latency.current)}<span class="text-muted text-sm font-medium"> {tx.ms}</span>
+						{Math.round(latency.current)}<span class="text-sm font-medium text-muted">
+							{tx.ms}</span
+						>
 					</p>
-					<span class="mt-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold {toneBg[tone[vk]]}">
+					<span
+						class="mt-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold {toneBg[
+							tone[vk]
+						]}"
+					>
 						{tx.verdicts[vk]}
 					</span>
 				{:else if compareDone}
-					<p class="text-faint text-sm">{provider ? tx.readoutPrompt : tx.pickProvider}</p>
+					<p class="text-sm text-faint">{provider ? tx.readoutPrompt : tx.pickProvider}</p>
 				{/if}
 			</LocationComparisonCard>
 		</div>

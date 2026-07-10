@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import type { LessonText, VirtualMachineText } from '$lib/chapters/types';
-	import { theme } from '$lib/theme.svelte';
 	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 
 	let {
@@ -18,8 +17,6 @@
 		onshow?: (v: boolean) => void;
 	} = $props();
 	const tx = $derived(text as VirtualMachineText);
-
-	let dark = $derived($theme === 'dark');
 
 	const lastBeat = $derived(beat >= tx.intro.length - 1);
 	// from the second beat (where virtualization is introduced) the one screen splits and the
@@ -58,7 +55,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
 	<!-- the laptop, lid swinging open, screen splitting into VMs -->
 	<div class="stagebox">
 		<div class="lap">
@@ -261,11 +258,11 @@
 	.scap b {
 		font-size: 11px;
 		font-weight: 800;
-		color: #16212b;
+		color: var(--color-ink);
 	}
 	.scap span {
 		font-size: 9px;
-		color: #8a949d;
+		color: var(--color-faint);
 	}
 
 	/* the screen split into four VMs, two up two down */
@@ -338,7 +335,7 @@
 	}
 	.vfoot span {
 		font-size: 7.5px;
-		color: #8a949d;
+		color: var(--color-faint);
 	}
 	.slot {
 		display: flex;
@@ -425,7 +422,7 @@
 		padding: 2px 10px;
 		font-size: 10px;
 		font-weight: 700;
-		color: #5e6b76;
+		color: var(--color-muted);
 		font-variant-numeric: tabular-nums;
 	}
 	.chip.dark {
@@ -435,7 +432,7 @@
 	}
 	.chip.per {
 		border-color: #cdddf6;
-		background: #eaf1fc;
+		background: var(--color-brand-soft);
 		color: #2e6fe0;
 		animation: vmpop 0.3s ease;
 	}
@@ -463,7 +460,7 @@
 	.gnum {
 		font-size: 10.5px;
 		font-weight: 700;
-		color: #5e6b76;
+		color: var(--color-muted);
 		font-variant-numeric: tabular-nums;
 	}
 
@@ -471,7 +468,7 @@
 		min-height: 1.4em;
 		font-size: 12px;
 		font-weight: 600;
-		color: #8a949d;
+		color: var(--color-faint);
 		text-align: center;
 	}
 	.cap.full {
@@ -547,89 +544,72 @@
 			font-size: 14px;
 		}
 	}
-	.dark .lidback {
+	:global(.dark) .lidback {
 		background: #1b2533;
 		border-color: #2c3746;
 	}
-	.dark .screen {
+	:global(.dark) .screen {
 		background: #1b2533;
 		border-color: #2c3746;
 	}
-	.dark .deck {
+	:global(.dark) .deck {
 		background: #1b2533;
 		border-color: #2c3746;
 	}
-	.dark .pad {
+	:global(.dark) .pad {
 		background: #3a4a5c;
 	}
-	.dark .single {
+	:global(.dark) .single {
 		background: #141c2a;
 	}
-	.dark .shead {
+	:global(.dark) .shead {
 		background: #1b2533;
 		border-bottom-color: #2c3746;
 	}
-	.dark .stab {
+	:global(.dark) .stab {
 		background: #3a4a5c;
 	}
-	.dark .bar {
+	:global(.dark) .bar {
 		background: #2c3746;
 	}
-	.dark .bar.title {
+	:global(.dark) .bar.title {
 		background: #1a2d4a;
 	}
-	.dark .scap b {
-		color: #e0dcd4;
-	}
-	.dark .scap span {
-		color: #6b7885;
-	}
-	.dark .vm {
+	:global(.dark) .vm {
 		background: color-mix(in srgb, var(--a) 7%, #1b2533);
 	}
-	.dark .vtab {
+	:global(.dark) .vtab {
 		background: color-mix(in srgb, var(--a) 25%, #1b2533);
 	}
-	.dark .vbar {
+	:global(.dark) .vbar {
 		background: color-mix(in srgb, var(--a) 18%, #1b2533);
 	}
-	.dark .vfoot span {
-		color: #6b7885;
-	}
-	.dark .slot {
+	:global(.dark) .slot {
 		border-color: #2c3746;
 		color: #4a5560;
 	}
-	.dark .vlayer {
+	:global(.dark) .vlayer {
 		background: #1a2d4a;
 		border-color: #2c4a6e;
 	}
-	.dark .vlayer-name {
+	:global(.dark) .vlayer-name {
 		color: #7daae0;
 	}
-	.dark .vlayer-sub {
+	:global(.dark) .vlayer-sub {
 		color: #5a8fd4;
 	}
-	.dark .chip {
+	:global(.dark) .chip {
 		border-color: #2c3746;
 		background: #1b2533;
-		color: #97a3ae;
 	}
-	.dark .chip.per {
+	:global(.dark) .chip.per {
 		border-color: #2c4a6e;
-		background: #1a2d4a;
 		color: #7daae0;
 	}
-	.dark .gtrack {
+	:global(.dark) .gtrack {
 		background: #2c3746;
 	}
-	.dark .gnum {
-		color: #97a3ae;
-	}
-	.dark .cap {
-		color: #6b7885;
-	}
-	.dark .cap.full {
+	:global(.dark) .cap.full {
 		color: #5bb87e;
 	}
 </style>

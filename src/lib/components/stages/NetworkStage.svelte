@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { SvelteSet } from 'svelte/reactivity';
-	import { theme } from '$lib/theme.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { NetworkText } from '$lib/chapters/networking/types';
 
-	let dark = $derived($theme === 'dark');
-
-	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
-		$props();
+	let {
+		text,
+		oncomplete,
+		onstate
+	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as NetworkText);
 
 	let flight = $state<'' | 'web' | 'attack'>('');
@@ -51,7 +51,7 @@
 	</svg>
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
 	<div class="scene">
 		<!-- the internet outside the fence -->
 		<div class="net">
@@ -74,7 +74,16 @@
 		<div class="vpc">
 			<div class="vhead">
 				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-					<rect x="3.5" y="3.5" width="17" height="17" rx="3.5" stroke="#5e6b76" stroke-width="2" stroke-dasharray="3.5 3" />
+					<rect
+						x="3.5"
+						y="3.5"
+						width="17"
+						height="17"
+						rx="3.5"
+						stroke="#5e6b76"
+						stroke-width="2"
+						stroke-dasharray="3.5 3"
+					/>
 				</svg>
 				<b>{tx.vpcLabel}</b>
 				<span>{tx.vpcSub}</span>
@@ -87,9 +96,15 @@
 						<span>{tx.publicSub}</span>
 					</div>
 					<div class="box">
-						<div class="slot"><span class="dot" style="background:#2e6fe0"></span><span class="bar"></span></div>
-						<div class="slot"><span class="dot" style="background:#2e6fe0"></span><span class="bar"></span></div>
-						<div class="slot"><span class="dot" style="background:#2e6fe0"></span><span class="bar"></span></div>
+						<div class="slot">
+							<span class="dot" style="background:#2e6fe0"></span><span class="bar"></span>
+						</div>
+						<div class="slot">
+							<span class="dot" style="background:#2e6fe0"></span><span class="bar"></span>
+						</div>
+						<div class="slot">
+							<span class="dot" style="background:#2e6fe0"></span><span class="bar"></span>
+						</div>
 					</div>
 					<span class="blabel">{tx.webLabel}</span>
 				</div>
@@ -101,8 +116,21 @@
 				<div class="room priv" class:shield={blocked}>
 					<span class="lockchip">
 						<svg width="9" height="9" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-							<rect x="5" y="10.5" width="14" height="9.5" rx="2.5" stroke="#fff" stroke-width="2.6" />
-							<path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" stroke="#fff" stroke-width="2.6" stroke-linecap="round" />
+							<rect
+								x="5"
+								y="10.5"
+								width="14"
+								height="9.5"
+								rx="2.5"
+								stroke="#fff"
+								stroke-width="2.6"
+							/>
+							<path
+								d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"
+								stroke="#fff"
+								stroke-width="2.6"
+								stroke-linecap="round"
+							/>
 						</svg>
 					</span>
 					<div class="rhead">
@@ -112,7 +140,11 @@
 					<div class="box db">
 						<svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 							<ellipse cx="12" cy="5.5" rx="8" ry="3" stroke="#3a9c64" stroke-width="1.8" />
-							<path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" stroke="#3a9c64" stroke-width="1.8" />
+							<path
+								d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"
+								stroke="#3a9c64"
+								stroke-width="1.8"
+							/>
 						</svg>
 					</div>
 					<span class="blabel">{tx.dbLabel}</span>
@@ -124,8 +156,20 @@
 	<p class="note">{note}</p>
 
 	<div class="acts">
-		<button type="button" class="cta" class:dim={tried.has('web')} onclick={() => run('web')} disabled={flight !== ''}>{tx.visitSite}</button>
-		<button type="button" class="line" class:dim={tried.has('attack')} onclick={() => run('attack')} disabled={flight !== ''}>{tx.attackDb}</button>
+		<button
+			type="button"
+			class="cta"
+			class:dim={tried.has('web')}
+			onclick={() => run('web')}
+			disabled={flight !== ''}>{tx.visitSite}</button
+		>
+		<button
+			type="button"
+			class="line"
+			class:dim={tried.has('attack')}
+			onclick={() => run('attack')}
+			disabled={flight !== ''}>{tx.attackDb}</button
+		>
 	</div>
 </div>
 
@@ -443,80 +487,80 @@
 		color: #3a9c64;
 	}
 
-	.dark .net {
+	:global(.dark) .net {
 		border-color: color-mix(in srgb, var(--color-amber) 50%, transparent);
 		background: var(--color-amber-soft);
 		color: var(--color-amber);
 	}
-	.dark .lane::before {
+	:global(.dark) .lane::before {
 		border-color: var(--color-line);
 	}
-	.dark .vpc {
+	:global(.dark) .vpc {
 		border-color: var(--color-line);
 		background: var(--color-card);
 		box-shadow: none;
 	}
-	.dark .vhead b {
+	:global(.dark) .vhead b {
 		color: var(--color-ink);
 	}
-	.dark .vhead span {
+	:global(.dark) .vhead span {
 		color: var(--color-faint);
 	}
-	.dark .room {
+	:global(.dark) .room {
 		border-color: color-mix(in srgb, var(--color-brand) 25%, transparent);
 		background: color-mix(in srgb, var(--color-brand) 10%, transparent);
 	}
-	.dark .room.priv {
+	:global(.dark) .room.priv {
 		border-color: color-mix(in srgb, var(--color-grass) 25%, transparent);
 		background: color-mix(in srgb, var(--color-grass) 10%, transparent);
 	}
-	.dark .gate {
+	:global(.dark) .gate {
 		background: var(--color-card);
 	}
-	.dark .lockchip {
+	:global(.dark) .lockchip {
 		background: var(--color-faint);
 		border-color: var(--color-card);
 	}
-	.dark .rhead b {
+	:global(.dark) .rhead b {
 		color: var(--color-ink);
 	}
-	.dark .rhead span {
+	:global(.dark) .rhead span {
 		color: var(--color-faint);
 	}
-	.dark .box {
+	:global(.dark) .box {
 		border-color: color-mix(in srgb, var(--color-brand) 25%, transparent);
 		background: var(--color-card);
 		box-shadow: none;
 	}
-	.dark .box.db {
+	:global(.dark) .box.db {
 		border-color: color-mix(in srgb, var(--color-grass) 25%, transparent);
 	}
-	.dark .slot {
+	:global(.dark) .slot {
 		border-color: var(--color-line);
 		background: var(--color-paper);
 	}
-	.dark .bar {
+	:global(.dark) .bar {
 		background: color-mix(in srgb, var(--color-line) 50%, transparent);
 	}
-	.dark .blabel {
+	:global(.dark) .blabel {
 		color: var(--color-muted);
 	}
-	.dark .bdot {
+	:global(.dark) .bdot {
 		background: var(--color-faint);
 	}
-	.dark .note {
+	:global(.dark) .note {
 		color: var(--color-muted);
 	}
-	.dark .cta {
+	:global(.dark) .cta {
 		background: var(--color-brand);
 		box-shadow: none;
 	}
-	.dark .line {
+	:global(.dark) .line {
 		border-color: var(--color-line);
 		background: var(--color-card);
 		color: var(--color-ink);
 	}
-	.dark .line:enabled:hover {
+	:global(.dark) .line:enabled:hover {
 		border-color: var(--color-ink);
 	}
 

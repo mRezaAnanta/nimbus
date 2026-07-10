@@ -4,14 +4,15 @@
 	import Browser from '../Browser.svelte';
 	import Server from '$lib/components/Server.svelte';
 	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
-	import { theme } from '$lib/theme.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 
-	let dark = $derived($theme === 'dark');
 	import type { EncryptionText } from '$lib/chapters/networking/types';
 
-	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
-		$props();
+	let {
+		text,
+		oncomplete,
+		onstate
+	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as EncryptionText);
 
 	let mode = $state<'' | 'plain' | 'locked'>('');
@@ -41,12 +42,14 @@
 		);
 	}
 
-	const note = $derived(!mode || !landed ? (mode ? ' ' : tx.noteIdle) : mode === 'plain' ? tx.notePlain : tx.noteLocked);
+	const note = $derived(
+		!mode || !landed ? (mode ? ' ' : tx.noteIdle) : mode === 'plain' ? tx.notePlain : tx.noteLocked
+	);
 
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
 	<div class="scene">
 		<!-- you -->
 		<div class="actor">
@@ -57,7 +60,11 @@
 		<!-- the road, with someone listening in the middle -->
 		<div class="road">
 			<div class="wire"></div>
-			<div class="snoop" class:happy={mode === 'plain' && stage2} class:confused={mode === 'locked' && stage2}>
+			<div
+				class="snoop"
+				class:happy={mode === 'plain' && stage2}
+				class:confused={mode === 'locked' && stage2}
+			>
 				<svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 					<circle cx="12" cy="8" r="4" fill="#8a949d" />
 					<path d="M4 21a8 8 0 0 1 16 0Z" fill="#8a949d" />
@@ -74,8 +81,21 @@
 					<div class="msg" class:half={stage2} class:lockedm={mode === 'locked'}>
 						{#if mode === 'locked'}
 							<svg width="8" height="8" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-								<rect x="5" y="10.5" width="14" height="9.5" rx="2.5" stroke="#fff" stroke-width="2.4" />
-								<path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" stroke="#fff" stroke-width="2.4" stroke-linecap="round" />
+								<rect
+									x="5"
+									y="10.5"
+									width="14"
+									height="9.5"
+									rx="2.5"
+									stroke="#fff"
+									stroke-width="2.4"
+								/>
+								<path
+									d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"
+									stroke="#fff"
+									stroke-width="2.4"
+									stroke-linecap="round"
+								/>
 							</svg>
 						{/if}
 						{mode === 'plain' ? tx.message : tx.cipher}
@@ -93,9 +113,21 @@
 				{/if}
 			</div>
 			<span class="alabel">
-				<svg width="9" height="9" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="display:inline">
+				<svg
+					width="9"
+					height="9"
+					viewBox="0 0 24 24"
+					fill="none"
+					aria-hidden="true"
+					style="display:inline"
+				>
 					<circle cx="8" cy="8" r="4.5" stroke="#dd9e36" stroke-width="2.5" />
-					<path d="M11 11.5 20 20m-3.5.5V17" stroke="#dd9e36" stroke-width="2.5" stroke-linecap="round" />
+					<path
+						d="M11 11.5 20 20m-3.5.5V17"
+						stroke="#dd9e36"
+						stroke-width="2.5"
+						stroke-linecap="round"
+					/>
 				</svg>
 				{tx.serverLabel}
 			</span>
@@ -309,39 +341,39 @@
 		color: #8fd6ae;
 	}
 
-	.dark .alabel {
+	:global(.dark) .alabel {
 		color: var(--color-muted);
 	}
-	.dark .wire {
+	:global(.dark) .wire {
 		border-color: var(--color-line);
 	}
-	.dark .snoop svg circle,
-	.dark .snoop svg path {
+	:global(.dark) .snoop svg circle,
+	:global(.dark) .snoop svg path {
 		fill: var(--color-faint);
 	}
-	.dark .slabel {
+	:global(.dark) .slabel {
 		color: var(--color-faint);
 	}
-	.dark .stag {
+	:global(.dark) .stag {
 		background: var(--color-paper);
 		color: var(--color-muted);
 	}
-	.dark .msg {
+	:global(.dark) .msg {
 		background: var(--color-card);
 		border-color: var(--color-danger);
 		color: var(--color-danger);
 	}
-	.dark .msg.lockedm {
+	:global(.dark) .msg.lockedm {
 		background: var(--color-brand);
 		border-color: var(--color-brand);
 		color: #fff;
 	}
-	.dark .opened {
+	:global(.dark) .opened {
 		background: color-mix(in srgb, var(--color-grass) 10%, transparent);
 		border-color: color-mix(in srgb, var(--color-grass) 25%, transparent);
 		color: var(--color-grass);
 	}
-	.dark .note {
+	:global(.dark) .note {
 		color: var(--color-muted);
 	}
 

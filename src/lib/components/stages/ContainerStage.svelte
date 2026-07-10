@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import { theme } from '$lib/theme.svelte';
 	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 
-	let dark = $derived($theme === 'dark');
 	import type { ContainerText } from '$lib/chapters/compute/types';
 
 	let {
@@ -24,7 +22,9 @@
 
 	// the architecture narrates along with Nim, one view per beat
 	const lastBeat = $derived(beat >= tx.intro.length - 1);
-	const view = $derived(lastBeat ? 'demo' : (['problem', 'stack', 'swarm', 'k8s'][Math.min(beat, 3)] as string));
+	const view = $derived(
+		lastBeat ? 'demo' : (['problem', 'stack', 'swarm', 'k8s'][Math.min(beat, 3)] as string)
+	);
 	$effect(() => {
 		void beat;
 		onshow?.(true);
@@ -53,7 +53,13 @@
 		}
 	}
 	const note = $derived(
-		!lastBeat ? ' ' : phase === 'running' ? tx.noteRan : phase === 'built' ? tx.noteBuilt : tx.noteIdle
+		!lastBeat
+			? ' '
+			: phase === 'running'
+				? tx.noteRan
+				: phase === 'built'
+					? tx.noteBuilt
+					: tx.noteIdle
 	);
 
 	onDestroy(() => timers.forEach(clearTimeout));
@@ -65,14 +71,29 @@
 		<rect x="8" y="8.5" width="3" height="3" fill="#2496ed" />
 		<rect x="12" y="8.5" width="3" height="3" fill="#2496ed" />
 		<rect x="8" y="4.5" width="3" height="3" fill="#2496ed" />
-		<path d="M2 13h18.5c1 0 1.8-.4 2.3-1.2.4.1-.4 1.6-1.3 2.3-2 5-7 7.4-11.5 7.4-4 0-7.4-1.9-9-5.5-.6-1.4-1-2.9-1-3Z" fill="#2496ed" />
+		<path
+			d="M2 13h18.5c1 0 1.8-.4 2.3-1.2.4.1-.4 1.6-1.3 2.3-2 5-7 7.4-11.5 7.4-4 0-7.4-1.9-9-5.5-.6-1.4-1-2.9-1-3Z"
+			fill="#2496ed"
+		/>
 	</svg>
 {/snippet}
 
 {#snippet cbox(label: string, small: boolean)}
 	<div class="cont" class:small>
-		<svg width={small ? 10 : 13} height={small ? 10 : 13} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-			<path d="M12 2 3 7v10l9 5 9-5V7Z" stroke="#2496ed" stroke-width="2" stroke-linejoin="round" fill="#e7f2fc" />
+		<svg
+			width={small ? 10 : 13}
+			height={small ? 10 : 13}
+			viewBox="0 0 24 24"
+			fill="none"
+			aria-hidden="true"
+		>
+			<path
+				d="M12 2 3 7v10l9 5 9-5V7Z"
+				stroke="#2496ed"
+				stroke-width="2"
+				stroke-linejoin="round"
+				fill="#e7f2fc"
+			/>
 			<path d="M3 7l9 5 9-5M12 12v10" stroke="#2496ed" stroke-width="2" stroke-linejoin="round" />
 		</svg>
 		<span>{label}</span>
@@ -89,7 +110,7 @@
 	</div>
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
 	<div class="panel">
 		{#key view}
 			{#if view === 'problem'}
@@ -97,19 +118,30 @@
 				<div class="problem">
 					<div class="side">
 						<div class="pieces">
-							{#each tx.pieces as p, i (p)}<span class="piece" style="--r:{[-4, 3, -2][i]}deg">{p}</span>{/each}
+							{#each tx.pieces as p, i (p)}<span class="piece" style="--r:{[-4, 3, -2][i]}deg"
+									>{p}</span
+								>{/each}
 						</div>
 						<span class="plabel">{tx.yourLaptop} ✓</span>
 					</div>
 					<div class="movearrow">
 						<svg width="34" height="14" viewBox="0 0 34 14" fill="none" aria-hidden="true">
-							<path d="M2 7h26m0 0-5-5m5 5-5 5" stroke="#b9c0c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+							<path
+								d="M2 7h26m0 0-5-5m5 5-5 5"
+								stroke="#b9c0c7"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
 						</svg>
 						<span class="xmark">×</span>
 					</div>
 					<div class="side">
 						<div class="pieces broken">
-							{#each tx.pieces.slice(0, 2) as p, i (p)}<span class="piece" style="--r:{[5, -6][i]}deg">{p}</span>{/each}
+							{#each tx.pieces.slice(0, 2) as p, i (p)}<span
+									class="piece"
+									style="--r:{[5, -6][i]}deg">{p}</span
+								>{/each}
 							<span class="piece missing">?</span>
 						</div>
 						<span class="plabel bad">{tx.otherMachine}, {tx.brokenTag}</span>
@@ -120,10 +152,14 @@
 				<div class="stack">
 					<div class="layer tops">
 						{#each tx.archApps as a, i (a)}
-							<div class="contwrap" style="animation-delay:{0.5 + i * 0.2}s">{@render cbox(a, false)}</div>
+							<div class="contwrap" style="animation-delay:{0.5 + i * 0.2}s">
+								{@render cbox(a, false)}
+							</div>
 						{/each}
 					</div>
-					<div class="layer docker" style="animation-delay:0.25s">{@render whale(15)}<b>{tx.archDocker}</b></div>
+					<div class="layer docker" style="animation-delay:0.25s">
+						{@render whale(15)}<b>{tx.archDocker}</b>
+					</div>
 					<div class="layer machine" style="animation-delay:0s">{tx.archMachine}</div>
 				</div>
 			{:else if view === 'swarm'}
@@ -137,7 +173,9 @@
 					</svg>
 					<div class="srow">
 						{#each [0, 1, 2] as i (i)}
-							<div class="swrap" style="animation-delay:{0.2 + i * 0.16}s">{@render ministack()}</div>
+							<div class="swrap" style="animation-delay:{0.2 + i * 0.16}s">
+								{@render ministack()}
+							</div>
 						{/each}
 					</div>
 				</div>
@@ -146,9 +184,20 @@
 				<div class="k8s">
 					<div class="plane">
 						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-							<path d="M12 2.2 3.4 6.4l-2 9.2 5.9 7.2h9.4l5.9-7.2-2-9.2Z" stroke="#326ce5" stroke-width="1.7" stroke-linejoin="round" fill="#eaf0fc" />
+							<path
+								d="M12 2.2 3.4 6.4l-2 9.2 5.9 7.2h9.4l5.9-7.2-2-9.2Z"
+								stroke="#326ce5"
+								stroke-width="1.7"
+								stroke-linejoin="round"
+								fill="#eaf0fc"
+							/>
 							<circle cx="12" cy="12.4" r="2.4" stroke="#326ce5" stroke-width="1.6" />
-							<path d="M12 6v3m-5.4 7.2 2.4-1.8m8.4 1.8-2.4-1.8M7 8.7l2.6 1.6m7.4-1.6-2.6 1.6" stroke="#326ce5" stroke-width="1.6" stroke-linecap="round" />
+							<path
+								d="M12 6v3m-5.4 7.2 2.4-1.8m8.4 1.8-2.4-1.8M7 8.7l2.6 1.6m7.4-1.6-2.6 1.6"
+								stroke="#326ce5"
+								stroke-width="1.6"
+								stroke-linecap="round"
+							/>
 						</svg>
 						{tx.k8sPlane}
 					</div>
@@ -161,7 +210,10 @@
 						{#each [0, 1, 2] as i (i)}
 							<div class="node" style="animation-delay:{0.2 + i * 0.16}s">
 								<div class="ngrid">
-									{#each Array(6) as _, j (j)}<span class="nc" style="animation-delay:{0.3 + i * 0.16 + j * 0.05}s"></span>{/each}
+									{#each Array(6) as _, j (j)}<span
+											class="nc"
+											style="animation-delay:{0.3 + i * 0.16 + j * 0.05}s"
+										></span>{/each}
 								</div>
 								<span class="nlabel">{tx.nodeLabel.replace('{n}', String(i + 1))}</span>
 							</div>
@@ -174,7 +226,9 @@
 				<div class="demo">
 					{#if phase === 'loose' || phase === 'building'}
 						<div class="pieces center" class:sucking={phase === 'building'}>
-							{#each tx.pieces as p, i (p)}<span class="piece" style="--r:{[-4, 3, -2][i]}deg">{p}</span>{/each}
+							{#each tx.pieces as p, i (p)}<span class="piece" style="--r:{[-4, 3, -2][i]}deg"
+									>{p}</span
+								>{/each}
 						</div>
 					{:else if phase === 'built'}
 						<div class="builtwrap">{@render cbox(tx.imageLabel, false)}</div>
@@ -556,98 +610,98 @@
 		font-weight: 600;
 		color: #6a7681;
 	}
-	.dark .panel {
+	:global(.dark) .panel {
 		border-color: var(--color-line);
 		background: var(--color-card);
 		box-shadow: none;
 	}
-	.dark .piece {
+	:global(.dark) .piece {
 		border-color: color-mix(in srgb, var(--color-amber) 40%, transparent);
 		background: var(--color-amber-soft);
 		color: var(--color-amber);
 	}
-	.dark .piece.missing {
+	:global(.dark) .piece.missing {
 		border-color: color-mix(in srgb, var(--color-danger) 40%, transparent);
 		background: var(--color-danger-soft);
 		color: var(--color-danger);
 	}
-	.dark .plabel {
+	:global(.dark) .plabel {
 		color: var(--color-grass);
 	}
-	.dark .plabel.bad {
+	:global(.dark) .plabel.bad {
 		color: var(--color-danger);
 	}
-	.dark .cont {
+	:global(.dark) .cont {
 		border-color: color-mix(in srgb, #2496ed 30%, transparent);
 		background: color-mix(in srgb, #2496ed 12%, transparent);
 		box-shadow: none;
 	}
-	.dark .cont span {
+	:global(.dark) .cont span {
 		color: #66b8f7;
 	}
-	.dark .cont svg path:first-child {
+	:global(.dark) .cont svg path:first-child {
 		fill: color-mix(in srgb, #2496ed 15%, transparent);
 	}
-	.dark .layer.docker {
+	:global(.dark) .layer.docker {
 		border-color: color-mix(in srgb, #2496ed 30%, transparent);
 		background: color-mix(in srgb, #2496ed 12%, transparent);
 	}
-	.dark .layer.docker b {
+	:global(.dark) .layer.docker b {
 		color: #66b8f7;
 	}
-	.dark .layer.machine {
+	:global(.dark) .layer.machine {
 		border-color: var(--color-line);
 		background: var(--color-paper);
 		color: var(--color-muted);
 	}
-	.dark .swarmtag {
+	:global(.dark) .swarmtag {
 		border-color: color-mix(in srgb, #2496ed 30%, transparent);
 		background: color-mix(in srgb, #2496ed 12%, transparent);
 		color: #66b8f7;
 	}
-	.dark .fl {
+	:global(.dark) .fl {
 		stroke: color-mix(in srgb, #2496ed 30%, transparent);
 	}
-	.dark .fl.k {
+	:global(.dark) .fl.k {
 		stroke: color-mix(in srgb, #326ce5 30%, transparent);
 	}
-	.dark .mini .dock {
+	:global(.dark) .mini .dock {
 		border-color: color-mix(in srgb, #2496ed 30%, transparent);
 		background: color-mix(in srgb, #2496ed 12%, transparent);
 	}
-	.dark .mini .mach {
+	:global(.dark) .mini .mach {
 		border-color: var(--color-line);
 		background: var(--color-paper);
 	}
-	.dark .plane {
+	:global(.dark) .plane {
 		border-color: color-mix(in srgb, #326ce5 30%, transparent);
 		background: color-mix(in srgb, #326ce5 12%, transparent);
 		color: #78a9ff;
 	}
-	.dark .plane svg path:first-child {
+	:global(.dark) .plane svg path:first-child {
 		fill: color-mix(in srgb, #326ce5 15%, transparent);
 	}
-	.dark .ngrid {
+	:global(.dark) .ngrid {
 		border-color: color-mix(in srgb, #326ce5 30%, transparent);
 		background: color-mix(in srgb, #326ce5 8%, transparent);
 	}
-	.dark .nlabel {
+	:global(.dark) .nlabel {
 		color: var(--color-muted);
 	}
-	.dark .place {
+	:global(.dark) .place {
 		border-color: var(--color-line);
 		background: var(--color-paper);
 	}
-	.dark .mlabel2 {
+	:global(.dark) .mlabel2 {
 		color: var(--color-muted);
 	}
-	.dark .same {
+	:global(.dark) .same {
 		color: var(--color-grass);
 	}
-	.dark .note {
+	:global(.dark) .note {
 		color: var(--color-muted);
 	}
-	.dark .movearrow svg path {
+	:global(.dark) .movearrow svg path {
 		stroke: var(--color-faint);
 	}
 

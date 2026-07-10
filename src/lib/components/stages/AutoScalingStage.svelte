@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-import type { LessonText } from '$lib/chapters/types';
-import type { AutoScalingText } from '$lib/chapters/traffic/types';
-import { theme } from '$lib/theme.svelte';
+	import type { LessonText } from '$lib/chapters/types';
+	import type { AutoScalingText } from '$lib/chapters/traffic/types';
 
 	let {
 		text,
@@ -14,7 +13,6 @@ import { theme } from '$lib/theme.svelte';
 		onstate?: (s: string) => void;
 	} = $props();
 	const tx = $derived(text as AutoScalingText);
-	let dark = $derived($theme === 'dark');
 
 	// The crowd drifts on its own like real traffic; the learner can still nudge it.
 	const STEP = 150;
@@ -42,13 +40,21 @@ import { theme } from '$lib/theme.svelte';
 	const cpuColor = $derived(cpu > 70 ? '#d3584a' : cpu > 50 ? '#dd9e36' : '#3a9c64');
 
 	const heads = $derived(Math.min(7, Math.ceil(visitors / STEP)));
-	const crowdColor = $derived(visitors >= 750 ? '#c2491f' : visitors >= 450 ? '#dd9e36' : '#8a949d');
+	const crowdColor = $derived(
+		visitors >= 750 ? '#c2491f' : visitors >= 450 ? '#dd9e36' : '#8a949d'
+	);
 
 	let upSeen = $state(false);
 	let downSeen = $state(false);
 	let done = false;
 	const prompt = $derived(
-		cpu > 70 ? tx.promptWatch : upSeen && downSeen ? tx.promptDone : upSeen ? tx.promptDrop : tx.promptRaise
+		cpu > 70
+			? tx.promptWatch
+			: upSeen && downSeen
+				? tx.promptDone
+				: upSeen
+					? tx.promptDrop
+					: tx.promptRaise
 	);
 
 	// a short lived toast each time the robot acts
@@ -113,7 +119,12 @@ import { theme } from '$lib/theme.svelte';
 			const lane = ((Math.floor(Math.random() * n) + 0.5) / n) * 100;
 			const d: Drop = { id: ++did, lane, routed: false };
 			drops = [...drops.slice(-12), d];
-			timers.push(setTimeout(() => (drops = drops.map((x) => (x.id === d.id ? { ...x, routed: true } : x))), 220));
+			timers.push(
+				setTimeout(
+					() => (drops = drops.map((x) => (x.id === d.id ? { ...x, routed: true } : x))),
+					220
+				)
+			);
 			timers.push(setTimeout(() => (drops = drops.filter((x) => x.id !== d.id)), 760));
 		}, gap);
 		return () => clearInterval(iv);
@@ -129,7 +140,7 @@ import { theme } from '$lib/theme.svelte';
 	</svg>
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-3 md:gap-4" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-3 md:gap-4">
 	<p class="prompt">{prompt}</p>
 
 	<!-- the only control the learner gets, a visitor counter -->
@@ -144,8 +155,22 @@ import { theme } from '$lib/theme.svelte';
 		<div class="cnum">
 			<span class="numrow">
 				{#key visitors}<b>{visitors}</b>{/key}
-				<svg class="tarrow" class:fall={trend < 0} width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-					<path d="M12 20V4m0 0l-6 6m6-6 6 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+				<svg
+					class="tarrow"
+					class:fall={trend < 0}
+					width="10"
+					height="10"
+					viewBox="0 0 24 24"
+					fill="none"
+					aria-hidden="true"
+				>
+					<path
+						d="M12 20V4m0 0l-6 6m6-6 6 6"
+						stroke="currentColor"
+						stroke-width="3"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
 				</svg>
 			</span>
 			<span>{tx.trafficLabel}</span>
@@ -175,7 +200,13 @@ import { theme } from '$lib/theme.svelte';
 			</div>
 			<div class="balmini">
 				<svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-					<path d="M12 4v6m0 0L6 18m6-8 6 8" stroke="#2e6fe0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+					<path
+						d="M12 4v6m0 0L6 18m6-8 6 8"
+						stroke="#2e6fe0"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
 				</svg>
 				{tx.balancerLabel}
 			</div>
@@ -189,8 +220,24 @@ import { theme } from '$lib/theme.svelte';
 					<div class="hcol">
 						<div class="hmachine" class:hot={cpu > 90} style="--c:{cpuColor}">
 							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-								<rect x="3" y="4" width="18" height="7" rx="2" stroke="currentColor" stroke-width="1.7" />
-								<rect x="3" y="13" width="18" height="7" rx="2" stroke="currentColor" stroke-width="1.7" />
+								<rect
+									x="3"
+									y="4"
+									width="18"
+									height="7"
+									rx="2"
+									stroke="currentColor"
+									stroke-width="1.7"
+								/>
+								<rect
+									x="3"
+									y="13"
+									width="18"
+									height="7"
+									rx="2"
+									stroke="currentColor"
+									stroke-width="1.7"
+								/>
 								<circle cx="7" cy="7.5" r="1" fill="currentColor" />
 								<circle cx="7" cy="16.5" r="1" fill="currentColor" />
 							</svg>
@@ -225,7 +272,8 @@ import { theme } from '$lib/theme.svelte';
 			</div>
 
 			<div class="rfoot">
-				{#key machines}<span class="chip cost">{tx.costLabel.replace('{n}', String(machines))}</span>{/key}
+				{#key machines}<span class="chip cost">{tx.costLabel.replace('{n}', String(machines))}</span
+					>{/key}
 				{#if evt}
 					{#key evt.id}<span class="evt">{evt.txt}</span>{/key}
 				{/if}
@@ -669,104 +717,104 @@ import { theme } from '$lib/theme.svelte';
 	}
 
 	/* ---- Dark mode ---- */
-	.dark .prompt {
+	:global(.dark) .prompt {
 		color: var(--color-muted);
 	}
-	.dark .counter {
+	:global(.dark) .counter {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		box-shadow: none;
 	}
-	.dark .cbtn {
+	:global(.dark) .cbtn {
 		background: var(--btn-primary);
 	}
-	.dark .tarrow {
+	:global(.dark) .tarrow {
 		color: var(--color-faint);
 	}
-	.dark .cnum b {
+	:global(.dark) .cnum b {
 		color: var(--color-ink);
 	}
-	.dark .cnum span {
+	:global(.dark) .cnum span {
 		color: var(--color-faint);
 	}
-	.dark .scene {
+	:global(.dark) .scene {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		box-shadow: none;
 	}
-	.dark .rail {
+	:global(.dark) .rail {
 		stroke: var(--color-line);
 	}
-	.dark .balmini {
+	:global(.dark) .balmini {
 		background: var(--color-card);
 		border-color: #3a5a80;
 		color: var(--color-brand);
 	}
-	.dark .hmachine {
+	:global(.dark) .hmachine {
 		background: color-mix(in srgb, var(--c) 20%, var(--color-card));
 	}
-	.dark .cputrack {
+	:global(.dark) .cputrack {
 		background: var(--color-line);
 	}
-	.dark .rules {
+	:global(.dark) .rules {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		box-shadow: none;
 	}
-	.dark .rtitle {
+	:global(.dark) .rtitle {
 		color: var(--color-ink);
 	}
-	.dark .glabel {
+	:global(.dark) .glabel {
 		color: var(--color-muted);
 	}
-	.dark .gtrack {
+	:global(.dark) .gtrack {
 		background: #222a36;
 	}
-	.dark .tick {
+	:global(.dark) .tick {
 		background: rgba(255, 255, 255, 0.2);
 	}
-	.dark .rrow {
+	:global(.dark) .rrow {
 		background: var(--color-paper);
 		border-color: var(--color-line);
 	}
-	.dark .cond {
+	:global(.dark) .cond {
 		color: var(--color-muted);
 	}
-	.dark .ract.up {
+	:global(.dark) .ract.up {
 		background: var(--color-grass-soft);
 		border-color: #1f3d28;
 		color: var(--color-grass);
 	}
-	.dark .ract.down {
+	:global(.dark) .ract.down {
 		background: var(--color-brand-soft);
 		border-color: #3a5a80;
 		color: var(--color-brand);
 	}
-	.dark .rrow.hot {
+	:global(.dark) .rrow.hot {
 		border-color: #4a2a2a;
 		background: var(--color-danger-soft);
 	}
-	.dark .rrow.hot .cond {
+	:global(.dark) .rrow.hot .cond {
 		color: var(--color-danger);
 	}
-	.dark .rrow.hotdown {
+	:global(.dark) .rrow.hotdown {
 		border-color: #3a5a80;
 		background: var(--color-brand-soft);
 	}
-	.dark .rrow.hotdown .cond {
+	:global(.dark) .rrow.hotdown .cond {
 		color: var(--color-brand);
 	}
-	.dark .chip {
+	:global(.dark) .chip {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		color: var(--color-muted);
 	}
-	.dark .chip.cost {
+	:global(.dark) .chip.cost {
 		background: var(--color-grass-soft);
 		border-color: #1f3d28;
 		color: var(--color-grass);
 	}
-	.dark .evt {
+	:global(.dark) .evt {
 		background: var(--btn-primary);
 	}
 

@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { SvelteSet } from 'svelte/reactivity';
-	import { theme } from '$lib/theme.svelte';
 	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { IamText } from '$lib/chapters/networking/types';
 
-	let dark = $derived($theme === 'dark');
-
-	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
-		$props();
+	let {
+		text,
+		oncomplete,
+		onstate
+	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as IamText);
 
 	let badge = $state<'' | 'admin' | 'scoped'>('');
@@ -30,10 +30,12 @@
 		if (badge === 'scoped') return scopedDoor;
 		return false;
 	}
-	const note = $derived(badge === 'admin' ? tx.noteAdmin : badge === 'scoped' ? tx.noteScoped : tx.noteIdle);
+	const note = $derived(
+		badge === 'admin' ? tx.noteAdmin : badge === 'scoped' ? tx.noteScoped : tx.noteIdle
+	);
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
 	<div class="scene">
 		<!-- Budi and whatever card he is holding -->
 		<div class="who">
@@ -61,13 +63,39 @@
 					<span class="dicon">
 						{#if badge && open}
 							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-								<rect x="5" y="10.5" width="14" height="9.5" rx="2.5" stroke="#2f7d54" stroke-width="2" />
-								<path d="M8.5 10.5V7a3.5 3.5 0 0 1 6.6-1.6" stroke="#2f7d54" stroke-width="2" stroke-linecap="round" />
+								<rect
+									x="5"
+									y="10.5"
+									width="14"
+									height="9.5"
+									rx="2.5"
+									stroke="#2f7d54"
+									stroke-width="2"
+								/>
+								<path
+									d="M8.5 10.5V7a3.5 3.5 0 0 1 6.6-1.6"
+									stroke="#2f7d54"
+									stroke-width="2"
+									stroke-linecap="round"
+								/>
 							</svg>
 						{:else}
 							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-								<rect x="5" y="10.5" width="14" height="9.5" rx="2.5" stroke="#8a949d" stroke-width="2" />
-								<path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" stroke="#8a949d" stroke-width="2" stroke-linecap="round" />
+								<rect
+									x="5"
+									y="10.5"
+									width="14"
+									height="9.5"
+									rx="2.5"
+									stroke="#8a949d"
+									stroke-width="2"
+								/>
+								<path
+									d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"
+									stroke="#8a949d"
+									stroke-width="2"
+									stroke-linecap="round"
+								/>
 							</svg>
 						{/if}
 					</span>
@@ -288,64 +316,64 @@
 			box-shadow: 0 0 0 4px rgba(46, 111, 224, 0.14);
 		}
 	}
-	.dark .avatar {
+	:global(.dark) .avatar {
 		border-color: var(--color-line);
 		background: var(--color-card);
 		box-shadow: none;
 	}
-	.dark .avatar svg circle,
-	.dark .avatar svg path {
+	:global(.dark) .avatar svg circle,
+	:global(.dark) .avatar svg path {
 		fill: var(--color-ink);
 	}
-	.dark .alabel {
+	:global(.dark) .alabel {
 		color: var(--color-muted);
 	}
-	.dark .door {
+	:global(.dark) .door {
 		border-color: var(--color-line);
 		background: var(--color-card);
 	}
-	.dark .door b {
+	:global(.dark) .door b {
 		color: var(--color-ink);
 	}
-	.dark .door.open {
+	:global(.dark) .door.open {
 		border-color: color-mix(in srgb, var(--color-grass) 25%, transparent);
 		background: color-mix(in srgb, var(--color-grass) 10%, transparent);
 	}
-	.dark .door.shut {
+	:global(.dark) .door.shut {
 		background: var(--color-paper);
 	}
-	.dark .dicon svg rect,
-	.dark .dicon svg path {
+	:global(.dark) .dicon svg rect,
+	:global(.dark) .dicon svg path {
 		stroke: var(--color-faint);
 	}
-	.dark .door.open .dicon svg rect,
-	.dark .door.open .dicon svg path {
+	:global(.dark) .door.open .dicon svg rect,
+	:global(.dark) .door.open .dicon svg path {
 		stroke: var(--color-grass);
 	}
-	.dark .dstat {
+	:global(.dark) .dstat {
 		background: var(--color-paper);
 		color: var(--color-faint);
 	}
-	.dark .note {
+	:global(.dark) .note {
 		color: var(--color-muted);
 	}
-	.dark .pick :global(.cta) {
+	:global(.dark) .pick :global(.cta) {
 		border-color: var(--color-line);
 		background: var(--color-card);
 		color: var(--color-ink);
 	}
-	.dark .pick :global(.cta span) {
+	:global(.dark) .pick :global(.cta span) {
 		color: var(--color-faint);
 	}
-	.dark .pick.on :global(.cta) {
+	:global(.dark) .pick.on :global(.cta) {
 		border-color: var(--color-brand);
 		background: var(--color-brand);
 	}
-	.dark .pick.on :global(.cta),
-	.dark .pick.on :global(.cta span) {
+	:global(.dark) .pick.on :global(.cta),
+	:global(.dark) .pick.on :global(.cta span) {
 		color: #fff;
 	}
-	.dark .pick :global(.cta:enabled:hover) {
+	:global(.dark) .pick :global(.cta:enabled:hover) {
 		border-color: var(--color-ink);
 	}
 

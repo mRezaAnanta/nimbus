@@ -4,7 +4,6 @@
 	import Browser from '../Browser.svelte';
 	import Laptop from '../Laptop.svelte';
 	import type { LessonText, LaptopServerText } from '$lib/chapters/types';
-	import { theme } from '$lib/theme.svelte';
 	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 
 	let {
@@ -17,8 +16,6 @@
 		onstate?: (s: string) => void;
 	} = $props();
 	const tx = $derived(text as LaptopServerText);
-
-	let dark = $derived($theme === 'dark');
 
 	// the story: works on home WiFi, opens to the internet, then reality bites
 	let phase = $state<'idle' | 'lan' | 'public'>('idle');
@@ -125,7 +122,7 @@
 	</svg>
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-3" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-3">
 	<!-- the internet above, your home below, one line between them -->
 	<div class="scene">
 		<!-- internet crowd, only once the laptop goes public -->
@@ -134,7 +131,12 @@
 				<div class="world" class:offline={problem === 'sleep'} class:lost={problem === 'ip'}>
 					<div class="heads">
 						{#each Array(problem === 'slow' ? 8 : 4) as _, k (k)}
-							<span class="hd">{@render person(13, problem === 'ip' ? '#b9c0c7' : problem === 'slow' ? '#c2491f' : '#dd9e36')}</span>
+							<span class="hd"
+								>{@render person(
+									13,
+									problem === 'ip' ? '#b9c0c7' : problem === 'slow' ? '#c2491f' : '#dd9e36'
+								)}</span
+							>
 						{/each}
 					</div>
 					<span class="wlabel">{tx.worldLabel}</span>
@@ -152,7 +154,9 @@
 					<span class="badge down">×</span>
 				{/if}
 				{#each drops as d (d.id)}
-					<span class="visitor" style="--lx:{d.lane}%">{@render person(11, problem === 'slow' ? '#c2491f' : '#dd9e36')}</span>
+					<span class="visitor" style="--lx:{d.lane}%"
+						>{@render person(11, problem === 'slow' ? '#c2491f' : '#dd9e36')}</span
+					>
 				{/each}
 			{/if}
 		</div>
@@ -163,7 +167,12 @@
 				<span class="hname">{tx.houseLabel}</span>
 				<span class="wifi">
 					<svg width="9" height="9" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-						<path d="M5 12.5a10 10 0 0 1 14 0M8 16a5.5 5.5 0 0 1 8 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+						<path
+							d="M5 12.5a10 10 0 0 1 14 0M8 16a5.5 5.5 0 0 1 8 0"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+						/>
 						<circle cx="12" cy="19.4" r="1.4" fill="currentColor" />
 					</svg>
 					WiFi
@@ -197,7 +206,9 @@
 	</div>
 
 	<!-- consequence -->
-	<div class="status" style="color:{status.c}"><i style="background:{status.c}"></i>{status.txt}</div>
+	<div class="status" style="color:{status.c}">
+		<i style="background:{status.c}"></i>{status.txt}
+	</div>
 	<p class="note">{note}</p>
 
 	<!-- the one clear next action, Foundation style at the bottom -->
@@ -207,9 +218,27 @@
 		{:else if phase === 'lan'}
 			<CallToActionButton onclick={goPublic}>{tx.goPublic}</CallToActionButton>
 		{:else}
-			<button type="button" class="prob" class:used={tried.has('ip')} class:on={problem === 'ip'} onclick={() => fire('ip')}>{tx.probIp}</button>
-			<button type="button" class="prob" class:used={tried.has('sleep')} class:on={problem === 'sleep'} onclick={() => fire('sleep')}>{tx.probSleep}</button>
-			<button type="button" class="prob" class:used={tried.has('slow')} class:on={problem === 'slow'} onclick={() => fire('slow')}>{tx.probSlow}</button>
+			<button
+				type="button"
+				class="prob"
+				class:used={tried.has('ip')}
+				class:on={problem === 'ip'}
+				onclick={() => fire('ip')}>{tx.probIp}</button
+			>
+			<button
+				type="button"
+				class="prob"
+				class:used={tried.has('sleep')}
+				class:on={problem === 'sleep'}
+				onclick={() => fire('sleep')}>{tx.probSleep}</button
+			>
+			<button
+				type="button"
+				class="prob"
+				class:used={tried.has('slow')}
+				class:on={problem === 'slow'}
+				onclick={() => fire('slow')}>{tx.probSlow}</button
+			>
 			{#if problem}
 				<button type="button" class="ghost" onclick={recover}>{tx.recover}</button>
 			{/if}
@@ -263,7 +292,7 @@
 	.wlabel {
 		font-size: 10.5px;
 		font-weight: 600;
-		color: #8a949d;
+		color: var(--color-faint);
 		white-space: nowrap;
 	}
 	.downzone {
@@ -363,14 +392,14 @@
 	.hname {
 		font-size: 11px;
 		font-weight: 800;
-		color: #16212b;
+		color: var(--color-ink);
 	}
 	.wifi {
 		display: inline-flex;
 		align-items: center;
 		gap: 3px;
 		border-radius: 999px;
-		background: #eaf1fc;
+		background: var(--color-brand-soft);
 		border: 1px solid #cdddf6;
 		color: #2e6fe0;
 		font-size: 9px;
@@ -392,7 +421,7 @@
 	.alabel {
 		font-size: 10.5px;
 		font-weight: 600;
-		color: #5e6b76;
+		color: var(--color-muted);
 		white-space: nowrap;
 	}
 	.shrink {
@@ -416,7 +445,7 @@
 		width: 46px;
 		height: 2px;
 		border-radius: 2px;
-		background: #e8e2d8;
+		background: var(--color-line);
 	}
 	.lanpkt {
 		position: absolute;
@@ -445,7 +474,7 @@
 	.lanlabel {
 		font-size: 9px;
 		font-weight: 700;
-		color: #8a949d;
+		color: var(--color-faint);
 		white-space: nowrap;
 	}
 	.lwrap {
@@ -474,7 +503,7 @@
 		padding: 1px 8px;
 		font-size: 8.5px;
 		font-weight: 700;
-		color: #5e6b76;
+		color: var(--color-muted);
 		font-variant-numeric: tabular-nums;
 		transition: all 0.3s ease;
 	}
@@ -524,15 +553,15 @@
 		padding: 8px 14px;
 		font-size: 12px;
 		font-weight: 600;
-		color: #16212b;
+		color: var(--color-ink);
 		transition: all 0.2s ease;
 	}
 	.prob:hover {
-		border-color: #16212b;
+		border-color: var(--color-ink);
 	}
 	.prob.on {
-		background: #16212b;
-		border-color: #16212b;
+		background: var(--color-ink);
+		border-color: var(--color-ink);
 		color: #fff;
 	}
 	.prob.used:not(.on)::after {
@@ -542,11 +571,11 @@
 	.ghost {
 		font-size: 12px;
 		font-weight: 600;
-		color: #5e6b76;
+		color: var(--color-muted);
 		padding: 6px 8px;
 	}
 	.ghost:hover {
-		color: #16212b;
+		color: var(--color-ink);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -607,73 +636,44 @@
 			padding: 9px 17px;
 		}
 	}
-	.dark .wlabel {
-		color: #6b7885;
-	}
-	.dark .vline {
+	:global(.dark) .vline {
 		border-left-color: #5a4a2c;
 	}
-	.dark .vline.dead {
+	:global(.dark) .vline.dead {
 		border-left-color: #3a4a5c;
 	}
-	.dark .badge {
+	:global(.dark) .badge {
 		border-color: #1b2533;
 		color: #1b2533;
 	}
-	.dark .home {
+	:global(.dark) .home {
 		border-color: #2c3746;
 		background: #1b2533;
 	}
-	.dark .hname {
-		color: #e0dcd4;
-	}
-	.dark .wifi {
-		background: #1a2d4a;
+	:global(.dark) .wifi {
 		border-color: #2c4a6e;
 		color: #7daae0;
 	}
-	.dark .alabel {
-		color: #97a3ae;
-	}
-	.dark .lanrail {
-		background: #2c3746;
-	}
-	.dark .lanpkt {
+	:global(.dark) .lanpkt {
 		border-color: #1b2533;
 	}
-	.dark .lanlabel {
-		color: #6b7885;
-	}
-	.dark .ipchip {
+	:global(.dark) .ipchip {
 		border-color: #2c3746;
 		background: #1b2533;
-		color: #97a3ae;
 	}
-	.dark .ipchip.flash {
+	:global(.dark) .ipchip.flash {
 		border-color: #5a2a2a;
 		background: #2a1a1a;
 		color: #e06050;
 	}
-	.dark .note {
+	:global(.dark) .note {
 		color: #97a3ae;
 	}
-	.dark .prob {
+	:global(.dark) .prob {
 		border-color: #2c3746;
 		background: #1b2533;
-		color: #e0dcd4;
 	}
-	.dark .prob:hover {
-		border-color: #e0dcd4;
-	}
-	.dark .prob.on {
-		background: #e0dcd4;
-		border-color: #e0dcd4;
+	:global(.dark) .prob.on {
 		color: #1b2533;
-	}
-	.dark .ghost {
-		color: #97a3ae;
-	}
-	.dark .ghost:hover {
-		color: #e0dcd4;
 	}
 </style>

@@ -2,7 +2,6 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { StorageTypesText } from '$lib/chapters/resilience/types';
-	import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -14,7 +13,6 @@
 		onstate?: (s: string) => void;
 	} = $props();
 	const tx = $derived(text as StorageTypesText);
-	let dark = $derived($theme === 'dark');
 
 	type Kind = 'object' | 'block' | 'file';
 	let view = $state<Kind | null>(null);
@@ -43,11 +41,17 @@
 						: tx.hint
 	);
 	const when = $derived(
-		view === 'object' ? tx.objectWhen : view === 'block' ? tx.blockWhen : view === 'file' ? tx.fileWhen : []
+		view === 'object'
+			? tx.objectWhen
+			: view === 'block'
+				? tx.blockWhen
+				: view === 'file'
+					? tx.fileWhen
+					: []
 	);
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
 	<!-- the visual, one shape of storage at a time -->
 	<div class="panel">
 		{#if view === null}
@@ -61,14 +65,24 @@
 						{#each tx.objectFiles as f, i (f)}
 							<div class="obj" style="animation-delay:{0.15 + i * 0.22}s">
 								<svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-									<path d="M13 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z" stroke="#5e6b76" stroke-width="2" stroke-linejoin="round" />
+									<path
+										d="M13 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"
+										stroke="#5e6b76"
+										stroke-width="2"
+										stroke-linejoin="round"
+									/>
 									<path d="M13 2v6h6" stroke="#5e6b76" stroke-width="2" stroke-linejoin="round" />
 								</svg>
 								{f}
 								<span class="key">
 									<svg width="8" height="8" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 										<circle cx="8" cy="8" r="4.5" stroke="#fff" stroke-width="2.5" />
-										<path d="M11 11.5 20 20m-3.5.5V17m-3 .5V14" stroke="#fff" stroke-width="2.5" stroke-linecap="round" />
+										<path
+											d="M11 11.5 20 20m-3.5.5V17m-3 .5V14"
+											stroke="#fff"
+											stroke-width="2.5"
+											stroke-linecap="round"
+										/>
 									</svg>
 									k{i + 1}
 								</span>
@@ -95,7 +109,13 @@
 					<div class="filescene">
 						<div class="folder">
 							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-								<path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" stroke="#dd9e36" stroke-width="2" stroke-linejoin="round" fill="#fbf1de" />
+								<path
+									d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"
+									stroke="#dd9e36"
+									stroke-width="2"
+									stroke-linejoin="round"
+									fill="#fbf1de"
+								/>
 							</svg>
 							<div class="fdocs">
 								{#each tx.fileDocs as d (d)}
@@ -136,13 +156,31 @@
 
 	<!-- the three shapes, open them one by one -->
 	<div class="tabs">
-		<button type="button" class="tab" class:on={view === 'object'} class:seen={viewed.has('object')} onclick={() => pick('object')}>
+		<button
+			type="button"
+			class="tab"
+			class:on={view === 'object'}
+			class:seen={viewed.has('object')}
+			onclick={() => pick('object')}
+		>
 			<b>{tx.objectTitle}</b><span>{tx.objectSub}</span>
 		</button>
-		<button type="button" class="tab" class:on={view === 'block'} class:seen={viewed.has('block')} onclick={() => pick('block')}>
+		<button
+			type="button"
+			class="tab"
+			class:on={view === 'block'}
+			class:seen={viewed.has('block')}
+			onclick={() => pick('block')}
+		>
 			<b>{tx.blockTitle}</b><span>{tx.blockSub}</span>
 		</button>
-		<button type="button" class="tab" class:on={view === 'file'} class:seen={viewed.has('file')} onclick={() => pick('file')}>
+		<button
+			type="button"
+			class="tab"
+			class:on={view === 'file'}
+			class:seen={viewed.has('file')}
+			onclick={() => pick('file')}
+		>
 			<b>{tx.fileTitle}</b><span>{tx.fileSub}</span>
 		</button>
 	</div>
@@ -494,91 +532,91 @@
 		}
 	}
 	/* ---- Dark mode ---- */
-	.dark .panel {
+	:global(.dark) .panel {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		box-shadow: none;
 	}
-	.dark .empty {
+	:global(.dark) .empty {
 		color: var(--color-faint);
 	}
-	.dark .bucket {
+	:global(.dark) .bucket {
 		background: var(--color-brand-soft);
 		border-color: #3a5a80;
 	}
-	.dark .bucketlip {
+	:global(.dark) .bucketlip {
 		background: #3a5a80;
 	}
-	.dark .obj {
+	:global(.dark) .obj {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		color: var(--color-ink);
 		box-shadow: none;
 	}
-	.dark .machine {
+	:global(.dark) .machine {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		box-shadow: none;
 	}
-	.dark .mrow {
+	:global(.dark) .mrow {
 		background: #222a36;
 		border-color: var(--color-line);
 	}
-	.dark .mlabel {
+	:global(.dark) .mlabel {
 		color: var(--color-muted);
 	}
-	.dark .disk {
+	:global(.dark) .disk {
 		background: var(--color-brand-soft);
 		border-color: #3a5a80;
 	}
-	.dark .folder {
+	:global(.dark) .folder {
 		background: var(--color-amber-soft);
 		border-color: #3d3522;
 		box-shadow: none;
 	}
-	.dark .fdoc {
+	:global(.dark) .fdoc {
 		background: var(--color-card);
 		border-color: #3d3522;
 		color: var(--color-amber);
 	}
-	.dark .fl {
+	:global(.dark) .fl {
 		stroke: #3a3d45;
 	}
-	.dark .fmbox {
+	:global(.dark) .fmbox {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		box-shadow: none;
 	}
-	.dark .fmlabel {
+	:global(.dark) .fmlabel {
 		color: var(--color-faint);
 	}
-	.dark .note {
+	:global(.dark) .note {
 		color: var(--color-muted);
 	}
-	.dark .wtitle {
+	:global(.dark) .wtitle {
 		color: var(--color-ink);
 	}
-	.dark .wchip {
+	:global(.dark) .wchip {
 		background: var(--color-grass-soft);
 		border-color: #1f3d28;
 		color: var(--color-grass);
 	}
-	.dark .tab {
+	:global(.dark) .tab {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		animation: none;
 	}
-	.dark .tab b {
+	:global(.dark) .tab b {
 		color: var(--color-ink);
 	}
-	.dark .tab span {
+	:global(.dark) .tab span {
 		color: var(--color-faint);
 	}
-	.dark .tab.on {
+	:global(.dark) .tab.on {
 		border-color: var(--btn-primary);
 		background: var(--btn-primary);
 	}
-	.dark .tab:hover:not(.on) {
+	:global(.dark) .tab:hover:not(.on) {
 		border-color: var(--color-ink);
 	}
 

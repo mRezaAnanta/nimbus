@@ -3,13 +3,13 @@
 	import Browser from '../Browser.svelte';
 	import Server from '../Server.svelte';
 	import type { CloudText, LessonText } from '$lib/chapters/types';
-	import { theme } from '$lib/theme.svelte';
 
-	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
-		$props();
+	let {
+		text,
+		oncomplete,
+		onstate
+	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as CloudText);
-
-	let dark = $derived($theme === 'dark');
 
 	let open = $state<'home' | 'cloud' | null>(null);
 	let explored = $state({ home: false, cloud: false });
@@ -64,15 +64,33 @@
 	onDestroy(clearAll);
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
 	<!-- picker: choose where your server lives -->
-	<div class="grid w-full max-w-md grid-cols-2 gap-1.5 rounded-2xl border border-line bg-card p-1.5" class:invite={!open}>
+	<div
+		class="grid w-full max-w-md grid-cols-2 gap-1.5 rounded-2xl border border-line bg-card p-1.5"
+		class:invite={!open}
+	>
 		<button onclick={() => pick('home')} class="seg {open === 'home' ? 'on-amber' : 'off'}">
-			<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor"><path d="M12 4.4 20.4 11H3.6Z" /><rect x="6" y="10.6" width="12" height="9.4" rx="1.4" /></g></svg>
+			<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"
+				><g fill="currentColor"
+					><path d="M12 4.4 20.4 11H3.6Z" /><rect
+						x="6"
+						y="10.6"
+						width="12"
+						height="9.4"
+						rx="1.4"
+					/></g
+				></svg
+			>
 			<span>{tx.homeTitle}</span>
 		</button>
 		<button onclick={() => pick('cloud')} class="seg {open === 'cloud' ? 'on-brand' : 'off'}">
-			<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18.5a4.2 4.2 0 0 1 .5-8.4 5.2 5.2 0 0 1 10-1A3.7 3.7 0 0 1 17 18.5Z" fill="currentColor" /></svg>
+			<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"
+				><path
+					d="M7 18.5a4.2 4.2 0 0 1 .5-8.4 5.2 5.2 0 0 1 10-1A3.7 3.7 0 0 1 17 18.5Z"
+					fill="currentColor"
+				/></svg
+			>
 			<span>{tx.cloudTitle}</span>
 		</button>
 	</div>
@@ -84,7 +102,10 @@
 		</div>
 
 		<!-- the connection, a stream of packets while the link is up -->
-		<div class="beam relative h-12 max-w-[150px] min-w-[22px] flex-1 self-center" style="--c:{linkColor}">
+		<div
+			class="beam relative h-12 max-w-[150px] min-w-[22px] flex-1 self-center"
+			style="--c:{linkColor}"
+		>
 			<div class="rail" class:broken={down}></div>
 			{#if open && live && !down}
 				<span class="dot" style="animation-delay:0s"></span>
@@ -99,7 +120,13 @@
 				<svg class="hero cloud" viewBox="0 0 120 104" width="112" height="97" aria-hidden="true">
 					<defs>
 						<filter id="cl-sh" x="-40%" y="-40%" width="180%" height="200%">
-							<feDropShadow dx="0" dy="4" stdDeviation="3.5" flood-color="#9cb6d8" flood-opacity="0.45" />
+							<feDropShadow
+								dx="0"
+								dy="4"
+								stdDeviation="3.5"
+								flood-color="#9cb6d8"
+								flood-opacity="0.45"
+							/>
 						</filter>
 					</defs>
 					<ellipse cx="58" cy="60" rx="52" ry="44" fill="#eaf2fe" />
@@ -109,7 +136,14 @@
 					<rect x="22" y="52" width="22" height="40" rx="3" fill="#3f6391" />
 					{#each [0, 1, 2] as c (c)}
 						{#each [0, 1, 2, 3] as r (r)}
-							<rect x={26 + c * 6} y={58 + r * 8} width="3.6" height="5" rx="0.7" fill={(c + r) % 3 === 0 ? '#27425f' : '#7ee0ae'} />
+							<rect
+								x={26 + c * 6}
+								y={58 + r * 8}
+								width="3.6"
+								height="5"
+								rx="0.7"
+								fill={(c + r) % 3 === 0 ? '#27425f' : '#7ee0ae'}
+							/>
 						{/each}
 					{/each}
 
@@ -138,7 +172,14 @@
 					<rect x="80" y="58" width="18" height="34" rx="3" fill="#4a6f9e" />
 					{#each [0, 1] as c (c)}
 						{#each [0, 1, 2] as r (r)}
-							<rect x={84 + c * 7} y={64 + r * 8} width="3.6" height="5" rx="0.7" fill={(c + r) % 2 ? '#8fd3ff' : '#27425f'} />
+							<rect
+								x={84 + c * 7}
+								y={64 + r * 8}
+								width="3.6"
+								height="5"
+								rx="0.7"
+								fill={(c + r) % 2 ? '#8fd3ff' : '#27425f'}
+							/>
 						{/each}
 					{/each}
 
@@ -150,37 +191,97 @@
 						<rect x="86" y="19" width="26" height="9" rx="4.5" />
 					</g>
 				</svg>
-				<span class="text-brand text-xs font-bold tracking-wide">{tx.cloudTerm}</span>
+				<span class="text-xs font-bold tracking-wide text-brand">{tx.cloudTerm}</span>
 			{:else if open === 'home'}
-				<svg class="hero home" class:down viewBox="0 0 120 104" width="110" height="95" aria-hidden="true">
+				<svg
+					class="hero home"
+					class:down
+					viewBox="0 0 120 104"
+					width="110"
+					height="95"
+					aria-hidden="true"
+				>
 					<ellipse cx="58" cy="95" rx="40" ry="6" fill="#16283c" opacity="0.08" />
 					<g class="building">
-						<path d="M26 55 58 28 90 55Z" fill="#e0934a" stroke="#c47e38" stroke-width="2" stroke-linejoin="round" />
+						<path
+							d="M26 55 58 28 90 55Z"
+							fill="#e0934a"
+							stroke="#c47e38"
+							stroke-width="2"
+							stroke-linejoin="round"
+						/>
 						<rect x="73" y="35" width="8" height="15" rx="1.5" fill="#c47e38" />
-						<rect x="32" y="53" width="52" height="40" rx="3" fill="#fff7ea" stroke="#d9b384" stroke-width="2" />
+						<rect
+							x="32"
+							y="53"
+							width="52"
+							height="40"
+							rx="3"
+							fill="#fff7ea"
+							stroke="#d9b384"
+							stroke-width="2"
+						/>
 						<rect x="39" y="73" width="12" height="20" rx="1.5" fill="#cf9e69" />
 						<circle cx="48" cy="83" r="1.1" fill="#8a5d31" />
-						<rect x="58" y="60" width="20" height="18" rx="2" fill={down ? '#2b2f36' : '#d6f0e0'} stroke="#d9b384" stroke-width="1.5" class="window" />
+						<rect
+							x="58"
+							y="60"
+							width="20"
+							height="18"
+							rx="2"
+							fill={down ? '#2b2f36' : '#d6f0e0'}
+							stroke="#d9b384"
+							stroke-width="1.5"
+							class="window"
+						/>
 						{#each [63, 70] as ly (ly)}
-							<rect x="61" y={ly} width="14" height="3.4" rx="1" fill={down ? '#3a3f48' : '#ffffff'} />
+							<rect
+								x="61"
+								y={ly}
+								width="14"
+								height="3.4"
+								rx="1"
+								fill={down ? '#3a3f48' : '#ffffff'}
+							/>
 							<circle cx="64" cy={ly + 1.7} r="1.1" fill={down ? '#565c66' : '#3a9c64'} />
 						{/each}
 					</g>
 					<g transform="translate(24 66)">
-						<rect x="-7" y="-7" width="14" height="14" rx="3" fill={down ? '#fbe9e6' : '#fbf1de'} stroke={down ? '#d3584a' : '#dd9e36'} stroke-width="2" />
+						<rect
+							x="-7"
+							y="-7"
+							width="14"
+							height="14"
+							rx="3"
+							fill={down ? '#fbe9e6' : '#fbf1de'}
+							stroke={down ? '#d3584a' : '#dd9e36'}
+							stroke-width="2"
+						/>
 						{#if down}
-							<path d="M-2.4 -2.4 2.4 2.4M2.4 -2.4 -2.4 2.4" stroke="#d3584a" stroke-width="2" stroke-linecap="round" />
+							<path
+								d="M-2.4 -2.4 2.4 2.4M2.4 -2.4 -2.4 2.4"
+								stroke="#d3584a"
+								stroke-width="2"
+								stroke-linecap="round"
+							/>
 						{:else}
 							<path d="M1 -3.8 -2.8 0.8 0.2 0.8 -1 4 3 -0.6 -0.6 -0.6Z" fill="#dd9e36" />
 						{/if}
 					</g>
-					{#if down}<path class="spark" d="M60 8 53 18 H57.5 L55 24 63 13.5 H58 Z" fill="#d3584a" stroke="#fff" stroke-width="0.8" stroke-linejoin="round" />{/if}
+					{#if down}<path
+							class="spark"
+							d="M60 8 53 18 H57.5 L55 24 63 13.5 H58 Z"
+							fill="#d3584a"
+							stroke="#fff"
+							stroke-width="0.8"
+							stroke-linejoin="round"
+						/>{/if}
 				</svg>
-				<span class="text-amber text-xs font-bold tracking-wide">{tx.onpremTerm}</span>
-		{:else}
-			<Server slots={2} />
-			<span class="text-faint text-xs font-semibold">&nbsp;</span>
-		{/if}
+				<span class="text-xs font-bold tracking-wide text-amber">{tx.onpremTerm}</span>
+			{:else}
+				<Server slots={2} />
+				<span class="text-xs font-semibold text-faint">&nbsp;</span>
+			{/if}
 		</div>
 	</div>
 
@@ -189,14 +290,36 @@
 		{#key open}
 			<ul class="flex w-full max-w-sm flex-col gap-1.5">
 				{#each open === 'cloud' ? tx.cloudPoints : tx.homePoints as p, i (p)}
-					<li class="point text-muted flex items-start gap-2 text-[13px] leading-snug" style="animation-delay:{i * 0.07}s">
+					<li
+						class="point flex items-start gap-2 text-[13px] leading-snug text-muted"
+						style="animation-delay:{i * 0.07}s"
+					>
 						{#if open === 'cloud'}
-							<span class="text-grass mt-0.5 shrink-0">
-								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>
+							<span class="mt-0.5 shrink-0 text-grass">
+								<svg
+									width="14"
+									height="14"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="3"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg
+								>
 							</span>
 						{:else}
-							<span class="text-danger mt-0.5 shrink-0">
-								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18" /></svg>
+							<span class="mt-0.5 shrink-0 text-danger">
+								<svg
+									width="14"
+									height="14"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="3"
+									stroke-linecap="round"
+									aria-hidden="true"><path d="M6 6 18 18M18 6 6 18" /></svg
+								>
 							</span>
 						{/if}
 						{p}
@@ -400,13 +523,13 @@
 	}
 
 	/* ---- Dark mode ---- */
-	.dark .scene[data-mode='cloud'] {
+	:global(.dark) .scene[data-mode='cloud'] {
 		background: linear-gradient(180deg, #142a44 0%, #1b2533 78%);
 	}
-	.dark .scene[data-mode='home'] {
+	:global(.dark) .scene[data-mode='home'] {
 		background: linear-gradient(180deg, #2a2418 0%, #1b2533 78%);
 	}
-	.dark .rail.broken {
+	:global(.dark) .rail.broken {
 		background: #5a3a35;
 	}
 </style>

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { LessonText } from '$lib/chapters/types';
 	import type { BottleneckText } from '$lib/chapters/trafficflow/types';
-	import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -9,7 +8,6 @@
 		onstate
 	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as BottleneckText);
-	let dark = $derived($theme === 'dark');
 
 	const MAXV = 6;
 	let visitors = $state(1);
@@ -42,7 +40,7 @@
 	}
 </script>
 
-<div class="wrap" class:dark>
+<div class="wrap">
 	<div class="status" class:ok={!overloaded}>
 		<span class="sdot"></span>
 		{#if overloaded}
@@ -591,107 +589,107 @@
 	}
 
 	/* ---- Dark mode ---- */
-	.dark .status {
+	:global(.dark) .status {
 		background: var(--color-danger-soft);
 		border-color: #3d2020;
 		color: var(--color-danger);
 	}
-	.dark .status.ok {
+	:global(.dark) .status.ok {
 		background: var(--color-grass-soft);
 		border-color: #1f3d28;
 		color: var(--color-grass);
 	}
-	.dark .qcount {
+	:global(.dark) .qcount {
 		background: var(--color-card);
 		color: var(--color-danger);
 	}
-	.dark .slabel {
+	:global(.dark) .slabel {
 		color: var(--color-muted);
 	}
-	.dark .vcount {
+	:global(.dark) .vcount {
 		background: #1e2835;
 		color: var(--color-muted);
 	}
-	.dark .phone {
+	:global(.dark) .phone {
 		background: #222d3d;
 		box-shadow: none;
 	}
-	.dark .notch {
+	:global(.dark) .notch {
 		background: var(--color-muted);
 	}
-	.dark .pscreen {
+	:global(.dark) .pscreen {
 		background: var(--color-card);
 	}
-	.dark .pbarmini {
+	:global(.dark) .pbarmini {
 		background: #1e2835;
 	}
-	.dark .pdot {
+	:global(.dark) .pdot {
 		background: var(--color-faint);
 	}
-	.dark .purl {
+	:global(.dark) .purl {
 		color: var(--color-faint);
 	}
-	.dark .phero {
+	:global(.dark) .phero {
 		background: linear-gradient(120deg, #1a2d4a, #2e6fe0);
 	}
-	.dark .prow i {
+	:global(.dark) .prow i {
 		background: #2c3746;
 	}
-	.dark .ldr {
+	:global(.dark) .ldr {
 		border-color: #3d3522;
 	}
-	.dark .ptag {
+	:global(.dark) .ptag {
 		color: var(--color-grass);
 	}
-	.dark .ptag.bad {
+	:global(.dark) .ptag.bad {
 		color: var(--color-danger);
 	}
-	.dark .arrow {
+	:global(.dark) .arrow {
 		color: var(--color-muted);
 	}
-	.dark .backend {
+	:global(.dark) .backend {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		box-shadow: none;
 	}
-	.dark .dbbody {
+	:global(.dark) .dbbody {
 		fill: var(--color-grass-soft);
 		stroke: var(--color-grass);
 	}
-	.dark .dbtop {
+	:global(.dark) .dbtop {
 		fill: var(--color-grass-soft);
 		stroke: var(--color-grass);
 	}
-	.dark .dbline {
+	:global(.dark) .dbline {
 		stroke: var(--color-grass);
 	}
-	.dark .db.hot .dbbody {
+	:global(.dark) .db.hot .dbbody {
 		fill: var(--color-danger-soft);
 		stroke: var(--color-danger);
 	}
-	.dark .db.hot .dbtop {
+	:global(.dark) .db.hot .dbtop {
 		fill: var(--color-danger-soft);
 		stroke: var(--color-danger);
 	}
-	.dark .db.hot .dbline {
+	:global(.dark) .db.hot .dbline {
 		stroke: var(--color-danger);
 	}
-	.dark .btag {
+	:global(.dark) .btag {
 		background: var(--color-danger);
 	}
-	.dark .blabel {
+	:global(.dark) .blabel {
 		color: var(--color-muted);
 	}
-	.dark .cta {
+	:global(.dark) .cta {
 		background: var(--btn-primary);
 		box-shadow: none;
 	}
-	.dark .line {
+	:global(.dark) .line {
 		background: var(--color-card);
 		border-color: var(--color-line);
 		color: var(--color-ink);
 	}
-	.dark .line:enabled:hover {
+	:global(.dark) .line:enabled:hover {
 		border-color: var(--color-ink);
 	}
 

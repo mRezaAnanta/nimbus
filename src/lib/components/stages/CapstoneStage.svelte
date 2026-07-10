@@ -1,11 +1,13 @@
 <script lang="ts">
 	import ProviderLogo from '../ProviderLogo.svelte';
-	import { theme } from '$lib/theme.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { CapstoneText } from '$lib/chapters/capstone/types';
 
-	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
-		$props();
+	let {
+		text,
+		oncomplete,
+		onstate
+	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as CapstoneText);
 
 	let picked = $state('');

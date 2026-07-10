@@ -1,10 +1,9 @@
 <script lang="ts">
-import { onDestroy } from 'svelte';
-import type { LessonText } from '$lib/chapters/types';
-import type { LoadBalancerText } from '$lib/chapters/traffic/types';
-import CallToActionButton from '$lib/components/CallToActionButton.svelte';
-import ServerRack from '$lib/components/Server.svelte';
-import { theme } from '$lib/theme.svelte';
+	import { onDestroy } from 'svelte';
+	import type { LessonText } from '$lib/chapters/types';
+	import type { LoadBalancerText } from '$lib/chapters/traffic/types';
+	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
+	import ServerRack from '$lib/components/Server.svelte';
 
 	let {
 		text,
@@ -16,7 +15,6 @@ import { theme } from '$lib/theme.svelte';
 		onstate?: (s: string) => void;
 	} = $props();
 	const tx = $derived(text as LoadBalancerText);
-	let dark = $derived($theme === 'dark');
 
 	type Server = { id: number; alive: boolean };
 	let servers = $state<Server[]>([{ id: 1, alive: true }]);
@@ -29,7 +27,13 @@ import { theme } from '$lib/theme.svelte';
 	const alive = $derived(servers.filter((s) => s.alive));
 	const overloaded = $derived(alive.some((s) => (loads[s.id] ?? 0) > 11));
 	const phase = $derived(
-		!surge ? 'start' : !hasBalancer ? 'overload' : servers.some((s) => !s.alive) ? 'done' : 'balanced'
+		!surge
+			? 'start'
+			: !hasBalancer
+				? 'overload'
+				: servers.some((s) => !s.alive)
+					? 'done'
+					: 'balanced'
 	);
 	const prompt = $derived(
 		phase === 'start'
@@ -60,7 +64,13 @@ import { theme } from '$lib/theme.svelte';
 		return 'calm';
 	}
 	function colorOf(st: string) {
-		return st === 'full' ? '#d3584a' : st === 'busy' ? '#dd9e36' : st === 'dead' ? '#cfd6dd' : '#3a9c64';
+		return st === 'full'
+			? '#d3584a'
+			: st === 'busy'
+				? '#dd9e36'
+				: st === 'dead'
+					? '#cfd6dd'
+					: '#3a9c64';
 	}
 	// Each arriving visitor is a person icon that streams down a rail onto a server.
 	type Arrival = { id: number; lane: number; tid: number; routed: boolean };
@@ -86,7 +96,10 @@ import { theme } from '$lib/theme.svelte';
 		arrivals = [...arrivals, { id, lane: laneOf(idx), tid, routed: !hasBalancer }];
 		if (hasBalancer)
 			timers.push(
-				setTimeout(() => (arrivals = arrivals.map((a) => (a.id === id ? { ...a, routed: true } : a))), 240)
+				setTimeout(
+					() => (arrivals = arrivals.map((a) => (a.id === id ? { ...a, routed: true } : a))),
+					240
+				)
 			);
 		// when the visitor lands, it joins that server for a short while
 		timers.push(
@@ -97,7 +110,9 @@ import { theme } from '$lib/theme.svelte';
 					if (!srv || !srv.alive) return;
 					loads = { ...loads, [tid]: (loads[tid] ?? 0) + 1 };
 					// hold tuned so one server alone tips into red, while two survivors stay amber
-					timers.push(setTimeout(() => (loads = { ...loads, [tid]: Math.max(0, (loads[tid] ?? 0) - 1) }), 900));
+					timers.push(
+						setTimeout(() => (loads = { ...loads, [tid]: Math.max(0, (loads[tid] ?? 0) - 1) }), 900)
+					);
 				},
 				hasBalancer ? 540 : 460
 			)
@@ -159,7 +174,7 @@ import { theme } from '$lib/theme.svelte';
 	</svg>
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
 	<!-- The live scene: visitors stream from the top, through the balancer, onto the servers -->
 	<div class="scene">
 		<div class="mech" class:wide={servers.length > 1}>
@@ -226,14 +241,21 @@ import { theme } from '$lib/theme.svelte';
 								<span class="rx">×</span>
 							{/if}
 						</div>
-						<span class="slabel" class:off={!s.alive}>{tx.serverLabel.replace('{n}', String(s.id))}</span>
+						<span class="slabel" class:off={!s.alive}
+							>{tx.serverLabel.replace('{n}', String(s.id))}</span
+						>
 					</div>
 				{/each}
 			</div>
 
 			<!-- visitors streaming down the rails onto the servers -->
 			{#each arrivals as a (a.id)}
-				<span class="visitor" class:routed={a.routed} class:bal={hasBalancer} style="--lx:{a.lane}%">
+				<span
+					class="visitor"
+					class:routed={a.routed}
+					class:bal={hasBalancer}
+					style="--lx:{a.lane}%"
+				>
 					{@render person(13, '#c2491f')}
 				</span>
 			{/each}
@@ -617,57 +639,57 @@ import { theme } from '$lib/theme.svelte';
 	}
 
 	/* ---- Dark mode ---- */
-	.dark .rail {
+	:global(.dark) .rail {
 		stroke: var(--color-line);
 	}
-	.dark .rail.dead {
+	:global(.dark) .rail.dead {
 		stroke: var(--color-line);
 	}
-	.dark .crowd-label {
+	:global(.dark) .crowd-label {
 		color: var(--color-faint);
 	}
-	.dark .crowd-label.busy {
+	:global(.dark) .crowd-label.busy {
 		color: #c2491f;
 	}
-	.dark .balancer {
+	:global(.dark) .balancer {
 		background: var(--color-card);
 		border-color: #3a5a80;
 		box-shadow: none;
 	}
-	.dark .bal-name {
+	:global(.dark) .bal-name {
 		color: var(--color-brand);
 	}
-	.dark .bal-note {
+	:global(.dark) .bal-note {
 		color: var(--color-muted);
 	}
-	.dark .srv-wrap :global(.server) {
+	:global(.dark) .srv-wrap :global(.server) {
 		box-shadow: none;
 	}
-	.dark .srv-wrap.dead .rx {
+	:global(.dark) .srv-wrap.dead .rx {
 		color: var(--color-faint);
 	}
-	.dark .srv-wrap :global(.slot) {
+	:global(.dark) .srv-wrap :global(.slot) {
 		background: #222a36;
 	}
-	.dark .slabel {
+	:global(.dark) .slabel {
 		color: var(--color-muted);
 	}
-	.dark .slabel.off {
+	:global(.dark) .slabel.off {
 		color: var(--color-faint);
 	}
-	.dark .status {
+	:global(.dark) .status {
 		color: var(--color-grass);
 	}
-	.dark .status.down {
+	:global(.dark) .status.down {
 		color: var(--color-danger);
 	}
-	.dark .prompt {
+	:global(.dark) .prompt {
 		color: var(--color-muted);
 	}
-	.dark .reset {
+	:global(.dark) .reset {
 		color: var(--color-muted);
 	}
-	.dark .reset:hover {
+	:global(.dark) .reset:hover {
 		color: var(--color-ink);
 	}
 

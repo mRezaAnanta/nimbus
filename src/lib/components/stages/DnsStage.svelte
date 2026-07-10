@@ -1,16 +1,17 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
-import Server from '$lib/components/Server.svelte';
-import Browser from '../Browser.svelte';
-import type { LessonText } from '$lib/chapters/types';
-import type { DnsText } from '$lib/chapters/networking/types';
-import { theme } from '$lib/theme.svelte';
+	import Server from '$lib/components/Server.svelte';
+	import Browser from '../Browser.svelte';
+	import type { LessonText } from '$lib/chapters/types';
+	import type { DnsText } from '$lib/chapters/networking/types';
 
-	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
-		$props();
+	let {
+		text,
+		oncomplete,
+		onstate
+	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as DnsText);
-	let dark = $derived($theme === 'dark');
 
 	let picked = $state<number | null>(null);
 	let phase = $state<'idle' | 'lookup' | 'connect'>('idle');
@@ -52,7 +53,7 @@ import { theme } from '$lib/theme.svelte';
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
+<div class="flex h-full w-full flex-col items-center justify-center gap-4">
 	<div class="scene">
 		<!-- your phone asking by name -->
 		<div class="actor">
@@ -302,48 +303,48 @@ import { theme } from '$lib/theme.svelte';
 	}
 
 	/* ---- Dark mode ---- */
-	.dark .alabel {
+	:global(.dark) .alabel {
 		color: var(--color-muted);
 	}
-	.dark .rail {
+	:global(.dark) .rail {
 		background: var(--color-line);
 	}
-	.dark .chip.ask {
+	:global(.dark) .chip.ask {
 		background: var(--btn-primary);
 	}
-	.dark .book {
+	:global(.dark) .book {
 		background: var(--color-card);
 		border-color: #3a5a80;
 		box-shadow: none;
 	}
-	.dark .bhead b {
+	:global(.dark) .bhead b {
 		color: var(--color-brand);
 	}
-	.dark .bhead span {
+	:global(.dark) .bhead span {
 		color: var(--color-faint);
 	}
-	.dark .brow {
+	:global(.dark) .brow {
 		background: var(--color-paper);
 		border-color: var(--color-line);
 	}
-	.dark .brow.hot {
+	:global(.dark) .brow.hot {
 		background: var(--color-brand-soft);
 		border-color: #3a5a80;
 	}
-	.dark .bhost {
+	:global(.dark) .bhost {
 		color: var(--color-ink);
 	}
-	.dark .bip {
+	:global(.dark) .bip {
 		color: var(--color-faint);
 	}
-	.dark .brow.hot .bip {
+	:global(.dark) .brow.hot .bip {
 		color: var(--color-brand);
 	}
-	.dark .pkt {
+	:global(.dark) .pkt {
 		border-color: var(--color-card);
 		box-shadow: none;
 	}
-	.dark .note {
+	:global(.dark) .note {
 		color: var(--color-muted);
 	}
 	@media (prefers-reduced-motion: reduce) {
@@ -396,6 +397,5 @@ import { theme } from '$lib/theme.svelte';
 			font-size: 14px;
 			max-width: 460px;
 		}
-
 	}
 </style>
