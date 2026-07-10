@@ -385,6 +385,7 @@
 		overflow: visible;
 	}
 	.shrink > :global(.phone) {
+		max-width: none;
 		transform: scale(0.6);
 		transform-origin: top left;
 	}

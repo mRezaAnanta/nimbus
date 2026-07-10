@@ -430,6 +430,9 @@
 		overflow: visible;
 	}
 	.shrink > :global(.phone) {
+		/* the wrapper is narrower than the phone on purpose, it reserves the scaled
+		   footprint, so the phone must keep its natural 158px width */
+		max-width: none;
 		transform: scale(0.6);
 		transform-origin: top left;
 	}
