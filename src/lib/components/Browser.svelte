@@ -4,13 +4,17 @@
 	// loading = spinner
 	// loaded  = content skeleton appears, as if real data arrived
 	// offline = loaded content dimmed + an outage mask
+	import { theme } from '$lib/theme.svelte';
+
 	let { phase = 'idle', offlineText = '' }: {
 		phase?: 'idle' | 'loading' | 'loaded' | 'offline';
 		offlineText?: string;
 	} = $props();
+
+	let dark = $derived($theme === 'dark');
 </script>
 
-<div class="phone">
+<div class="phone" class:dark>
 	<div class="screen">
 		<div class="addr">
 			<span class="led" class:on={phase === 'loaded'} class:off={phase === 'offline'}></span>
@@ -49,8 +53,8 @@
 		width: 158px;
 		max-width: 100%;
 		border-radius: 26px;
-		background: #fff;
-		border: 1px solid #e8e2d8;
+		background: var(--color-card);
+		border: 1px solid var(--color-line);
 		padding: 10px;
 		box-shadow: 0 10px 26px rgba(22, 40, 60, 0.1);
 	}
@@ -58,7 +62,7 @@
 		position: relative;
 		height: 228px;
 		border-radius: 18px;
-		background: #f7f6f2;
+		background: var(--color-paper);
 		overflow: hidden;
 		display: flex;
 		flex-direction: column;
@@ -68,28 +72,28 @@
 		align-items: center;
 		gap: 6px;
 		padding: 8px 10px;
-		background: #fff;
-		border-bottom: 1px solid #efeae1;
+		background: var(--color-card);
+		border-bottom: 1px solid var(--color-line);
 	}
 	.led {
 		flex: none;
 		width: 7px;
 		height: 7px;
 		border-radius: 50%;
-		background: #cfd6dd;
+		background: var(--color-muted);
 		transition: background 0.3s;
 	}
 	.led.on {
-		background: #3a9c64;
+		background: var(--color-grass);
 	}
 	.led.off {
-		background: #d3584a;
+		background: var(--color-danger);
 	}
 	.urlbar {
 		flex: 1;
 		height: 9px;
 		border-radius: 5px;
-		background: #e8e2d8;
+		background: var(--color-line);
 	}
 	.body {
 		position: relative;
@@ -196,5 +200,23 @@
 		color: #d3584a;
 		font-size: 12px;
 		font-weight: 600;
+	}
+	.dark .hero {
+		background: linear-gradient(120deg, #1a2d4a, #162a44);
+	}
+	.dark .bar {
+		background: #2c3746;
+	}
+	.dark .bar.title {
+		background: #1a2d4a;
+	}
+	.dark .cardlet {
+		background: #2c3746;
+	}
+	.dark .spinner {
+		border-color: #2c3746;
+	}
+	.dark .mask {
+		background: rgba(18, 26, 36, 0.82);
 	}
 </style>

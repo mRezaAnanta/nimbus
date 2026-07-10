@@ -70,7 +70,7 @@
 					type="button"
 					onclick={() => (menuOpen = false)}
 					aria-label="Close"
-					class="-mr-1 flex h-8 w-8 items-center justify-center rounded-full text-faint transition-colors hover:bg-white hover:text-ink"
+					class="-mr-1 flex h-8 w-8 items-center justify-center rounded-full text-faint transition-colors header-btn hover:text-ink"
 				>
 					<svg
 						width="16"
