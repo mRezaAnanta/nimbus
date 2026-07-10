@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { LessonText } from '$lib/chapters/types';
 	import type { BottleneckText } from '$lib/chapters/trafficflow/types';
+	import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -8,6 +9,7 @@
 		onstate
 	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as BottleneckText);
+	let dark = $derived($theme === 'dark');
 
 	const MAXV = 6;
 	let visitors = $state(1);
@@ -40,7 +42,7 @@
 	}
 </script>
 
-<div class="wrap">
+<div class="wrap" class:dark>
 	<div class="status" class:ok={!overloaded}>
 		<span class="sdot"></span>
 		{#if overloaded}
@@ -586,6 +588,111 @@
 	.cta:disabled,
 	.line:disabled {
 		opacity: 0.5;
+	}
+
+	/* ---- Dark mode ---- */
+	.dark .status {
+		background: var(--color-danger-soft);
+		border-color: #3d2020;
+		color: var(--color-danger);
+	}
+	.dark .status.ok {
+		background: var(--color-grass-soft);
+		border-color: #1f3d28;
+		color: var(--color-grass);
+	}
+	.dark .qcount {
+		background: var(--color-card);
+		color: var(--color-danger);
+	}
+	.dark .slabel {
+		color: var(--color-muted);
+	}
+	.dark .vcount {
+		background: #1e2835;
+		color: var(--color-muted);
+	}
+	.dark .phone {
+		background: #222d3d;
+		box-shadow: none;
+	}
+	.dark .notch {
+		background: var(--color-muted);
+	}
+	.dark .pscreen {
+		background: var(--color-card);
+	}
+	.dark .pbarmini {
+		background: #1e2835;
+	}
+	.dark .pdot {
+		background: var(--color-faint);
+	}
+	.dark .purl {
+		color: var(--color-faint);
+	}
+	.dark .phero {
+		background: linear-gradient(120deg, #1a2d4a, #2e6fe0);
+	}
+	.dark .prow i {
+		background: #2c3746;
+	}
+	.dark .ldr {
+		border-color: #3d3522;
+	}
+	.dark .ptag {
+		color: var(--color-grass);
+	}
+	.dark .ptag.bad {
+		color: var(--color-danger);
+	}
+	.dark .arrow {
+		color: var(--color-muted);
+	}
+	.dark .backend {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	.dark .dbbody {
+		fill: var(--color-grass-soft);
+		stroke: var(--color-grass);
+	}
+	.dark .dbtop {
+		fill: var(--color-grass-soft);
+		stroke: var(--color-grass);
+	}
+	.dark .dbline {
+		stroke: var(--color-grass);
+	}
+	.dark .db.hot .dbbody {
+		fill: var(--color-danger-soft);
+		stroke: var(--color-danger);
+	}
+	.dark .db.hot .dbtop {
+		fill: var(--color-danger-soft);
+		stroke: var(--color-danger);
+	}
+	.dark .db.hot .dbline {
+		stroke: var(--color-danger);
+	}
+	.dark .btag {
+		background: var(--color-danger);
+	}
+	.dark .blabel {
+		color: var(--color-muted);
+	}
+	.dark .cta {
+		background: var(--btn-primary);
+		box-shadow: none;
+	}
+	.dark .line {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		color: var(--color-ink);
+	}
+	.dark .line:enabled:hover {
+		border-color: var(--color-ink);
 	}
 
 	@media (prefers-reduced-motion: reduce) {

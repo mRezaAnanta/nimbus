@@ -2,6 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { lang, t, setLang } from '$lib/i18n';
+	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import { chapters } from '$lib/chapters';
 	import Nim from '$lib/components/Nim.svelte';
 	import ProgressDots from '$lib/components/ProgressDots.svelte';
@@ -47,23 +48,31 @@
 
 <div
 	class="relative flex min-h-dvh flex-col overflow-hidden"
-	style="background: radial-gradient(120% 90% at 75% 8%, #eef4fc 0%, #f6f4ee 55%, #faf9f6 100%);"
+	style="background: radial-gradient(120% 90% at 75% 8%, var(--bg-grad-1) 0%, var(--bg-grad-2) 55%, var(--bg-grad-3) 100%);"
 >
 	<header class="z-20 flex shrink-0 items-center justify-between px-5 pt-[max(1rem,env(safe-area-inset-top))] md:px-8">
 		<span class="font-display text-lg font-semibold tracking-tight">Nimbus</span>
-		<div class="border-line flex items-center gap-0.5 rounded-full border bg-white/70 p-0.5 text-[11px] font-bold backdrop-blur">
-			<button
-				onclick={() => setLang('id')}
-				class="rounded-full px-2 py-0.5 transition-colors {$lang === 'id' ? 'bg-ink text-white' : 'text-faint hover:text-ink'}"
+		<div class="flex items-center gap-2">
+			<ThemeToggle />
+			<div
+				class="flex items-center gap-0.5 rounded-full border border-line p-0.5 text-[11px] font-bold backdrop-blur"
+				style="background: var(--header-btn-bg);"
 			>
-				ID
-			</button>
-			<button
-				onclick={() => setLang('en')}
-				class="rounded-full px-2 py-0.5 transition-colors {$lang === 'en' ? 'bg-ink text-white' : 'text-faint hover:text-ink'}"
-			>
-				EN
-			</button>
+				<button
+					onclick={() => setLang('id')}
+					class="rounded-full px-2 py-0.5 transition-colors {$lang === 'id' ? 'text-white' : 'text-faint hover:text-ink'}"
+					style={$lang === 'id' ? 'background: var(--toggle-active);' : ''}
+				>
+					ID
+				</button>
+				<button
+					onclick={() => setLang('en')}
+					class="rounded-full px-2 py-0.5 transition-colors {$lang === 'en' ? 'text-white' : 'text-faint hover:text-ink'}"
+					style={$lang === 'en' ? 'background: var(--toggle-active);' : ''}
+				>
+					EN
+				</button>
+			</div>
 		</div>
 	</header>
 

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import type { LessonText, VirtualMachineText } from '$lib/chapters/types';
+	import { theme } from '$lib/theme.svelte';
+	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 
 	let {
 		text,
@@ -16,6 +18,8 @@
 		onshow?: (v: boolean) => void;
 	} = $props();
 	const tx = $derived(text as VirtualMachineText);
+
+	let dark = $derived($theme === 'dark');
 
 	const lastBeat = $derived(beat >= tx.intro.length - 1);
 	// from the second beat (where virtualization is introduced) the one screen splits and the
@@ -54,7 +58,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
 	<!-- the laptop, lid swinging open, screen splitting into VMs -->
 	<div class="stagebox">
 		<div class="lap">
@@ -126,9 +130,9 @@
 	<p class="cap" class:full={vms === 4}>{caption}</p>
 
 	{#if vms < 4}
-		<button type="button" class="cta" class:waiting={!lastBeat} onclick={addVm} disabled={!lastBeat || !open}>
+		<CallToActionButton waiting={!lastBeat} onclick={addVm} disabled={!lastBeat || !open}>
 			{tx.addVm}
-		</button>
+		</CallToActionButton>
 	{/if}
 </div>
 
@@ -474,47 +478,7 @@
 		color: #2f7d54;
 	}
 
-	.cta {
-		border-radius: 12px;
-		background: #16212b;
-		padding: 12px 24px;
-		font-size: 14px;
-		font-weight: 600;
-		color: #fff;
-		box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		animation: invite 2s ease-in-out infinite;
-		transition:
-			filter 0.2s ease,
-			transform 0.15s ease,
-			opacity 0.2s ease;
-	}
-	.cta:enabled:hover {
-		filter: brightness(1.18);
-	}
-	.cta:active {
-		transform: translateY(1px);
-	}
-	.cta:disabled {
-		opacity: 0.5;
-		animation: none;
-	}
-	.cta.waiting {
-		opacity: 0.35;
-	}
-	@keyframes invite {
-		0%,
-		100% {
-			box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		}
-		50% {
-			box-shadow:
-				0 8px 20px rgba(22, 40, 60, 0.16),
-				0 0 0 6px rgba(22, 40, 60, 0.08);
-		}
-	}
-
 	@media (prefers-reduced-motion: reduce) {
-		.cta,
 		.vm,
 		.vlayer,
 		.grid4 .slot {
@@ -582,9 +546,90 @@
 		.cap {
 			font-size: 14px;
 		}
-		.cta {
-			font-size: 15px;
-			padding: 13px 28px;
-		}
+	}
+	.dark .lidback {
+		background: #1b2533;
+		border-color: #2c3746;
+	}
+	.dark .screen {
+		background: #1b2533;
+		border-color: #2c3746;
+	}
+	.dark .deck {
+		background: #1b2533;
+		border-color: #2c3746;
+	}
+	.dark .pad {
+		background: #3a4a5c;
+	}
+	.dark .single {
+		background: #141c2a;
+	}
+	.dark .shead {
+		background: #1b2533;
+		border-bottom-color: #2c3746;
+	}
+	.dark .stab {
+		background: #3a4a5c;
+	}
+	.dark .bar {
+		background: #2c3746;
+	}
+	.dark .bar.title {
+		background: #1a2d4a;
+	}
+	.dark .scap b {
+		color: #e0dcd4;
+	}
+	.dark .scap span {
+		color: #6b7885;
+	}
+	.dark .vm {
+		background: color-mix(in srgb, var(--a) 7%, #1b2533);
+	}
+	.dark .vtab {
+		background: color-mix(in srgb, var(--a) 25%, #1b2533);
+	}
+	.dark .vbar {
+		background: color-mix(in srgb, var(--a) 18%, #1b2533);
+	}
+	.dark .vfoot span {
+		color: #6b7885;
+	}
+	.dark .slot {
+		border-color: #2c3746;
+		color: #4a5560;
+	}
+	.dark .vlayer {
+		background: #1a2d4a;
+		border-color: #2c4a6e;
+	}
+	.dark .vlayer-name {
+		color: #7daae0;
+	}
+	.dark .vlayer-sub {
+		color: #5a8fd4;
+	}
+	.dark .chip {
+		border-color: #2c3746;
+		background: #1b2533;
+		color: #97a3ae;
+	}
+	.dark .chip.per {
+		border-color: #2c4a6e;
+		background: #1a2d4a;
+		color: #7daae0;
+	}
+	.dark .gtrack {
+		background: #2c3746;
+	}
+	.dark .gnum {
+		color: #97a3ae;
+	}
+	.dark .cap {
+		color: #6b7885;
+	}
+	.dark .cap.full {
+		color: #5bb87e;
 	}
 </style>

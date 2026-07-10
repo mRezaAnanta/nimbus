@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import type { LessonText, RequestJourneyText } from '$lib/chapters/types';
+	import { theme } from '$lib/theme.svelte';
+	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 
 	let {
 		text,
@@ -16,6 +18,8 @@
 		onshow?: (v: boolean) => void;
 	} = $props();
 	const tx = $derived(text as RequestJourneyText);
+
+	let dark = $derived($theme === 'dark');
 
 	const KEYS = ['phone', 'router', 'isp', 'net', 'server'] as const;
 
@@ -109,7 +113,7 @@
 	{/if}
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-6">
+<div class="flex h-full w-full flex-col items-center justify-center gap-6" class:dark>
 	<!-- the road, five stations and one traveling packet -->
 	<div class="road">
 		<div class="rail"></div>
@@ -136,9 +140,9 @@
 	<!-- what is happening right now -->
 	<p class="note" class:res={returning}>{note}</p>
 
-	<button type="button" class="cta" class:waiting={!lastBeat} onclick={run} disabled={running || !lastBeat}>
+	<CallToActionButton waiting={!lastBeat} onclick={run} disabled={running || !lastBeat}>
 		{ranOnce ? tx.again : tx.openSite}
-	</button>
+	</CallToActionButton>
 </div>
 
 <style>
@@ -258,49 +262,6 @@
 	.note.res {
 		color: #2f7d54;
 	}
-	.cta {
-		border-radius: 12px;
-		background: #16212b;
-		padding: 12px 24px;
-		font-size: 14px;
-		font-weight: 600;
-		color: #fff;
-		box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		animation: invite 2s ease-in-out infinite;
-		transition:
-			filter 0.2s ease,
-			transform 0.15s ease,
-			opacity 0.2s ease;
-	}
-	.cta:enabled:hover {
-		filter: brightness(1.18);
-	}
-	.cta:active {
-		transform: translateY(1px);
-	}
-	.cta:disabled {
-		opacity: 0.5;
-		animation: none;
-	}
-	.cta.waiting {
-		opacity: 0.35;
-	}
-	@keyframes invite {
-		0%,
-		100% {
-			box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		}
-		50% {
-			box-shadow:
-				0 8px 20px rgba(22, 40, 60, 0.16),
-				0 0 0 6px rgba(22, 40, 60, 0.08);
-		}
-	}
-	@media (prefers-reduced-motion: reduce) {
-		.cta {
-			animation: none;
-		}
-	}
 	@media (min-width: 768px) {
 		.road {
 			width: 560px;
@@ -328,5 +289,22 @@
 		.packet {
 			top: 44px;
 		}
+	}
+	.dark .rail {
+		background: #2c3746;
+	}
+	.dark .pdot {
+		border-color: #1b2533;
+	}
+	.dark .box {
+		border-color: #2c3746;
+		background: #1b2533;
+		color: #6b7885;
+	}
+	.dark .slabel {
+		color: #6b7885;
+	}
+	.dark .station.on .slabel {
+		color: #e0dcd4;
 	}
 </style>

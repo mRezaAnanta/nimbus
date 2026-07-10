@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { lang, setLang } from '$lib/i18n';
+	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import LessonMenu from '$lib/components/LessonMenu.svelte';
 
 	let { children } = $props();
@@ -7,7 +8,7 @@
 
 <div
 	class="flex h-dvh flex-col overflow-hidden"
-	style="background: radial-gradient(120% 90% at 75% 8%, #eef4fc 0%, #f6f4ee 55%, #faf9f6 100%);"
+	style="background: radial-gradient(120% 90% at 75% 8%, var(--bg-grad-1) 0%, var(--bg-grad-2) 55%, var(--bg-grad-3) 100%);"
 >
 	<header
 		class="z-20 flex shrink-0 items-center justify-between px-5 pt-[max(1rem,env(safe-area-inset-top))] md:px-8"
@@ -17,16 +18,22 @@
 			<a href="/" class="font-display text-lg font-semibold tracking-tight">Nimbus</a>
 		</div>
 		<div class="flex items-center gap-3">
-			<div class="border-line flex items-center gap-0.5 rounded-full border bg-white/70 p-0.5 text-[11px] font-bold backdrop-blur">
+			<ThemeToggle />
+			<div
+				class="flex items-center gap-0.5 rounded-full border border-line p-0.5 text-[11px] font-bold backdrop-blur"
+				style="background: var(--header-btn-bg);"
+			>
 				<button
 					onclick={() => setLang('id')}
-					class="rounded-full px-2 py-0.5 transition-colors {$lang === 'id' ? 'bg-ink text-white' : 'text-faint hover:text-ink'}"
+					class="rounded-full px-2 py-0.5 transition-colors {$lang === 'id' ? 'text-white' : 'text-faint hover:text-ink'}"
+					style={$lang === 'id' ? 'background: var(--toggle-active);' : ''}
 				>
 					ID
 				</button>
 				<button
 					onclick={() => setLang('en')}
-					class="rounded-full px-2 py-0.5 transition-colors {$lang === 'en' ? 'bg-ink text-white' : 'text-faint hover:text-ink'}"
+					class="rounded-full px-2 py-0.5 transition-colors {$lang === 'en' ? 'text-white' : 'text-faint hover:text-ink'}"
+					style={$lang === 'en' ? 'background: var(--toggle-active);' : ''}
 				>
 					EN
 				</button>

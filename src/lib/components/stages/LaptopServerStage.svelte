@@ -4,6 +4,8 @@
 	import Browser from '../Browser.svelte';
 	import Laptop from '../Laptop.svelte';
 	import type { LessonText, LaptopServerText } from '$lib/chapters/types';
+	import { theme } from '$lib/theme.svelte';
+	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 
 	let {
 		text,
@@ -15,6 +17,8 @@
 		onstate?: (s: string) => void;
 	} = $props();
 	const tx = $derived(text as LaptopServerText);
+
+	let dark = $derived($theme === 'dark');
 
 	// the story: works on home WiFi, opens to the internet, then reality bites
 	let phase = $state<'idle' | 'lan' | 'public'>('idle');
@@ -121,7 +125,7 @@
 	</svg>
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-3">
+<div class="flex h-full w-full flex-col items-center justify-center gap-3" class:dark>
 	<!-- the internet above, your home below, one line between them -->
 	<div class="scene">
 		<!-- internet crowd, only once the laptop goes public -->
@@ -199,9 +203,9 @@
 	<!-- the one clear next action, Foundation style at the bottom -->
 	<div class="acts">
 		{#if phase === 'idle'}
-			<button type="button" class="cta" onclick={tryLan} disabled={lanFlight}>{tx.tryLan}</button>
+			<CallToActionButton onclick={tryLan} disabled={lanFlight}>{tx.tryLan}</CallToActionButton>
 		{:else if phase === 'lan'}
-			<button type="button" class="cta" onclick={goPublic}>{tx.goPublic}</button>
+			<CallToActionButton onclick={goPublic}>{tx.goPublic}</CallToActionButton>
 		{:else}
 			<button type="button" class="prob" class:used={tried.has('ip')} class:on={problem === 'ip'} onclick={() => fire('ip')}>{tx.probIp}</button>
 			<button type="button" class="prob" class:used={tried.has('sleep')} class:on={problem === 'sleep'} onclick={() => fire('sleep')}>{tx.probSleep}</button>
@@ -513,40 +517,6 @@
 		justify-content: center;
 		gap: 8px;
 	}
-	.cta {
-		border-radius: 12px;
-		background: #16212b;
-		padding: 12px 24px;
-		font-size: 14px;
-		font-weight: 600;
-		color: #fff;
-		box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		animation: invite 2s ease-in-out infinite;
-		transition:
-			filter 0.2s ease,
-			transform 0.15s ease;
-	}
-	.cta:enabled:hover {
-		filter: brightness(1.18);
-	}
-	.cta:active {
-		transform: translateY(1px);
-	}
-	.cta:disabled {
-		opacity: 0.6;
-		animation: none;
-	}
-	@keyframes invite {
-		0%,
-		100% {
-			box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		}
-		50% {
-			box-shadow:
-				0 8px 20px rgba(22, 40, 60, 0.16),
-				0 0 0 6px rgba(22, 40, 60, 0.08);
-		}
-	}
 	.prob {
 		border-radius: 999px;
 		border: 1px solid #e8e2d8;
@@ -580,7 +550,6 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.cta,
 		.visitor,
 		.lwrap.hot,
 		.vline,
@@ -637,9 +606,74 @@
 			font-size: 13.5px;
 			padding: 9px 17px;
 		}
-		.cta {
-			font-size: 15px;
-			padding: 13px 28px;
-		}
+	}
+	.dark .wlabel {
+		color: #6b7885;
+	}
+	.dark .vline {
+		border-left-color: #5a4a2c;
+	}
+	.dark .vline.dead {
+		border-left-color: #3a4a5c;
+	}
+	.dark .badge {
+		border-color: #1b2533;
+		color: #1b2533;
+	}
+	.dark .home {
+		border-color: #2c3746;
+		background: #1b2533;
+	}
+	.dark .hname {
+		color: #e0dcd4;
+	}
+	.dark .wifi {
+		background: #1a2d4a;
+		border-color: #2c4a6e;
+		color: #7daae0;
+	}
+	.dark .alabel {
+		color: #97a3ae;
+	}
+	.dark .lanrail {
+		background: #2c3746;
+	}
+	.dark .lanpkt {
+		border-color: #1b2533;
+	}
+	.dark .lanlabel {
+		color: #6b7885;
+	}
+	.dark .ipchip {
+		border-color: #2c3746;
+		background: #1b2533;
+		color: #97a3ae;
+	}
+	.dark .ipchip.flash {
+		border-color: #5a2a2a;
+		background: #2a1a1a;
+		color: #e06050;
+	}
+	.dark .note {
+		color: #97a3ae;
+	}
+	.dark .prob {
+		border-color: #2c3746;
+		background: #1b2533;
+		color: #e0dcd4;
+	}
+	.dark .prob:hover {
+		border-color: #e0dcd4;
+	}
+	.dark .prob.on {
+		background: #e0dcd4;
+		border-color: #e0dcd4;
+		color: #1b2533;
+	}
+	.dark .ghost {
+		color: #97a3ae;
+	}
+	.dark .ghost:hover {
+		color: #e0dcd4;
 	}
 </style>

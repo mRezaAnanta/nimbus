@@ -2,6 +2,7 @@
 	import { onDestroy } from 'svelte';
 	import { SvelteSet } from 'svelte/reactivity';
 	import type { LessonText, PortText } from '$lib/chapters/types';
+	import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -9,6 +10,8 @@
 		onstate
 	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as PortText);
+
+	let dark = $derived($theme === 'dark');
 
 	let active = $state('');
 	const viewed = new SvelteSet<string>();
@@ -31,7 +34,7 @@
 	onDestroy(() => clearTimeout(summaryTimer));
 </script>
 
-<div class="wrap">
+<div class="wrap" class:dark>
 	<div class="addr">
 		<span class="alabel">{tx.addrLabel}</span>
 		<span class="achip">{tx.address}</span>
@@ -232,5 +235,48 @@
 			font-size: 14px;
 			max-width: 400px;
 		}
+	}
+	.dark .alabel {
+		color: #6b7885;
+	}
+	.dark .achip {
+		border-color: #2c4a6e;
+		background: #1a2d4a;
+		color: #7daae0;
+	}
+	.dark .building {
+		border-color: #2c3746;
+		background: linear-gradient(#1b2533, #141c2a);
+	}
+	.dark .facade span {
+		background: #2c3746;
+		border-color: #3a4a5c;
+	}
+	.dark .leaf {
+		border-color: #3a4a5c;
+		background: #2c3746;
+	}
+	.dark .door.open .leaf {
+		border-color: #3a5a8e;
+		background: #1a2d4a;
+	}
+	.dark .knob {
+		background: #6b7885;
+	}
+	.dark .svc {
+		color: #7daae0;
+	}
+	.dark .pnum {
+		color: #97a3ae;
+	}
+	.dark .door.open .pnum {
+		color: #e0dcd4;
+	}
+	.dark .desc {
+		color: #97a3ae;
+	}
+	.dark .dport {
+		background: #2a3748;
+		color: #e0dcd4;
 	}
 </style>

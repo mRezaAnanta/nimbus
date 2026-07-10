@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { SvelteSet } from 'svelte/reactivity';
+	import { theme } from '$lib/theme.svelte';
+	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { IamText } from '$lib/chapters/networking/types';
+
+	let dark = $derived($theme === 'dark');
 
 	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
 		$props();
@@ -29,7 +33,7 @@
 	const note = $derived(badge === 'admin' ? tx.noteAdmin : badge === 'scoped' ? tx.noteScoped : tx.noteIdle);
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
 	<div class="scene">
 		<!-- Budi and whatever card he is holding -->
 		<div class="who">
@@ -79,12 +83,20 @@
 	<p class="note">{note}</p>
 
 	<div class="acts">
-		<button type="button" class="pick" class:on={badge === 'admin'} class:dim={tried.has('admin')} onclick={() => wear('admin')}>
-			<b>{tx.badgeAdmin}</b><span>{tx.badgeAdminSub}</span>
-		</button>
-		<button type="button" class="pick" class:on={badge === 'scoped'} class:dim={tried.has('scoped')} onclick={() => wear('scoped')}>
-			<b>{tx.badgeScoped}</b><span>{tx.badgeScopedSub}</span>
-		</button>
+		<div class="pick" class:on={badge === 'admin'} class:dim={tried.has('admin')}>
+			<CallToActionButton onclick={() => wear('admin')}>
+				{#snippet children()}
+					<b>{tx.badgeAdmin}</b><span>{tx.badgeAdminSub}</span>
+				{/snippet}
+			</CallToActionButton>
+		</div>
+		<div class="pick" class:on={badge === 'scoped'} class:dim={tried.has('scoped')}>
+			<CallToActionButton onclick={() => wear('scoped')}>
+				{#snippet children()}
+					<b>{tx.badgeScoped}</b><span>{tx.badgeScopedSub}</span>
+				{/snippet}
+			</CallToActionButton>
+		</div>
 	</div>
 </div>
 
@@ -217,6 +229,9 @@
 	}
 	.pick {
 		position: relative;
+	}
+	.pick :global(.cta) {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -226,21 +241,19 @@
 		background: #fff;
 		padding: 9px 16px;
 		line-height: 1.2;
-		transition: all 0.2s ease;
-		animation: pulse 1.8s ease-in-out infinite;
-	}
-	.pick b {
 		font-size: 12.5px;
 		font-weight: 800;
 		color: #16212b;
+		box-shadow: none;
+		animation: pulse 1.8s ease-in-out infinite;
 	}
-	.pick span {
+	.pick :global(.cta span) {
 		font-size: 8.5px;
 		font-weight: 600;
 		color: #8a949d;
 		white-space: nowrap;
 	}
-	.pick.dim {
+	.pick.dim :global(.cta) {
 		animation: none;
 	}
 	.pick.dim:not(.on)::after {
@@ -251,18 +264,20 @@
 		color: #3a9c64;
 		font-size: 10px;
 		font-weight: 800;
+		z-index: 1;
 	}
-	.pick.on {
+	.pick.on :global(.cta) {
 		border-color: #16212b;
 		background: #16212b;
 		animation: none;
 	}
-	.pick.on b,
-	.pick.on span {
+	.pick.on :global(.cta),
+	.pick.on :global(.cta span) {
 		color: #fff;
 	}
-	.pick:hover:not(.on) {
+	.pick :global(.cta:enabled:hover) {
 		border-color: #16212b;
+		filter: none;
 	}
 	@keyframes pulse {
 		0%,
@@ -273,8 +288,69 @@
 			box-shadow: 0 0 0 4px rgba(46, 111, 224, 0.14);
 		}
 	}
+	.dark .avatar {
+		border-color: var(--color-line);
+		background: var(--color-card);
+		box-shadow: none;
+	}
+	.dark .avatar svg circle,
+	.dark .avatar svg path {
+		fill: var(--color-ink);
+	}
+	.dark .alabel {
+		color: var(--color-muted);
+	}
+	.dark .door {
+		border-color: var(--color-line);
+		background: var(--color-card);
+	}
+	.dark .door b {
+		color: var(--color-ink);
+	}
+	.dark .door.open {
+		border-color: color-mix(in srgb, var(--color-grass) 25%, transparent);
+		background: color-mix(in srgb, var(--color-grass) 10%, transparent);
+	}
+	.dark .door.shut {
+		background: var(--color-paper);
+	}
+	.dark .dicon svg rect,
+	.dark .dicon svg path {
+		stroke: var(--color-faint);
+	}
+	.dark .door.open .dicon svg rect,
+	.dark .door.open .dicon svg path {
+		stroke: var(--color-grass);
+	}
+	.dark .dstat {
+		background: var(--color-paper);
+		color: var(--color-faint);
+	}
+	.dark .note {
+		color: var(--color-muted);
+	}
+	.dark .pick :global(.cta) {
+		border-color: var(--color-line);
+		background: var(--color-card);
+		color: var(--color-ink);
+	}
+	.dark .pick :global(.cta span) {
+		color: var(--color-faint);
+	}
+	.dark .pick.on :global(.cta) {
+		border-color: var(--color-brand);
+		background: var(--color-brand);
+	}
+	.dark .pick.on :global(.cta),
+	.dark .pick.on :global(.cta span) {
+		color: #fff;
+	}
+	.dark .pick :global(.cta:enabled:hover) {
+		border-color: var(--color-ink);
+	}
+
 	@media (prefers-reduced-motion: reduce) {
-		.pick,
+		.pick :global(.cta),
 		.card,
 		.dstat {
 			animation-duration: 0.01s;
@@ -312,13 +388,10 @@
 			font-size: 14px;
 			max-width: 460px;
 		}
-		.pick {
+		.pick :global(.cta) {
 			padding: 11px 22px;
 		}
-		.pick b {
-			font-size: 14.5px;
-		}
-		.pick span {
+		.pick :global(.cta span) {
 			font-size: 10px;
 		}
 	}

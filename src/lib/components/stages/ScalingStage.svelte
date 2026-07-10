@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { SvelteSet } from 'svelte/reactivity';
-	import type { LessonText } from '$lib/chapters/types';
-	import type { ScalingText } from '$lib/chapters/traffic/types';
+import type { LessonText } from '$lib/chapters/types';
+import type { ScalingText } from '$lib/chapters/traffic/types';
+import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -14,6 +15,7 @@
 		onstate?: (s: string) => void;
 	} = $props();
 	const tx = $derived(text as ScalingText);
+	let dark = $derived($theme === 'dark');
 
 	// One shared crowd feeds both columns, so the two strategies face the same traffic.
 	const LEVELS = [150, 450, 800];
@@ -138,7 +140,7 @@
 	</svg>
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-3 md:gap-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-3 md:gap-4" class:dark>
 	<!-- guidance + the shared crowd both columns must survive -->
 	<p class="prompt">{prompt}</p>
 	<div class="traffic">
@@ -749,6 +751,81 @@
 		50% {
 			box-shadow: 0 0 0 4px rgba(46, 111, 224, 0.16);
 		}
+	}
+
+	/* ---- Dark mode ---- */
+	.dark .prompt {
+		color: var(--color-muted);
+	}
+	.dark .tlabel {
+		color: var(--color-muted);
+	}
+	.dark .seg {
+		background: var(--color-card);
+		border-color: var(--color-line);
+	}
+	.dark .tbtn b {
+		color: var(--color-ink);
+	}
+	.dark .tbtn span {
+		color: var(--color-faint);
+	}
+	.dark .tbtn.on {
+		background: var(--btn-primary);
+	}
+	.dark .card {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	.dark header h3 {
+		color: var(--color-ink);
+	}
+	.dark header p {
+		color: var(--color-faint);
+	}
+	.dark .ic {
+		background: color-mix(in srgb, var(--a) 20%, var(--color-card));
+	}
+	.dark .scene {
+		background: #1e2835;
+	}
+	.dark .rail {
+		stroke: var(--color-line);
+	}
+	.dark .balmini {
+		background: var(--color-card);
+		border-color: #3a5a80;
+		color: var(--color-brand);
+	}
+	.dark .machine {
+		background: color-mix(in srgb, var(--c) 20%, var(--color-card));
+	}
+	.dark .downmask {
+		background: rgba(27, 37, 51, 0.92);
+		color: var(--color-danger);
+	}
+	.dark .hmachine {
+		background: color-mix(in srgb, var(--c) 20%, var(--color-card));
+	}
+	.dark .chips span {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		color: var(--color-muted);
+	}
+	.dark .cap {
+		color: var(--color-grass);
+	}
+	.dark .status {
+		color: var(--color-grass);
+	}
+	.dark .status.bad {
+		color: var(--color-danger);
+	}
+	.dark .act-line {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		color: var(--color-ink);
 	}
 
 	@media (prefers-reduced-motion: reduce) {

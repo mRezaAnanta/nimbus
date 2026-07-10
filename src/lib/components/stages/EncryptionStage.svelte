@@ -2,7 +2,12 @@
 	import { onDestroy } from 'svelte';
 	import { SvelteSet } from 'svelte/reactivity';
 	import Browser from '../Browser.svelte';
+	import Server from '$lib/components/Server.svelte';
+	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
+	import { theme } from '$lib/theme.svelte';
 	import type { LessonText } from '$lib/chapters/types';
+
+	let dark = $derived($theme === 'dark');
 	import type { EncryptionText } from '$lib/chapters/networking/types';
 
 	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
@@ -41,7 +46,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
 	<div class="scene">
 		<!-- you -->
 		<div class="actor">
@@ -81,9 +86,8 @@
 
 		<!-- the server holding the key -->
 		<div class="actor">
-			<div class="srv" class:got={landed}>
-				<div class="slot"><span class="dot"></span></div>
-				<div class="slot"><span class="dot"></span></div>
+			<div class="srvwrap" class:got={landed}>
+				<Server slots={2} active={landed} />
 				{#if landed}
 					<span class="opened" class:safe={mode === 'locked'}>{tx.message}</span>
 				{/if}
@@ -101,8 +105,16 @@
 	<p class="note">{note}</p>
 
 	<div class="acts">
-		<button type="button" class="line" class:dim={tried.has('plain')} onclick={() => send('plain')} disabled={mode !== '' && !landed}>{tx.sendPlain}</button>
-		<button type="button" class="cta" class:dim={tried.has('locked')} onclick={() => send('locked')} disabled={mode !== '' && !landed}>{tx.sendLocked}</button>
+		<div class="btn-wrap" class:tried={tried.has('plain')}>
+			<CallToActionButton onclick={() => send('plain')} disabled={mode !== '' && !landed}>
+				{#snippet children()}{tx.sendPlain}{/snippet}
+			</CallToActionButton>
+		</div>
+		<div class="btn-wrap" class:tried={tried.has('locked')}>
+			<CallToActionButton onclick={() => send('locked')} disabled={mode !== '' && !landed}>
+				{#snippet children()}{tx.sendLocked}{/snippet}
+			</CallToActionButton>
+		</div>
 	</div>
 </div>
 
@@ -244,36 +256,25 @@
 			opacity: 1;
 		}
 	}
-	.srv {
-		position: relative;
+	.srvwrap {
 		display: flex;
-		width: 70px;
 		flex-direction: column;
-		gap: 4px;
-		border-radius: 10px;
-		border: 1.5px solid #e8e2d8;
-		background: #fff;
-		padding: 7px;
-		box-shadow: 0 6px 14px rgba(22, 40, 60, 0.07);
-		transition: border-color 0.3s ease;
-	}
-	.srv.got {
-		border-color: #3a9c64;
-	}
-	.slot {
-		display: flex;
-		height: 9px;
 		align-items: center;
-		border-radius: 3px;
-		border: 1px solid #ece6dc;
-		background: #f4f1ea;
-		padding: 0 4px;
 	}
-	.dot {
-		width: 4px;
-		height: 4px;
-		border-radius: 50%;
-		background: #3a9c64;
+	.srvwrap.got :global(.server) {
+		border-color: var(--color-grass);
+		border-width: 1.5px;
+	}
+	.srvwrap :global(.server) {
+		width: 70px;
+		padding: 7px;
+		border-radius: 10px;
+		gap: 4px;
+		border-width: 1.5px;
+	}
+	.srvwrap :global(.server .slot) {
+		height: 9px;
+		border-radius: 3px;
 	}
 	.opened {
 		border-radius: 6px;
@@ -298,45 +299,52 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
-		gap: 8px;
+		gap: 16px;
 	}
-	.cta {
-		border-radius: 12px;
-		background: #16212b;
-		color: #fff;
-		padding: 11px 18px;
-		font-size: 13px;
-		font-weight: 600;
-		box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		transition: filter 0.2s ease;
+	.btn-wrap {
+		position: relative;
 	}
-	.cta:enabled:hover {
-		filter: brightness(1.18);
-	}
-	.line {
-		border-radius: 12px;
-		border: 1px solid #e8e2d8;
-		background: #fff;
-		color: #16212b;
-		padding: 10px 16px;
-		font-size: 13px;
-		font-weight: 600;
-		transition: border-color 0.2s ease;
-	}
-	.line:enabled:hover {
-		border-color: #16212b;
-	}
-	.cta:disabled,
-	.line:disabled {
-		opacity: 0.55;
-	}
-	.dim::after {
+	.btn-wrap.tried :global(.cta)::after {
 		content: ' ✓';
-		color: #3a9c64;
-	}
-	.cta.dim::after {
 		color: #8fd6ae;
 	}
+
+	.dark .alabel {
+		color: var(--color-muted);
+	}
+	.dark .wire {
+		border-color: var(--color-line);
+	}
+	.dark .snoop svg circle,
+	.dark .snoop svg path {
+		fill: var(--color-faint);
+	}
+	.dark .slabel {
+		color: var(--color-faint);
+	}
+	.dark .stag {
+		background: var(--color-paper);
+		color: var(--color-muted);
+	}
+	.dark .msg {
+		background: var(--color-card);
+		border-color: var(--color-danger);
+		color: var(--color-danger);
+	}
+	.dark .msg.lockedm {
+		background: var(--color-brand);
+		border-color: var(--color-brand);
+		color: #fff;
+	}
+	.dark .opened {
+		background: color-mix(in srgb, var(--color-grass) 10%, transparent);
+		border-color: color-mix(in srgb, var(--color-grass) 25%, transparent);
+		color: var(--color-grass);
+	}
+	.dark .note {
+		color: var(--color-muted);
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.msg,
 		.stag,
@@ -365,7 +373,7 @@
 		.slabel {
 			font-size: 10.5px;
 		}
-		.srv {
+		.srvwrap :global(.server) {
 			width: 92px;
 		}
 		.opened {
@@ -377,11 +385,6 @@
 		.note {
 			font-size: 14px;
 			max-width: 460px;
-		}
-		.cta,
-		.line {
-			font-size: 14px;
-			padding: 12px 22px;
 		}
 	}
 </style>

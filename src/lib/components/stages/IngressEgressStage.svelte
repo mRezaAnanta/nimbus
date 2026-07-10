@@ -3,6 +3,7 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { IngressEgressText } from '$lib/chapters/trafficflow/types';
+	import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -10,6 +11,7 @@
 		onstate
 	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as IngressEgressText);
+	let dark = $derived($theme === 'dark');
 
 	const STEP = 0.3; // dollars added to the bill per egress burst
 
@@ -41,7 +43,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="wrap">
+<div class="wrap" class:dark>
 	<div class="bill" class:bump>
 		<span class="bcap">{tx.billLabel}</span>
 		<span class="bamt">${bill.toFixed(2)}</span>
@@ -343,6 +345,67 @@
 			transition: none;
 		}
 	}
+	/* ---- Dark mode ---- */
+	.dark .bill {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	.dark .bill.bump {
+		border-color: #3d3522;
+	}
+	.dark .bcap {
+		color: var(--color-faint);
+	}
+	.dark .bamt {
+		color: var(--color-ink);
+	}
+	.dark .bill.bump .bamt {
+		color: var(--color-amber);
+	}
+	.dark .vic,
+	.dark .dc {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	.dark .vic svg circle,
+	.dark .vic svg path {
+		fill: var(--color-muted);
+	}
+	.dark .dc svg path[fill="#eaf1fc"] {
+		fill: var(--color-brand-soft);
+	}
+	.dark .alabel {
+		color: var(--color-muted);
+	}
+	.dark .lane::before {
+		border-top-color: var(--color-line);
+	}
+	.dark .tag {
+		background: var(--color-grass-soft);
+		color: var(--color-grass);
+	}
+	.dark .tag.billed {
+		background: var(--color-amber-soft);
+		color: var(--color-amber);
+	}
+	.dark .photo {
+		filter: none;
+	}
+	.dark .cta {
+		background: var(--btn-primary);
+		box-shadow: none;
+	}
+	.dark .line {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		color: var(--color-ink);
+	}
+	.dark .line:hover {
+		border-color: var(--color-ink);
+	}
+
 	@media (min-width: 768px) {
 		.wrap {
 			width: 440px;

@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { SvelteSet } from 'svelte/reactivity';
+	import { theme } from '$lib/theme.svelte';
+	import Server from '$lib/components/Server.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { FirewallText } from '$lib/chapters/networking/types';
+
+	let dark = $derived($theme === 'dark');
 
 	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
 		$props();
@@ -58,7 +62,7 @@
 	</svg>
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
 	<div class="scene">
 		<!-- the guest list the guard holds -->
 		<div class="rules">
@@ -114,11 +118,7 @@
 
 			<!-- the server safe behind the wall -->
 			<div class="srvwrap" class:got={verdict === 'allow'}>
-				<div class="srv">
-					<div class="slot"><span class="dot"></span></div>
-					<div class="slot"><span class="dot"></span></div>
-					<div class="slot"><span class="dot"></span></div>
-				</div>
+				<Server active={verdict === 'allow'} />
 				<span class="alabel">{tx.serverLabel}</span>
 			</div>
 		</div>
@@ -383,35 +383,17 @@
 		gap: 4px;
 		transition: transform 0.3s ease;
 	}
-	.srvwrap.got .srv {
-		border-color: #3a9c64;
+	.srvwrap.got :global(.server) {
+		border-color: var(--color-grass);
 	}
-	.srv {
-		display: flex;
+	.srvwrap :global(.server) {
 		width: 58px;
-		flex-direction: column;
-		gap: 4px;
-		border-radius: 10px;
-		border: 1.5px solid #e8e2d8;
-		background: #fff;
 		padding: 7px;
-		box-shadow: 0 6px 14px rgba(22, 40, 60, 0.07);
-		transition: border-color 0.3s ease;
+		border-radius: 10px;
+		border-width: 1.5px;
 	}
-	.slot {
-		display: flex;
+	.srvwrap :global(.server .slot) {
 		height: 9px;
-		align-items: center;
-		border-radius: 3px;
-		border: 1px solid #ece6dc;
-		background: #f4f1ea;
-		padding: 0 4px;
-	}
-	.dot {
-		width: 4px;
-		height: 4px;
-		border-radius: 50%;
-		background: #3a9c64;
 	}
 	.alabel {
 		font-size: 10px;
@@ -468,6 +450,64 @@
 		color: #3a9c64;
 	}
 
+	.dark .rules {
+		border-color: var(--color-line);
+		background: var(--color-card);
+		box-shadow: none;
+	}
+	.dark .rules b {
+		color: var(--color-faint);
+	}
+	.dark .r.ok {
+		color: var(--color-grass);
+	}
+	.dark .r.no {
+		color: var(--color-danger);
+	}
+	.dark .ruletail {
+		background: var(--color-card);
+		border-right-color: var(--color-line);
+		border-bottom-color: var(--color-line);
+	}
+	.dark .ground {
+		border-color: var(--color-line);
+	}
+	.dark .brickcol i {
+		background: color-mix(in srgb, var(--color-brand) 25%, transparent);
+		border-color: color-mix(in srgb, var(--color-brand) 35%, transparent);
+	}
+	.dark .gatehole {
+		background: var(--color-card);
+		border-color: color-mix(in srgb, var(--color-brand) 25%, transparent);
+	}
+	.dark .gatehole svg path {
+		fill: var(--color-brand-soft);
+	}
+	.dark .wlabel b {
+		color: var(--color-brand);
+	}
+	.dark .wlabel span {
+		color: var(--color-faint);
+	}
+	.dark .alabel {
+		color: var(--color-muted);
+	}
+	.dark .note {
+		color: var(--color-muted);
+	}
+	.dark .cta {
+		background: var(--color-brand);
+		box-shadow: none;
+	}
+	.dark .line {
+		border-color: var(--color-line);
+		background: var(--color-card);
+		color: var(--color-ink);
+	}
+	.dark .line:enabled:hover {
+		border-color: var(--color-ink);
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.walker,
 		.vtag,
@@ -522,10 +562,10 @@
 		.srvwrap {
 			top: 32px;
 		}
-		.srv {
+		.srvwrap :global(.server) {
 			width: 72px;
 		}
-		.slot {
+		.srvwrap :global(.server .slot) {
 			height: 11px;
 		}
 		.alabel {

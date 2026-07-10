@@ -33,7 +33,7 @@
 	type="button"
 	onclick={() => (menuOpen = true)}
 	aria-label={$t.lessons}
-	class="flex h-9 w-9 items-center justify-center rounded-full border border-line bg-white/70 text-ink backdrop-blur transition-colors hover:bg-white"
+	class="header-btn flex h-9 w-9 items-center justify-center rounded-full border border-line text-ink backdrop-blur transition-colors"
 >
 	<svg
 		width="17"
@@ -70,7 +70,7 @@
 					type="button"
 					onclick={() => (menuOpen = false)}
 					aria-label="Close"
-					class="-mr-1 flex h-8 w-8 items-center justify-center rounded-full text-faint transition-colors hover:bg-white hover:text-ink"
+					class="-mr-1 flex h-8 w-8 items-center justify-center rounded-full text-faint transition-colors header-btn hover:text-ink"
 				>
 					<svg
 						width="16"
@@ -222,3 +222,12 @@
 		</nav>
 	</aside>
 {/if}
+
+<style>
+	.header-btn {
+		background: var(--header-btn-bg);
+	}
+	.header-btn:hover {
+		background: var(--header-btn-hover);
+	}
+</style>

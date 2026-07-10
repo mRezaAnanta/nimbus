@@ -2,6 +2,8 @@
 	import { onDestroy } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
 	import type { LessonText, ApiStyleText } from '$lib/chapters/types';
+	import { theme } from '$lib/theme.svelte';
+	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 
 	let {
 		text,
@@ -16,6 +18,8 @@
 	} = $props();
 	const tx = $derived(text as ApiStyleText);
 	const style = $derived(tx.style);
+
+	let dark = $derived($theme === 'dark');
 
 	type Kind = 'get' | 'post' | 'put' | 'delete' | 'graphql' | 'grpc' | 'webhook' | 'data';
 	type Chip = { label: string; body?: string; kind: Kind; dir: 'out' | 'back' };
@@ -179,7 +183,7 @@
 	onDestroy(reset);
 </script>
 
-<div class="ak">
+<div class="ak" class:dark>
 	<div class="frame">
 		<!-- client: a phone -->
 		<div class="side">
@@ -240,7 +244,7 @@
 	</div>
 
 	{#if isAnimBeat}
-		<button class="replay" disabled={running} onclick={() => runBeat(beat)}>{tx.replayBtn}</button>
+		<CallToActionButton disabled={running} onclick={() => runBeat(beat)}>{tx.replayBtn}</CallToActionButton>
 	{/if}
 </div>
 
@@ -588,29 +592,6 @@
 		}
 	}
 
-	.replay {
-		border-radius: 11px;
-		border: 1px solid #d7e0ea;
-		background: #fff;
-		padding: 9px 20px;
-		font-size: 12.5px;
-		font-weight: 800;
-		color: #2e6fe0;
-		transition:
-			border-color 0.15s,
-			opacity 0.15s,
-			transform 0.08s;
-	}
-	.replay:enabled:hover {
-		border-color: #9cc0f3;
-	}
-	.replay:enabled:active {
-		transform: translateY(1px);
-	}
-	.replay:disabled {
-		opacity: 0.45;
-	}
-
 	@media (prefers-reduced-motion: reduce) {
 		.wd {
 			animation: none;
@@ -627,5 +608,83 @@
 		.l2 {
 			font-size: 9px;
 		}
+	}
+	.dark .slabel {
+		color: #97a3ae;
+	}
+	.dark .phone {
+		border-color: #2c3746;
+		background: #1b2533;
+	}
+	.dark .notch {
+		background: #2c3746;
+	}
+	.dark .screen {
+		background: linear-gradient(#141c2a, #121a24);
+	}
+	.dark .empty {
+		color: #6b7885;
+	}
+	.dark .row {
+		border-color: #2c3746;
+		background: #1b2533;
+	}
+	.dark .row.note {
+		border-color: #2a4a38;
+		background: #142a1e;
+	}
+	.dark .thumb {
+		background: linear-gradient(135deg, #1a2d4a, #1a365e);
+	}
+	.dark .row.note .thumb {
+		background: linear-gradient(135deg, #2a4a38, #1a3a2a);
+	}
+	.dark .bell {
+		color: #5bb87e;
+	}
+	.dark .price {
+		color: #7daae0;
+	}
+	.dark .row.note .price {
+		color: #5bb87e;
+	}
+	.dark .bubble.in {
+		background: #1a2d4a;
+	}
+	.dark .bubble.out {
+		background: #2a2050;
+	}
+	.dark .server {
+		border-color: #2c3746;
+		background: #1b2533;
+	}
+	.dark .server.hit {
+		border-color: #3a5a8e;
+	}
+	.dark .rack i {
+		background: #2c3746;
+	}
+	.dark .server.hit .rack i {
+		background: #5a8fd4;
+	}
+	.dark .wireline {
+		background: repeating-linear-gradient(90deg, #3a4a5c 0 6px, transparent 6px 11px);
+	}
+	.dark .wireline.ws {
+		background: linear-gradient(90deg, #1a1540, #2a1a50);
+		box-shadow: inset 0 0 0 1px #3a2a60;
+	}
+	.dark .chip.data {
+		background: #1b2533;
+		color: #5bb87e;
+		border-color: #2a4a38;
+	}
+	.dark .replay {
+		border-color: #2c3746;
+		background: #1b2533;
+		color: #7daae0;
+	}
+	.dark .replay:enabled:hover {
+		border-color: #4a7ab8;
 	}
 </style>

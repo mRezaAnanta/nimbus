@@ -2,6 +2,7 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { DatabaseText } from '$lib/chapters/resilience/types';
+	import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -13,6 +14,7 @@
 		onstate?: (s: string) => void;
 	} = $props();
 	const tx = $derived(text as DatabaseText);
+	let dark = $derived($theme === 'dark');
 
 	let extraCount = $state(0);
 	let docCount = $state(1);
@@ -43,7 +45,7 @@
 	const DOCC = ['#2e6fe0', '#3a9c64', '#dd9e36'];
 </script>
 
-<div class="flex h-full w-full items-center justify-center">
+<div class="flex h-full w-full items-center justify-center" class:dark>
 	<div class="grid w-full max-w-[680px] grid-cols-2 gap-3 md:gap-5">
 		<!-- SQL, the strict table -->
 		<section class="card">
@@ -353,6 +355,69 @@
 			animation-duration: 0.01s;
 		}
 	}
+	/* ---- Dark mode ---- */
+	.dark .card {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	.dark .ic {
+		background: color-mix(in srgb, var(--a) 20%, var(--color-card));
+	}
+	.dark header h3 {
+		color: var(--color-ink);
+	}
+	.dark header p {
+		color: var(--color-faint);
+	}
+	.dark .demo {
+		background: #1e2835;
+	}
+	.dark .tbl {
+		background: var(--color-card);
+		border-color: #3a5a80;
+	}
+	.dark .tname {
+		background: var(--color-brand-soft);
+	}
+	.dark .trow {
+		border-top-color: var(--color-line);
+	}
+	.dark .trow span {
+		color: var(--color-muted);
+		border-left-color: var(--color-line);
+	}
+	.dark .trow.head span {
+		background: var(--color-brand-soft);
+	}
+	.dark .trow.fresh span {
+		background: var(--color-grass-soft);
+	}
+	.dark .doc {
+		background: color-mix(in srgb, var(--a) 10%, var(--color-card));
+	}
+	.dark .dfield i {
+		color: var(--color-muted);
+	}
+	.dark .dfield em {
+		background: color-mix(in srgb, var(--a) 30%, var(--color-card));
+	}
+	.dark .snote {
+		color: var(--color-faint);
+	}
+	.dark .wtitle {
+		color: var(--color-ink);
+	}
+	.dark .wchip.blue {
+		background: var(--color-brand-soft);
+		border-color: #3a5a80;
+	}
+	.dark .wchip.green {
+		background: var(--color-grass-soft);
+		border-color: #1f3d28;
+		color: var(--color-grass);
+	}
+
 	@media (min-width: 768px) {
 		.card {
 			gap: 12px;

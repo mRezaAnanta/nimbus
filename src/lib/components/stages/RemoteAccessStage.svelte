@@ -3,6 +3,7 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import Terminal from '../Terminal.svelte';
 	import type { LessonText, RemoteAccessText } from '$lib/chapters/types';
+	import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -10,6 +11,8 @@
 		onstate
 	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as RemoteAccessText);
+
+	let dark = $derived($theme === 'dark');
 
 	let view = $state<'' | 'ssh' | 'rdp'>('');
 	let connecting = $state(false);
@@ -93,7 +96,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="wrap">
+<div class="wrap" class:dark>
 	<!-- the faraway server, in a data center -->
 	<div class="dc" class:live={connected}>
 		<span class="rack"><i></i><i></i><i></i></span>
@@ -641,5 +644,134 @@
 			font-size: 14px;
 			padding: 12px 22px;
 		}
+	}
+
+	/* ---- Dark mode ---- */
+	.dark .dc {
+		border-color: #2c3746;
+		background: #1b2533;
+		box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+	}
+	.dark .dc.live {
+		border-color: #3a9c64;
+	}
+	.dark .rack i {
+		background: #2c3746;
+	}
+	.dark .dc.live .rack i {
+		background: #3a9c64;
+	}
+	.dark .dctext {
+		color: #e0dcd4;
+	}
+	.dark .dcsub {
+		color: #6b7885;
+	}
+	.dark .link {
+		border-color: #3a4a5c;
+	}
+	.dark .link.flow {
+		border-color: #2e6fe0;
+	}
+	.dark .screen {
+		background: #0f1720;
+	}
+	.dark .screen.lit {
+		background: #141c28;
+	}
+	.dark .locked {
+		color: #6b7885;
+	}
+	.dark .conn {
+		color: #6b7885;
+	}
+	.dark .spin {
+		border-color: rgba(255, 255, 255, 0.12);
+		border-top-color: #6fd39a;
+	}
+	.dark .dwin {
+		background: #1b2533;
+		box-shadow: 0 12px 26px rgba(0, 0, 0, 0.4);
+	}
+	.dark .dwbar {
+		background: #141c2a;
+		border-bottom-color: #2c3746;
+	}
+	.dark .dwtitle {
+		color: #e0dcd4;
+	}
+	.dark .dwctrls i,
+	.dark .dwctrls b {
+		background: #6b7885;
+	}
+	.dark .dwctrls i:nth-child(2) {
+		background: none;
+		border-color: #6b7885;
+	}
+	.dark .dwside {
+		background: #121a24;
+		border-right-color: #2c3746;
+	}
+	.dark .dwside span {
+		background: #2c3746;
+	}
+	.dark .dwside span:first-child {
+		background: #1a2d4a;
+	}
+	.dark .dwl {
+		background: #2c3746;
+	}
+	.dark .dwl.s {
+		background: #1a2d4a;
+	}
+	.dark .dwfiles i {
+		background: linear-gradient(160deg, #8a6a20, #7a5a18);
+		box-shadow: inset 0 4px 0 #a08030;
+	}
+	.dark .rhint {
+		color: #97a3ae;
+		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+	}
+	.dark .taskbar {
+		background: rgba(14, 22, 33, 0.72);
+		border-top-color: rgba(255, 255, 255, 0.08);
+	}
+	.dark .tsearch {
+		background: #1b2533;
+		border-color: #2c3746;
+	}
+	.dark .tapp {
+		background: #2c3746;
+	}
+	.dark .tclock {
+		color: #e0dcd4;
+	}
+	.dark .tclock small {
+		color: #97a3ae;
+	}
+	.dark .neck {
+		background: linear-gradient(#141c28, #0f1720);
+	}
+	.dark .base {
+		background: #0f1720;
+	}
+	.dark .hlabel {
+		color: #6b7885;
+	}
+	.dark .cta {
+		background: #2a3748;
+		color: #e0dcd4;
+		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+	}
+	.dark .line {
+		border-color: #2c3746;
+		background: #1b2533;
+		color: #e0dcd4;
+	}
+	.dark .line:enabled:hover {
+		border-color: #e0dcd4;
+	}
+	.dark .cta.dim::after {
+		color: #5bb87e;
 	}
 </style>

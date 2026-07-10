@@ -4,8 +4,10 @@
 	import { cubicOut } from 'svelte/easing';
 	import { geoDistance, geoInterpolate } from 'd3-geo';
 	import Browser from '../Browser.svelte';
-	import WorldMap from '../WorldMap.svelte';
+	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
+  import WorldMap from '../WorldMap.svelte';
 	import Globe from '../Globe.svelte';
+import LocationComparisonCard from '../LocationComparisonCard.svelte';
 	import type { GlobeView } from '../Globe.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { CdnText } from '$lib/chapters/traffic/types';
@@ -255,27 +257,6 @@
 {/snippet}
 
 <!-- progress: the learner must compare a load without the CDN and one with it -->
-{#snippet stepChip(label: string, done: boolean)}
-	<span
-		class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold backdrop-blur transition-colors {done
-			? 'border-transparent bg-grass-soft text-grass'
-			: 'border-line bg-white/85 text-faint'}"
-	>
-		{#if done}
-			<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>
-		{:else}
-			<span class="h-1.5 w-1.5 rounded-full border border-current opacity-60"></span>
-		{/if}
-		{label}
-	</span>
-{/snippet}
-
-{#snippet compareChips()}
-	<div class="flex items-center justify-center gap-1.5">
-		{@render stepChip(tx.compare.off, sawOrigin)}
-		{@render stepChip(tx.compare.on, sawEdge)}
-	</div>
-{/snippet}
 
 <!-- small screens: a draggable globe with the CDN switch floating below -->
 <div class="h-full w-full md:hidden">
@@ -287,22 +268,29 @@
 		<Globe overlay={cdnOverlay} />
 		{#if !compareDone}
 			<div class="pointer-events-none absolute top-12 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1">
-				{@render compareChips()}
+				<div class="flex items-center justify-center gap-1.5">
+					<span class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold backdrop-blur transition-colors {sawOrigin ? 'border-transparent bg-grass-soft text-grass' : 'border-line bg-white/85 text-faint'}">{#if sawOrigin}<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>{:else}<span class="h-1.5 w-1.5 rounded-full border border-current opacity-60"></span>{/if}{tx.compare.off}</span>
+					<span class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold backdrop-blur transition-colors {sawEdge ? 'border-transparent bg-grass-soft text-grass' : 'border-line bg-white/85 text-faint'}">{#if sawEdge}<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>{:else}<span class="h-1.5 w-1.5 rounded-full border border-current opacity-60"></span>{/if}{tx.compare.on}</span>
+				</div>
 				{#if !selected}
 					<span class="border-line text-muted rounded-full border bg-white/85 px-2.5 py-0.5 text-[10px] font-medium backdrop-blur">{tx.compare.hint}</span>
 				{/if}
 			</div>
 		{/if}
 		<div class="pointer-events-none absolute inset-x-0 bottom-3 z-10 flex justify-center">
-			<button
-				type="button"
-				onclick={toggle}
-				class="pointer-events-auto rounded-xl px-6 py-2.5 text-sm font-semibold transition-all hover:brightness-110 {cdnOn
-					? 'border border-line bg-white text-ink'
-					: 'bg-ink text-white cta'}"
-			>
-				{cdnOn ? tx.cdnOff : tx.cdnOn}
-			</button>
+			{#if !cdnOn}
+				<div class="pointer-events-auto">
+					<CallToActionButton onclick={toggle}>{tx.cdnOn}</CallToActionButton>
+				</div>
+			{:else}
+				<button
+					type="button"
+					onclick={toggle}
+					class="pointer-events-auto rounded-xl border border-line bg-card px-6 py-2.5 text-sm font-semibold text-ink transition-all hover:brightness-110"
+				>
+					{tx.cdnOff}
+				</button>
+			{/if}
 		</div>
 	</div>
 </div>
@@ -404,11 +392,13 @@
 	<div class="flex shrink-0 flex-col items-center justify-center gap-3 md:w-[210px]">
 		<div class="flex flex-row items-center gap-4 md:flex-col md:gap-3">
 			<Browser phase={browser} />
-			<div class="border-line bg-card w-[170px] rounded-2xl border p-4 text-center md:w-full">
-				{#if !compareDone}
-					{@render compareChips()}
-					<p class="text-faint mt-1.5 text-[11px] leading-snug {selected ? 'mb-3' : ''}">{tx.compare.hint}</p>
-				{/if}
+			<LocationComparisonCard
+				tx={{ compare: { near: tx.compare.off, far: tx.compare.on, hint: tx.compare.hint } }}
+				compareDone={compareDone}
+				nearTested={sawOrigin}
+				farTested={sawEdge}
+				hintCompact={!!selected}
+			>
 				{#if selected && served && ms !== null && verdict}
 					<p class="text-ink text-sm font-semibold">{tx.cities[selected.code]}</p>
 					<p class="text-faint text-[10.5px] leading-snug">
@@ -428,17 +418,19 @@
 				{:else if compareDone}
 					<p class="text-faint text-sm">{tx.readoutPrompt}</p>
 				{/if}
-			</div>
+			</LocationComparisonCard>
 		</div>
-		<button
-			type="button"
-			onclick={toggle}
-			class="rounded-xl px-6 py-2.5 text-sm font-semibold transition-all hover:brightness-110 {cdnOn
-				? 'border border-line bg-white text-ink'
-				: 'bg-ink text-white cta'}"
-		>
-			{cdnOn ? tx.cdnOff : tx.cdnOn}
-		</button>
+		{#if !cdnOn}
+			<CallToActionButton onclick={toggle}>{tx.cdnOn}</CallToActionButton>
+		{:else}
+			<button
+				type="button"
+				onclick={toggle}
+				class="rounded-xl border border-line bg-card px-6 py-2.5 text-sm font-semibold text-faint transition-all hover:brightness-110"
+			>
+				{tx.cdnOff}
+			</button>
+		{/if}
 	</div>
 </div>
 
@@ -513,25 +505,10 @@
 			stroke-dashoffset: -13;
 		}
 	}
-	.cta {
-		animation: invite 2s ease-in-out infinite;
-	}
-	@keyframes invite {
-		0%,
-		100% {
-			box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		}
-		50% {
-			box-shadow:
-				0 8px 20px rgba(22, 40, 60, 0.16),
-				0 0 0 6px rgba(22, 40, 60, 0.08);
-		}
-	}
 	@media (prefers-reduced-motion: reduce) {
 		.breathe,
 		.edge,
-		.arcflow,
-		.cta {
+		.arcflow {
 			animation-duration: 0.01s;
 		}
 	}

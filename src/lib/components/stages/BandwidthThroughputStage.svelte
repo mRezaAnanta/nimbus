@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { LessonText } from '$lib/chapters/types';
 	import type { BandwidthThroughputText } from '$lib/chapters/trafficflow/types';
+	import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -8,6 +9,7 @@
 		onstate
 	}: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } = $props();
 	const tx = $derived(text as BandwidthThroughputText);
+	let dark = $derived($theme === 'dark');
 
 	const RATE = 2.5; // MB/s each viewer needs to stream smoothly
 	const MAXV = 4;
@@ -44,7 +46,7 @@
 	}
 </script>
 
-<div class="wrap">
+<div class="wrap" class:dark>
 	<div class="head">
 		<span class="dc">
 			<svg viewBox="0 0 40 30" aria-hidden="true">
@@ -467,6 +469,86 @@
 			transition: none;
 		}
 	}
+	/* ---- Dark mode ---- */
+	.dark .dc {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	.dark .dc svg path[fill="#eaf1fc"] {
+		fill: var(--color-brand-soft);
+	}
+	.dark .hlabel {
+		color: var(--color-ink);
+	}
+	.dark .gauge {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	.dark .tpread {
+		color: var(--color-grass);
+	}
+	.dark .tpread.cap {
+		color: var(--color-amber);
+	}
+	.dark .track {
+		background: #1e2835;
+	}
+	.dark .marker {
+		border-left-color: var(--color-ink);
+	}
+	.dark .mtag {
+		background: var(--btn-primary);
+	}
+	.dark .thumb {
+		background: linear-gradient(165deg, #1a3048, #1a3640 55%, #1a3024);
+		border-color: #1f3d28;
+	}
+	.dark .vplayer.buffer .thumb {
+		border-color: #3d3522;
+	}
+	.dark .cloud {
+		background: #b0b8c0;
+	}
+	.dark .cloud::before,
+	.dark .cloud::after {
+		background: #b0b8c0;
+	}
+	.dark .bird path {
+		stroke: var(--color-muted);
+	}
+	.dark .hill.back {
+		background: #2a4a30;
+	}
+	.dark .hill.front {
+		background: #1f3d28;
+	}
+	.dark .pbar {
+		background: #2c3746;
+	}
+	.dark .pfill.load {
+		background-image: linear-gradient(90deg, #3d3522 25%, #dd9e36 50%, #3d3522 75%);
+	}
+	.dark .cap {
+		color: var(--color-grass);
+	}
+	.dark .cap.bad {
+		color: var(--color-amber);
+	}
+	.dark .cta {
+		background: var(--btn-primary);
+		box-shadow: none;
+	}
+	.dark .line {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		color: var(--color-ink);
+	}
+	.dark .line:enabled:hover {
+		border-color: var(--color-ink);
+	}
+
 	@media (min-width: 768px) {
 		.wrap {
 			width: 440px;

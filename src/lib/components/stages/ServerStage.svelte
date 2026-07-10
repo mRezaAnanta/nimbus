@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import Browser from '../Browser.svelte';
+	import Server from '../Server.svelte';
 	import type { LessonText, ServerText } from '$lib/chapters/types';
+	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 
 	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
 		$props();
@@ -61,23 +63,15 @@
 
 		<!-- server -->
 		<div class="flex shrink-0 flex-col items-center gap-2">
-			<div class="server">
-				{#each [0, 1, 2] as i (i)}
-					<div class="slot"><span class="dot"></span></div>
-				{/each}
-			</div>
+			<Server active={phase === 'res'} />
 			<span class="text-muted text-xs font-semibold">{tx.server}</span>
 		</div>
 	</div>
 
 	<div class="flex flex-col items-center">
-		<button
-			onclick={visit}
-			disabled={busy}
-			class="bg-ink rounded-xl px-6 py-3 text-sm font-semibold text-white transition-all enabled:hover:brightness-125 disabled:opacity-50"
-		>
+		<CallToActionButton onclick={visit} disabled={busy}>
 			{tx.open}
-		</button>
+		</CallToActionButton>
 		{#if count > 0}
 			<p class="text-grass mt-3 text-sm font-semibold">✓ {tx.count.replace('{n}', String(count))}</p>
 		{/if}
@@ -100,31 +94,5 @@
 			opacity 0.3s ease,
 			background 0.3s ease;
 		box-shadow: 0 3px 8px rgba(22, 40, 60, 0.18);
-	}
-	.server {
-		display: flex;
-		width: 86px;
-		flex-direction: column;
-		gap: 8px;
-		border-radius: 12px;
-		border: 1px solid #e8e2d8;
-		background: #fff;
-		padding: 10px;
-		box-shadow: 0 8px 20px rgba(22, 40, 60, 0.07);
-	}
-	.slot {
-		display: flex;
-		height: 16px;
-		align-items: center;
-		border-radius: 4px;
-		border: 1px solid #ece6dc;
-		background: #f4f1ea;
-		padding: 0 6px;
-	}
-	.dot {
-		height: 6px;
-		width: 6px;
-		border-radius: 50%;
-		background: #3a9c64;
 	}
 </style>
