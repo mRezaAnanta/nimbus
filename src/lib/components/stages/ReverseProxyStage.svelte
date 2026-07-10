@@ -3,6 +3,8 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { ReverseProxyText } from '$lib/chapters/traffic/types';
+	import Server from '$lib/components/Server.svelte';
+import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -14,6 +16,7 @@
 		onstate?: (s: string) => void;
 	} = $props();
 	const tx = $derived(text as ReverseProxyText);
+	let dark = $derived($theme === 'dark');
 
 	// One stable colour per backend, shared by the button, the packet, and the rack.
 	const COLORS: Record<string, string> = { web: '#2e6fe0', api: '#3a9c64', static: '#dd9e36' };
@@ -67,7 +70,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
 	<!-- The action, kept obvious and up top, clear of Nim -->
 	<div class="flex flex-col items-center gap-2">
 		<p class="text-faint text-[11px] font-semibold md:text-[13px]">{tx.promptLabel}</p>
@@ -169,10 +172,8 @@
 
 			{#each tx.routes as route, i (route.backend)}
 				<div class="rackwrap" style="left:{LANES[i]}">
-					<div class="server" class:lit={routed.has(route.backend)} class:hot={active === route.backend} style="--c:{COLORS[route.backend]}">
-						<div class="slot"><span class="sdot"></span></div>
-						<div class="slot"><span class="sdot"></span></div>
-						<div class="slot"><span class="sdot"></span></div>
+					<div class="server-wrap" class:lit={routed.has(route.backend)} class:hot={active === route.backend} style="--c:{COLORS[route.backend]}">
+						<Server slots={3} active={routed.has(route.backend)} />
 					</div>
 					<span class="rlabel" style={routed.has(route.backend) ? `color:${COLORS[route.backend]}` : ''}>{route.label}</span>
 				</div>
@@ -499,51 +500,43 @@
 		align-items: center;
 		gap: 4px;
 	}
-	/* the server, taken straight from the Foundation lesson */
-	.server {
-		display: flex;
-		width: 74px;
-		flex-direction: column;
-		gap: 5px;
-		border-radius: 11px;
-		border: 1px solid #e8e2d8;
-		background: #fff;
-		padding: 8px;
-		box-shadow: 0 8px 18px rgba(22, 40, 60, 0.07);
+	.server-wrap {
 		opacity: 0.5;
 		transition:
 			opacity 0.3s ease,
-			border-color 0.3s ease,
-			box-shadow 0.3s ease,
 			transform 0.3s ease;
 	}
-	.server.hot {
+	.server-wrap.hot {
 		opacity: 1;
 		transform: translateY(-3px);
 	}
-	.server.lit {
+	.server-wrap.lit {
 		opacity: 1;
+	}
+	.server-wrap.lit :global(.server) {
 		border-color: var(--c);
 		box-shadow: 0 6px 16px color-mix(in srgb, var(--c) 22%, transparent);
 	}
-	.slot {
-		display: flex;
+	.server-wrap.lit :global(.dot) {
+		background: var(--c);
+	}
+	.server-wrap :global(.server) {
+		width: 74px;
+		gap: 5px;
+		border-radius: 11px;
+		padding: 8px;
+		box-shadow: 0 8px 18px rgba(22, 40, 60, 0.07);
+		transition:
+			border-color 0.3s ease,
+			box-shadow 0.3s ease;
+	}
+	.server-wrap :global(.slot) {
 		height: 13px;
-		align-items: center;
-		border-radius: 4px;
-		border: 1px solid #ece6dc;
-		background: #f4f1ea;
 		padding: 0 5px;
 	}
-	.sdot {
-		height: 5px;
+	.server-wrap :global(.dot) {
 		width: 5px;
-		border-radius: 50%;
-		background: #c2cad2;
-		transition: background 0.3s ease;
-	}
-	.server.lit .sdot {
-		background: var(--c);
+		height: 5px;
 	}
 	.rlabel {
 		font-size: 10px;
@@ -599,6 +592,80 @@
 			opacity: 0;
 		}
 	}
+	/* ---- Dark mode ---- */
+	.dark .req-btn {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		color: var(--color-ink);
+		box-shadow: none;
+	}
+	.dark .req-btn .path {
+		color: var(--color-faint);
+	}
+	.dark .phone {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	.dark .screen {
+		background: #1e2835;
+	}
+	.dark .addr {
+		background: var(--color-card);
+		border-bottom-color: var(--color-line);
+	}
+	.dark .led {
+		background: var(--color-faint);
+	}
+	.dark .url {
+		color: var(--color-muted);
+	}
+	.dark .idle {
+		color: var(--color-faint);
+	}
+	.dark .spinner {
+		border-color: #2c3746;
+	}
+	.dark .hero {
+		background: linear-gradient(120deg, #1a2d4a, #2e6fe0);
+	}
+	.dark .bar {
+		background: #2c3746;
+	}
+	.dark .cards span {
+		background: #1a2d4a;
+	}
+	.dark .json .v {
+		background: var(--color-grass-soft);
+	}
+	.dark .img .ph {
+		background: var(--color-amber-soft);
+		border-color: #3d3522;
+	}
+	.dark .proxy {
+		background: var(--color-card);
+		border-color: #3a5a80;
+		box-shadow: none;
+	}
+	.dark .addr-chip {
+		background: var(--color-brand-soft);
+	}
+	.dark .proxy svg path[fill="#eaf1fc"] {
+		fill: var(--color-brand-soft);
+	}
+	.dark .rails line {
+		stroke: var(--color-line);
+	}
+	.dark .server-wrap :global(.server) {
+		box-shadow: none;
+	}
+	.dark .rlabel {
+		color: var(--color-muted);
+	}
+	.dark .packet {
+		box-shadow: none;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.req-btn.pulse,
 		.packet {
@@ -677,16 +744,16 @@
 		.rackwrap {
 			width: 116px;
 		}
-		.server {
+		.server-wrap :global(.server) {
 			width: 100px;
 			padding: 11px;
 			gap: 7px;
 			border-radius: 13px;
 		}
-		.slot {
+		.server-wrap :global(.slot) {
 			height: 16px;
 		}
-		.sdot {
+		.server-wrap :global(.dot) {
 			width: 6px;
 			height: 6px;
 		}

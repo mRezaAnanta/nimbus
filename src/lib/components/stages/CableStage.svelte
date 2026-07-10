@@ -55,6 +55,7 @@
 	import Browser from '../Browser.svelte';
 	import WorldMap from '../WorldMap.svelte';
 	import Globe from '../Globe.svelte';
+  import LocationComparisonCard from '../LocationComparisonCard.svelte';
 	import type { GlobeView } from '../Globe.svelte';
 	import type { LessonText, CableText } from '$lib/chapters/types';
 
@@ -188,7 +189,7 @@
 	<span
 		class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold backdrop-blur transition-colors {done
 			? 'border-transparent bg-grass-soft text-grass'
-			: 'border-line bg-white/85 text-faint'}"
+			: 'border-line bg-card text-faint'}"
 	>
 		{#if done}
 			<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>
@@ -277,23 +278,19 @@
 	<!-- Phone + readout (desktop only; small screens use the globe above) -->
 	<div class="flex shrink-0 flex-row items-center justify-center gap-4 md:w-[200px] md:flex-col md:justify-center">
 		<Browser phase={browser} />
-		<div class="border-line bg-card w-[160px] rounded-2xl border p-4 text-center md:w-full">
-			{#if !compareDone}
-				{@render compareChips()}
-				<p class="text-faint mt-1.5 text-[11px] leading-snug {selected ? 'mb-3' : ''}">{tx.compare.hint}</p>
-			{/if}
-			{#if selected}
-				<p class="text-ink text-sm font-semibold">{tx.dests[selected.code]}</p>
-				<p class="text-faint text-[11px]">{selected.code}</p>
-				<p class="text-ink mt-2 text-sm font-medium">
-					{#if phase === 'leaving'}{tx.phases.leaving}{:else if phase === 'undersea'}{tx.phases.undersea}{:else}{tx.phases.arrived}{/if}
-				</p>
-				{#if !sending}<p class="text-faint mt-2 text-[11px]">{tx.again}</p>{/if}
-			{:else if compareDone}
-				<p class="text-faint text-sm">{tx.prompt}</p>
-				<p class="text-faint mt-3 text-[11px]">{tx.cablesNote}</p>
-			{/if}
-		</div>
+    <LocationComparisonCard {tx} {compareDone} {nearTested} {farTested} hintCompact={!!selected}>
+        {#if selected}
+            <p class="text-ink text-sm font-semibold">{tx.dests[selected.code]}</p>
+            <p class="text-faint text-[11px]">{selected.code}</p>
+            <p class="text-ink mt-2 text-sm font-medium">
+                {#if phase === 'leaving'}{tx.phases.leaving}{:else if phase === 'undersea'}{tx.phases.undersea}{:else}{tx.phases.arrived}{/if}
+            </p>
+            {#if !sending}<p class="text-faint mt-2 text-[11px]">{tx.again}</p>{/if}
+        {:else if compareDone}
+            <p class="text-faint text-sm">{tx.prompt}</p>
+            <p class="text-faint mt-3 text-[11px]">{tx.cablesNote}</p>
+        {/if}
+    </LocationComparisonCard>
 	</div>
 </div>
 

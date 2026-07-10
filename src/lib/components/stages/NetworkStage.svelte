@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { SvelteSet } from 'svelte/reactivity';
+	import { theme } from '$lib/theme.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { NetworkText } from '$lib/chapters/networking/types';
+
+	let dark = $derived($theme === 'dark');
 
 	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
 		$props();
@@ -48,7 +51,7 @@
 	</svg>
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
 	<div class="scene">
 		<!-- the internet outside the fence -->
 		<div class="net">
@@ -438,6 +441,83 @@
 	.dim::after {
 		content: ' ✓';
 		color: #3a9c64;
+	}
+
+	.dark .net {
+		border-color: color-mix(in srgb, var(--color-amber) 50%, transparent);
+		background: var(--color-amber-soft);
+		color: var(--color-amber);
+	}
+	.dark .lane::before {
+		border-color: var(--color-line);
+	}
+	.dark .vpc {
+		border-color: var(--color-line);
+		background: var(--color-card);
+		box-shadow: none;
+	}
+	.dark .vhead b {
+		color: var(--color-ink);
+	}
+	.dark .vhead span {
+		color: var(--color-faint);
+	}
+	.dark .room {
+		border-color: color-mix(in srgb, var(--color-brand) 25%, transparent);
+		background: color-mix(in srgb, var(--color-brand) 10%, transparent);
+	}
+	.dark .room.priv {
+		border-color: color-mix(in srgb, var(--color-grass) 25%, transparent);
+		background: color-mix(in srgb, var(--color-grass) 10%, transparent);
+	}
+	.dark .gate {
+		background: var(--color-card);
+	}
+	.dark .lockchip {
+		background: var(--color-faint);
+		border-color: var(--color-card);
+	}
+	.dark .rhead b {
+		color: var(--color-ink);
+	}
+	.dark .rhead span {
+		color: var(--color-faint);
+	}
+	.dark .box {
+		border-color: color-mix(in srgb, var(--color-brand) 25%, transparent);
+		background: var(--color-card);
+		box-shadow: none;
+	}
+	.dark .box.db {
+		border-color: color-mix(in srgb, var(--color-grass) 25%, transparent);
+	}
+	.dark .slot {
+		border-color: var(--color-line);
+		background: var(--color-paper);
+	}
+	.dark .bar {
+		background: color-mix(in srgb, var(--color-line) 50%, transparent);
+	}
+	.dark .blabel {
+		color: var(--color-muted);
+	}
+	.dark .bdot {
+		background: var(--color-faint);
+	}
+	.dark .note {
+		color: var(--color-muted);
+	}
+	.dark .cta {
+		background: var(--color-brand);
+		box-shadow: none;
+	}
+	.dark .line {
+		border-color: var(--color-line);
+		background: var(--color-card);
+		color: var(--color-ink);
+	}
+	.dark .line:enabled:hover {
+		border-color: var(--color-ink);
 	}
 
 	@media (prefers-reduced-motion: reduce) {

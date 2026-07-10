@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import type { LessonText } from '$lib/chapters/types';
-	import type { AutoScalingText } from '$lib/chapters/traffic/types';
+import type { LessonText } from '$lib/chapters/types';
+import type { AutoScalingText } from '$lib/chapters/traffic/types';
+import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -13,6 +14,7 @@
 		onstate?: (s: string) => void;
 	} = $props();
 	const tx = $derived(text as AutoScalingText);
+	let dark = $derived($theme === 'dark');
 
 	// The crowd drifts on its own like real traffic; the learner can still nudge it.
 	const STEP = 150;
@@ -127,7 +129,7 @@
 	</svg>
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-3 md:gap-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-3 md:gap-4" class:dark>
 	<p class="prompt">{prompt}</p>
 
 	<!-- the only control the learner gets, a visitor counter -->
@@ -664,6 +666,108 @@
 		100% {
 			transform: scale(1);
 		}
+	}
+
+	/* ---- Dark mode ---- */
+	.dark .prompt {
+		color: var(--color-muted);
+	}
+	.dark .counter {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	.dark .cbtn {
+		background: var(--btn-primary);
+	}
+	.dark .tarrow {
+		color: var(--color-faint);
+	}
+	.dark .cnum b {
+		color: var(--color-ink);
+	}
+	.dark .cnum span {
+		color: var(--color-faint);
+	}
+	.dark .scene {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	.dark .rail {
+		stroke: var(--color-line);
+	}
+	.dark .balmini {
+		background: var(--color-card);
+		border-color: #3a5a80;
+		color: var(--color-brand);
+	}
+	.dark .hmachine {
+		background: color-mix(in srgb, var(--c) 20%, var(--color-card));
+	}
+	.dark .cputrack {
+		background: var(--color-line);
+	}
+	.dark .rules {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	.dark .rtitle {
+		color: var(--color-ink);
+	}
+	.dark .glabel {
+		color: var(--color-muted);
+	}
+	.dark .gtrack {
+		background: #222a36;
+	}
+	.dark .tick {
+		background: rgba(255, 255, 255, 0.2);
+	}
+	.dark .rrow {
+		background: var(--color-paper);
+		border-color: var(--color-line);
+	}
+	.dark .cond {
+		color: var(--color-muted);
+	}
+	.dark .ract.up {
+		background: var(--color-grass-soft);
+		border-color: #1f3d28;
+		color: var(--color-grass);
+	}
+	.dark .ract.down {
+		background: var(--color-brand-soft);
+		border-color: #3a5a80;
+		color: var(--color-brand);
+	}
+	.dark .rrow.hot {
+		border-color: #4a2a2a;
+		background: var(--color-danger-soft);
+	}
+	.dark .rrow.hot .cond {
+		color: var(--color-danger);
+	}
+	.dark .rrow.hotdown {
+		border-color: #3a5a80;
+		background: var(--color-brand-soft);
+	}
+	.dark .rrow.hotdown .cond {
+		color: var(--color-brand);
+	}
+	.dark .chip {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		color: var(--color-muted);
+	}
+	.dark .chip.cost {
+		background: var(--color-grass-soft);
+		border-color: #1f3d28;
+		color: var(--color-grass);
+	}
+	.dark .evt {
+		background: var(--btn-primary);
 	}
 
 	@media (prefers-reduced-motion: reduce) {

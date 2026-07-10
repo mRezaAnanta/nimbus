@@ -2,6 +2,7 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { StorageTypesText } from '$lib/chapters/resilience/types';
+	import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -13,6 +14,7 @@
 		onstate?: (s: string) => void;
 	} = $props();
 	const tx = $derived(text as StorageTypesText);
+	let dark = $derived($theme === 'dark');
 
 	type Kind = 'object' | 'block' | 'file';
 	let view = $state<Kind | null>(null);
@@ -45,7 +47,7 @@
 	);
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
 	<!-- the visual, one shape of storage at a time -->
 	<div class="panel">
 		{#if view === null}
@@ -491,6 +493,95 @@
 			animation-duration: 0.01s;
 		}
 	}
+	/* ---- Dark mode ---- */
+	.dark .panel {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	.dark .empty {
+		color: var(--color-faint);
+	}
+	.dark .bucket {
+		background: var(--color-brand-soft);
+		border-color: #3a5a80;
+	}
+	.dark .bucketlip {
+		background: #3a5a80;
+	}
+	.dark .obj {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		color: var(--color-ink);
+		box-shadow: none;
+	}
+	.dark .machine {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	.dark .mrow {
+		background: #222a36;
+		border-color: var(--color-line);
+	}
+	.dark .mlabel {
+		color: var(--color-muted);
+	}
+	.dark .disk {
+		background: var(--color-brand-soft);
+		border-color: #3a5a80;
+	}
+	.dark .folder {
+		background: var(--color-amber-soft);
+		border-color: #3d3522;
+		box-shadow: none;
+	}
+	.dark .fdoc {
+		background: var(--color-card);
+		border-color: #3d3522;
+		color: var(--color-amber);
+	}
+	.dark .fl {
+		stroke: #3a3d45;
+	}
+	.dark .fmbox {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	.dark .fmlabel {
+		color: var(--color-faint);
+	}
+	.dark .note {
+		color: var(--color-muted);
+	}
+	.dark .wtitle {
+		color: var(--color-ink);
+	}
+	.dark .wchip {
+		background: var(--color-grass-soft);
+		border-color: #1f3d28;
+		color: var(--color-grass);
+	}
+	.dark .tab {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		animation: none;
+	}
+	.dark .tab b {
+		color: var(--color-ink);
+	}
+	.dark .tab span {
+		color: var(--color-faint);
+	}
+	.dark .tab.on {
+		border-color: var(--btn-primary);
+		background: var(--btn-primary);
+	}
+	.dark .tab:hover:not(.on) {
+		border-color: var(--color-ink);
+	}
+
 	@media (min-width: 768px) {
 		.panel {
 			width: 470px;

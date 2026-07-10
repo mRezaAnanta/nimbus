@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
+	import { theme } from '$lib/theme.svelte';
+	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 	import type { LessonText } from '$lib/chapters/types';
+
+	let dark = $derived($theme === 'dark');
 	import type { ContainerText } from '$lib/chapters/compute/types';
 
 	let {
@@ -85,7 +89,7 @@
 	</div>
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
 	<div class="panel">
 		{#key view}
 			{#if view === 'problem'}
@@ -193,9 +197,9 @@
 	<p class="note">{note}</p>
 
 	{#if lastBeat && phase !== 'running'}
-		<button type="button" class="cta" onclick={phase === 'built' ? run : build} disabled={phase === 'building'}>
-			{phase === 'built' ? tx.runLabel : tx.buildLabel}
-		</button>
+		<CallToActionButton onclick={phase === 'built' ? run : build} disabled={phase === 'building'}>
+			{#snippet children()}{phase === 'built' ? tx.runLabel : tx.buildLabel}{/snippet}
+		</CallToActionButton>
 	{/if}
 </div>
 
@@ -552,38 +556,102 @@
 		font-weight: 600;
 		color: #6a7681;
 	}
-	.cta {
-		border-radius: 12px;
-		background: #16212b;
-		color: #fff;
-		padding: 12px 22px;
-		font-size: 13.5px;
-		font-weight: 600;
-		box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		animation: invite 2s ease-in-out infinite;
-		transition: filter 0.2s ease;
+	.dark .panel {
+		border-color: var(--color-line);
+		background: var(--color-card);
+		box-shadow: none;
 	}
-	.cta:enabled:hover {
-		filter: brightness(1.18);
+	.dark .piece {
+		border-color: color-mix(in srgb, var(--color-amber) 40%, transparent);
+		background: var(--color-amber-soft);
+		color: var(--color-amber);
 	}
-	.cta:disabled {
-		opacity: 0.6;
-		animation: none;
+	.dark .piece.missing {
+		border-color: color-mix(in srgb, var(--color-danger) 40%, transparent);
+		background: var(--color-danger-soft);
+		color: var(--color-danger);
 	}
-	@keyframes invite {
-		0%,
-		100% {
-			box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		}
-		50% {
-			box-shadow:
-				0 8px 20px rgba(22, 40, 60, 0.16),
-				0 0 0 6px rgba(22, 40, 60, 0.08);
-		}
+	.dark .plabel {
+		color: var(--color-grass);
+	}
+	.dark .plabel.bad {
+		color: var(--color-danger);
+	}
+	.dark .cont {
+		border-color: color-mix(in srgb, #2496ed 30%, transparent);
+		background: color-mix(in srgb, #2496ed 12%, transparent);
+		box-shadow: none;
+	}
+	.dark .cont span {
+		color: #66b8f7;
+	}
+	.dark .cont svg path:first-child {
+		fill: color-mix(in srgb, #2496ed 15%, transparent);
+	}
+	.dark .layer.docker {
+		border-color: color-mix(in srgb, #2496ed 30%, transparent);
+		background: color-mix(in srgb, #2496ed 12%, transparent);
+	}
+	.dark .layer.docker b {
+		color: #66b8f7;
+	}
+	.dark .layer.machine {
+		border-color: var(--color-line);
+		background: var(--color-paper);
+		color: var(--color-muted);
+	}
+	.dark .swarmtag {
+		border-color: color-mix(in srgb, #2496ed 30%, transparent);
+		background: color-mix(in srgb, #2496ed 12%, transparent);
+		color: #66b8f7;
+	}
+	.dark .fl {
+		stroke: color-mix(in srgb, #2496ed 30%, transparent);
+	}
+	.dark .fl.k {
+		stroke: color-mix(in srgb, #326ce5 30%, transparent);
+	}
+	.dark .mini .dock {
+		border-color: color-mix(in srgb, #2496ed 30%, transparent);
+		background: color-mix(in srgb, #2496ed 12%, transparent);
+	}
+	.dark .mini .mach {
+		border-color: var(--color-line);
+		background: var(--color-paper);
+	}
+	.dark .plane {
+		border-color: color-mix(in srgb, #326ce5 30%, transparent);
+		background: color-mix(in srgb, #326ce5 12%, transparent);
+		color: #78a9ff;
+	}
+	.dark .plane svg path:first-child {
+		fill: color-mix(in srgb, #326ce5 15%, transparent);
+	}
+	.dark .ngrid {
+		border-color: color-mix(in srgb, #326ce5 30%, transparent);
+		background: color-mix(in srgb, #326ce5 8%, transparent);
+	}
+	.dark .nlabel {
+		color: var(--color-muted);
+	}
+	.dark .place {
+		border-color: var(--color-line);
+		background: var(--color-paper);
+	}
+	.dark .mlabel2 {
+		color: var(--color-muted);
+	}
+	.dark .same {
+		color: var(--color-grass);
+	}
+	.dark .note {
+		color: var(--color-muted);
+	}
+	.dark .movearrow svg path {
+		stroke: var(--color-faint);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.cta,
 		.layer,
 		.contwrap,
 		.swrap,
@@ -648,10 +716,6 @@
 		}
 		.note {
 			font-size: 14px;
-		}
-		.cta {
-			font-size: 14.5px;
-			padding: 13px 26px;
 		}
 	}
 </style>

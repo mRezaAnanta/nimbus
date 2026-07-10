@@ -1,11 +1,15 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import Browser from '../Browser.svelte';
+	import Server from '../Server.svelte';
 	import type { CloudText, LessonText } from '$lib/chapters/types';
+	import { theme } from '$lib/theme.svelte';
 
 	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
 		$props();
 	const tx = $derived(text as CloudText);
+
+	let dark = $derived($theme === 'dark');
 
 	let open = $state<'home' | 'cloud' | null>(null);
 	let explored = $state({ home: false, cloud: false });
@@ -60,7 +64,7 @@
 	onDestroy(clearAll);
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
 	<!-- picker: choose where your server lives -->
 	<div class="grid w-full max-w-md grid-cols-2 gap-1.5 rounded-2xl border border-line bg-card p-1.5" class:invite={!open}>
 		<button onclick={() => pick('home')} class="seg {open === 'home' ? 'on-amber' : 'off'}">
@@ -173,16 +177,10 @@
 					{#if down}<path class="spark" d="M60 8 53 18 H57.5 L55 24 63 13.5 H58 Z" fill="#d3584a" stroke="#fff" stroke-width="0.8" stroke-linejoin="round" />{/if}
 				</svg>
 				<span class="text-amber text-xs font-bold tracking-wide">{tx.onpremTerm}</span>
-			{:else}
-				<svg viewBox="0 0 120 104" width="110" height="95" aria-hidden="true">
-					<rect x="42" y="40" width="36" height="30" rx="5" fill="#f3f0ea" stroke="#e2dacb" stroke-width="2" />
-					{#each [47, 56] as ry (ry)}
-						<rect x="47" y={ry} width="26" height="4.5" rx="1.5" fill="#e9e3d6" />
-						<circle cx="51" cy={ry + 2.25} r="1.4" fill="#cfd6dd" />
-					{/each}
-				</svg>
-				<span class="text-faint text-xs font-semibold">&nbsp;</span>
-			{/if}
+		{:else}
+			<Server slots={2} />
+			<span class="text-faint text-xs font-semibold">&nbsp;</span>
+		{/if}
 		</div>
 	</div>
 
@@ -399,5 +397,16 @@
 		.spark {
 			animation-duration: 0.01s;
 		}
+	}
+
+	/* ---- Dark mode ---- */
+	.dark .scene[data-mode='cloud'] {
+		background: linear-gradient(180deg, #142a44 0%, #1b2533 78%);
+	}
+	.dark .scene[data-mode='home'] {
+		background: linear-gradient(180deg, #2a2418 0%, #1b2533 78%);
+	}
+	.dark .rail.broken {
+		background: #5a3a35;
 	}
 </style>

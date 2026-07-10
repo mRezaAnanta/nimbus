@@ -2,6 +2,7 @@
 	import { Tween } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import { SvelteSet } from 'svelte/reactivity';
+	import { theme } from '$lib/theme.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { CostText } from '$lib/chapters/compute/types';
 
@@ -272,6 +273,51 @@
 		font-weight: 600;
 		color: #6a7681;
 	}
+	/* ---- Dark mode ---- */
+	:global(.dark) .bill {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	:global(.dark) .blabel {
+		color: var(--color-faint);
+	}
+	:global(.dark) .bnum {
+		color: var(--color-ink);
+	}
+	:global(.dark) .bnum em {
+		color: var(--color-faint);
+	}
+	:global(.dark) .row {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	:global(.dark) .info b {
+		color: var(--color-ink);
+	}
+	:global(.dark) .info span {
+		color: var(--color-faint);
+	}
+	:global(.dark) .mini {
+		background: color-mix(in srgb, var(--c) 9%, var(--color-card));
+	}
+	:global(.dark) .price {
+		color: var(--color-ink);
+	}
+	:global(.dark) .price.strike {
+		color: var(--color-muted);
+	}
+	:global(.dark) .x {
+		color: var(--color-muted);
+	}
+	:global(.dark) .fix {
+		background: var(--btn-primary);
+	}
+	:global(.dark) .note {
+		color: var(--color-muted);
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.fix,
 		.saved {

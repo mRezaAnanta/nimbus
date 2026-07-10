@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
+	import { theme } from '$lib/theme.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { CicdText } from '$lib/chapters/compute/types';
 
@@ -535,6 +536,85 @@
 	}
 	.note.hint {
 		color: #9aa3ae;
+	}
+
+	/* ---- Dark mode ---- */
+	:global(.dark) .node {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		color: var(--color-ink);
+	}
+	:global(.dark) .ver {
+		background: var(--color-line);
+		color: var(--color-faint);
+	}
+	:global(.dark) .live.updated {
+		border-color: var(--color-grass);
+		background: var(--color-grass-soft);
+	}
+	:global(.dark) .live.blocked {
+		border-color: var(--color-danger);
+		background: var(--color-danger-soft);
+	}
+	:global(.dark) .glabel.ci {
+		background: var(--color-brand-soft);
+		color: var(--color-brand);
+	}
+	:global(.dark) .glabel.cd {
+		background: var(--color-grass-soft);
+		color: var(--color-grass);
+	}
+	:global(.dark) .group {
+		border-color: var(--color-line);
+	}
+	:global(.dark) .group.ci {
+		border-color: var(--color-brand-soft);
+	}
+	:global(.dark) .group.cd {
+		border-color: var(--color-grass-soft);
+	}
+	:global(.dark) .gsub {
+		color: var(--color-faint);
+	}
+	:global(.dark) .stage {
+		border-color: var(--color-line);
+		background: var(--color-card);
+	}
+	:global(.dark) .stage .sicon {
+		background: var(--color-line);
+	}
+	:global(.dark) .slabel {
+		color: var(--color-muted);
+	}
+	:global(.dark) .stage.run {
+		border-color: var(--color-amber);
+		background: var(--color-amber-soft);
+	}
+	:global(.dark) .stage.run .slabel {
+		color: var(--color-amber);
+	}
+	:global(.dark) .stage.pass {
+		border-color: var(--color-grass);
+		background: var(--color-grass-soft);
+	}
+	:global(.dark) .stage.pass .slabel {
+		color: var(--color-grass);
+	}
+	:global(.dark) .stage.fail {
+		border-color: var(--color-danger);
+		background: var(--color-danger-soft);
+	}
+	:global(.dark) .stage.fail .slabel {
+		color: var(--color-danger);
+	}
+	:global(.dark) .arr {
+		color: var(--color-muted);
+	}
+	:global(.dark) .note {
+		color: var(--color-muted);
+	}
+	:global(.dark) .note.hint {
+		color: var(--color-faint);
 	}
 
 	@media (prefers-reduced-motion: reduce) {

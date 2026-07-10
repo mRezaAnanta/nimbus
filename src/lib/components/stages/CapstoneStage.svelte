@@ -1,5 +1,6 @@
 <script lang="ts">
 	import ProviderLogo from '../ProviderLogo.svelte';
+	import { theme } from '$lib/theme.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { CapstoneText } from '$lib/chapters/capstone/types';
 
@@ -270,6 +271,62 @@
 		text-align: center;
 		animation: popin 0.3s ease;
 	}
+	/* ---- Dark mode ---- */
+	:global(.dark) .prov {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	:global(.dark) .prov:hover {
+		border-color: var(--color-muted);
+	}
+	:global(.dark) .prov.on {
+		border-color: var(--color-brand);
+	}
+	:global(.dark) .prov b {
+		color: var(--color-ink);
+	}
+	:global(.dark) .psub {
+		color: var(--color-faint);
+	}
+	:global(.dark) .note {
+		color: var(--color-muted);
+	}
+	:global(.dark) .news {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		box-shadow: none;
+	}
+	:global(.dark) .ntext b {
+		color: var(--color-ink);
+	}
+	:global(.dark) .ntext span {
+		color: var(--color-faint);
+	}
+	:global(.dark) .frm input {
+		background: var(--color-paper);
+		border-color: var(--color-line);
+		color: var(--color-ink);
+	}
+	:global(.dark) .frm input:focus {
+		border-color: var(--color-brand);
+		background: var(--color-card);
+	}
+	:global(.dark) .frm input.bad {
+		border-color: var(--color-danger);
+	}
+	:global(.dark) .sub {
+		background: var(--btn-primary);
+	}
+	:global(.dark) .badmsg {
+		color: var(--color-danger);
+	}
+	:global(.dark) .okmsg {
+		border-color: var(--color-grass);
+		background: var(--color-grass-soft);
+		color: var(--color-grass);
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.pickedtag,
 		.okmsg {

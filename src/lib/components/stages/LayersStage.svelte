@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import LayerPlay from './LayerPlay.svelte';
+	import { theme } from '$lib/theme.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { LayersText } from '$lib/chapters/networking/types';
+
+	let dark = $derived($theme === 'dark');
 
 	let {
 		text,
@@ -121,7 +124,7 @@
 	onDestroy(clearTimers);
 </script>
 
-<div class="wrap">
+<div class="wrap" class:dark>
 	{#if !playground}
 		<p class="flow">{tx.scenarioNote}</p>
 
@@ -847,6 +850,170 @@
 			opacity: 1;
 			transform: none;
 		}
+	}
+
+	.dark .flow {
+		color: var(--color-faint);
+	}
+	.dark .cap-actor {
+		border-color: var(--color-line);
+		background: var(--color-card);
+	}
+	.dark .phone.lit {
+		border-color: #cadcf7;
+		box-shadow: 0 0 0 3px rgba(46, 111, 224, 0.12);
+	}
+	.dark .server.lit {
+		border-color: #b9e0c8;
+		box-shadow: 0 0 0 3px rgba(47, 138, 87, 0.14);
+	}
+	.dark .rrack i {
+		background: #4a5a6a;
+	}
+	.dark .server.lit .rrack i {
+		background: #8fcfa8;
+	}
+	.dark .rlab {
+		color: var(--color-muted);
+	}
+	.dark .bands {
+		border-color: var(--color-line);
+		background: var(--color-card);
+	}
+	.dark .rb {
+		border-bottom: 1px solid var(--color-line);
+	}
+	.dark .rb.on {
+		background: color-mix(in srgb, var(--color-brand) 18%, transparent);
+	}
+	.dark .rb.passed {
+		background: color-mix(in srgb, var(--color-grass) 18%, transparent);
+	}
+	.dark .rn {
+		background: var(--color-paper);
+		color: var(--color-faint);
+	}
+	.dark .rb.on .rn {
+		background: var(--color-brand);
+		color: #fff;
+	}
+	.dark .rb.passed .rn {
+		background: color-mix(in srgb, var(--color-grass) 30%, transparent);
+		color: var(--color-grass);
+	}
+	.dark .rname {
+		color: var(--color-ink);
+	}
+	.dark .rconn {
+		background: #3a4a5a;
+	}
+	.dark .panel {
+		border-color: var(--color-line);
+		background: var(--color-paper);
+		box-shadow: none;
+	}
+	.dark .phead {
+		border-bottom: 1px solid var(--color-line);
+		background: var(--color-card);
+	}
+	.dark .hname {
+		color: var(--color-ink);
+	}
+	.dark .pcap {
+		border-top: 1px solid var(--color-line);
+		color: var(--color-muted);
+	}
+	.dark .capw {
+		color: var(--color-faint);
+	}
+	.dark .rwho {
+		border-color: var(--color-line);
+		background: var(--color-card);
+		color: var(--color-ink);
+	}
+	.dark .rwho.phone2 {
+		border-color: #cadcf7;
+	}
+	.dark .rwho.server2 {
+		border-color: #b9e0c8;
+	}
+	.dark .rarrow {
+		color: var(--color-brand);
+	}
+	.dark .rarrow.up {
+		color: var(--color-grass);
+	}
+	.dark .ratag {
+		color: var(--color-muted);
+	}
+	.dark .rseq {
+		color: var(--color-faint);
+	}
+	.dark .rgap {
+		background: repeating-linear-gradient(#5a5349 0 4px, transparent 4px 8px);
+	}
+	.dark .pprompt {
+		color: var(--color-muted);
+	}
+	.dark .end {
+		border-color: var(--color-line);
+		background: var(--color-card);
+	}
+	.dark .estack i {
+		background: color-mix(in srgb, var(--color-brand) 25%, transparent);
+	}
+	.dark .elabel {
+		color: var(--color-ink);
+	}
+	.dark .rcap {
+		color: var(--color-faint);
+	}
+	.dark .slot {
+		border-color: var(--color-line);
+		background: var(--color-paper);
+		color: var(--color-faint);
+	}
+	.dark .slot.got {
+		border-color: #1f3d28;
+		background: color-mix(in srgb, var(--color-grass) 18%, transparent);
+		color: var(--color-grass);
+	}
+	.dark .channel {
+		background: linear-gradient(var(--color-card), var(--color-paper));
+		border-color: var(--color-line);
+	}
+	.dark .hs {
+		background: color-mix(in srgb, var(--color-amber) 18%, transparent);
+		color: var(--color-amber);
+		box-shadow: none;
+	}
+	.dark .hs.ok {
+		background: color-mix(in srgb, var(--color-grass) 18%, transparent);
+		color: var(--color-grass);
+	}
+	.dark .use {
+		color: var(--color-muted);
+	}
+	.dark .use.hint {
+		color: var(--color-faint);
+	}
+	.dark .use.tcp {
+		color: var(--color-brand);
+	}
+	.dark .use.udp {
+		color: var(--color-amber);
+	}
+	.dark .takeaway {
+		border-color: var(--color-line);
+		background: var(--color-card);
+		box-shadow: none;
+	}
+	.dark .tk-label {
+		background: color-mix(in srgb, var(--color-brand) 18%, transparent);
+		color: var(--color-brand);
+	}
+	.dark .takeaway p {
+		color: var(--color-muted);
 	}
 
 	@media (prefers-reduced-motion: reduce) {

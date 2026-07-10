@@ -1,6 +1,10 @@
 <script lang="ts">
+	import { theme } from '$lib/theme.svelte';
+	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { SharedResponsibilityText } from '$lib/chapters/networking/types';
+
+	let dark = $derived($theme === 'dark');
 
 	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
 		$props();
@@ -53,7 +57,7 @@
 	{/if}
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
 	<div class="wrap">
 		<div class="cols">
 			<!-- the provider guards the building -->
@@ -116,7 +120,9 @@
 	<p class="note" class:strong={revealed}>{revealed ? tx.noteDone : tx.noteIdle}</p>
 
 	{#if !revealed}
-		<button type="button" class="cta" onclick={reveal}>{tx.reveal}</button>
+		<CallToActionButton onclick={reveal}>
+			{#snippet children()}{tx.reveal}{/snippet}
+		</CallToActionButton>
 	{/if}
 </div>
 
@@ -257,34 +263,53 @@
 		color: #16212b;
 		font-weight: 700;
 	}
-	.cta {
-		border-radius: 12px;
-		background: #16212b;
-		color: #fff;
-		padding: 12px 24px;
-		font-size: 14px;
-		font-weight: 600;
-		box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		animation: invite 2s ease-in-out infinite;
-		transition: filter 0.2s ease;
+	.dark .col {
+		background: var(--color-card);
+		box-shadow: none;
 	}
-	.cta:hover {
-		filter: brightness(1.18);
+	.dark .col:first-child {
+		--soft: color-mix(in srgb, var(--color-brand) 12%, transparent) !important;
+		--bord: color-mix(in srgb, var(--color-brand) 25%, transparent) !important;
 	}
-	@keyframes invite {
-		0%,
-		100% {
-			box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		}
-		50% {
-			box-shadow:
-				0 8px 20px rgba(22, 40, 60, 0.16),
-				0 0 0 6px rgba(22, 40, 60, 0.08);
-		}
+	.dark .col:last-child {
+		--soft: color-mix(in srgb, var(--color-grass) 12%, transparent) !important;
+		--bord: color-mix(in srgb, var(--color-grass) 25%, transparent) !important;
+	}
+	.dark .medal {
+		background: var(--color-card);
+	}
+	.dark .chead b {
+		color: var(--color-ink);
+	}
+	.dark .chead span {
+		color: var(--color-faint);
+	}
+	.dark .item {
+		color: var(--color-ink);
+	}
+	.dark .ghost {
+		border-color: var(--color-line);
+		background: var(--color-paper);
+	}
+	.dark .mid {
+		background: var(--color-card);
+		border-color: var(--color-line);
+		color: var(--color-faint);
+		box-shadow: none;
+	}
+	.dark .mid.lit {
+		color: var(--color-amber);
+		border-color: color-mix(in srgb, var(--color-amber) 50%, transparent);
+		background: var(--color-amber-soft);
+	}
+	.dark .note {
+		color: var(--color-muted);
+	}
+	.dark .note.strong {
+		color: var(--color-ink);
 	}
 	@media (prefers-reduced-motion: reduce) {
-		.item,
-		.cta {
+		.item {
 			animation-duration: 0.01s;
 		}
 	}

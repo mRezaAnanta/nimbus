@@ -1,12 +1,16 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import Browser from '../Browser.svelte';
-	import type { LessonText } from '$lib/chapters/types';
-	import type { DnsText } from '$lib/chapters/networking/types';
+	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
+import Server from '$lib/components/Server.svelte';
+import Browser from '../Browser.svelte';
+import type { LessonText } from '$lib/chapters/types';
+import type { DnsText } from '$lib/chapters/networking/types';
+import { theme } from '$lib/theme.svelte';
 
 	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
 		$props();
 	const tx = $derived(text as DnsText);
+	let dark = $derived($theme === 'dark');
 
 	let picked = $state<number | null>(null);
 	let phase = $state<'idle' | 'lookup' | 'connect'>('idle');
@@ -48,7 +52,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
 	<div class="scene">
 		<!-- your phone asking by name -->
 		<div class="actor">
@@ -86,10 +90,8 @@
 		</div>
 
 		<div class="actor">
-			<div class="srv" class:on={browser === 'loaded'}>
-				<div class="slot"><span class="dot"></span></div>
-				<div class="slot"><span class="dot"></span></div>
-				<div class="slot"><span class="dot"></span></div>
+			<div class="srv-wrap" class:on={browser === 'loaded'}>
+				<Server slots={3} active={browser === 'loaded'} />
 			</div>
 			<span class="alabel">{tx.serverLabel}</span>
 		</div>
@@ -99,7 +101,7 @@
 
 	<div class="acts">
 		{#each tx.domains as d, i (d.host)}
-			<button type="button" class="dom" class:on={picked === i} onclick={() => pick(i)}>{d.host}</button>
+			<CallToActionButton onclick={() => pick(i)}>{d.host}</CallToActionButton>
 		{/each}
 	</div>
 </div>
@@ -265,35 +267,24 @@
 			left: 100%;
 		}
 	}
-	.srv {
-		display: flex;
+	.srv-wrap.on :global(.server) {
+		border-color: var(--color-grass);
+	}
+	.srv-wrap :global(.server) {
 		width: 64px;
-		flex-direction: column;
 		gap: 4px;
 		border-radius: 10px;
-		border: 1.5px solid #e8e2d8;
-		background: #fff;
 		padding: 7px;
-		box-shadow: 0 6px 14px rgba(22, 40, 60, 0.07);
-		transition: border-color 0.3s ease;
+		border-width: 1.5px;
 	}
-	.srv.on {
-		border-color: #3a9c64;
-	}
-	.slot {
-		display: flex;
+	.srv-wrap :global(.slot) {
 		height: 9px;
-		align-items: center;
-		border-radius: 3px;
-		border: 1px solid #ece6dc;
-		background: #f4f1ea;
 		padding: 0 4px;
+		border-radius: 3px;
 	}
-	.dot {
+	.srv-wrap :global(.dot) {
 		width: 4px;
 		height: 4px;
-		border-radius: 50%;
-		background: #3a9c64;
 	}
 	.note {
 		min-height: 1.4em;
@@ -307,39 +298,55 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
-		gap: 8px;
+		gap: 16px;
 	}
-	.dom {
-		border-radius: 12px;
-		border: 1px solid #e8e2d8;
-		background: #fff;
-		padding: 10px 16px;
-		font-size: 13px;
-		font-weight: 700;
-		color: #16212b;
-		transition: all 0.2s ease;
-		animation: pulse 1.8s ease-in-out infinite;
+
+	/* ---- Dark mode ---- */
+	.dark .alabel {
+		color: var(--color-muted);
 	}
-	.dom.on {
-		background: #16212b;
-		border-color: #16212b;
-		color: #fff;
-		animation: none;
+	.dark .rail {
+		background: var(--color-line);
 	}
-	.dom:hover:not(.on) {
-		border-color: #16212b;
+	.dark .chip.ask {
+		background: var(--btn-primary);
 	}
-	@keyframes pulse {
-		0%,
-		100% {
-			box-shadow: 0 0 0 0 rgba(46, 111, 224, 0);
-		}
-		50% {
-			box-shadow: 0 0 0 4px rgba(46, 111, 224, 0.14);
-		}
+	.dark .book {
+		background: var(--color-card);
+		border-color: #3a5a80;
+		box-shadow: none;
+	}
+	.dark .bhead b {
+		color: var(--color-brand);
+	}
+	.dark .bhead span {
+		color: var(--color-faint);
+	}
+	.dark .brow {
+		background: var(--color-paper);
+		border-color: var(--color-line);
+	}
+	.dark .brow.hot {
+		background: var(--color-brand-soft);
+		border-color: #3a5a80;
+	}
+	.dark .bhost {
+		color: var(--color-ink);
+	}
+	.dark .bip {
+		color: var(--color-faint);
+	}
+	.dark .brow.hot .bip {
+		color: var(--color-brand);
+	}
+	.dark .pkt {
+		border-color: var(--color-card);
+		box-shadow: none;
+	}
+	.dark .note {
+		color: var(--color-muted);
 	}
 	@media (prefers-reduced-motion: reduce) {
-		.dom,
 		.chip,
 		.pkt {
 			animation-duration: 0.01s;
@@ -376,10 +383,10 @@
 		.chip {
 			font-size: 10px;
 		}
-		.srv {
+		.srv-wrap :global(.server) {
 			width: 84px;
 		}
-		.slot {
+		.srv-wrap :global(.slot) {
 			height: 13px;
 		}
 		.alabel {
@@ -389,9 +396,6 @@
 			font-size: 14px;
 			max-width: 460px;
 		}
-		.dom {
-			font-size: 14.5px;
-			padding: 11px 20px;
-		}
+
 	}
 </style>

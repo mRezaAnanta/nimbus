@@ -3,6 +3,8 @@
 	import Browser from '../Browser.svelte';
 	import Laptop from '../Laptop.svelte';
 	import type { LessonText, TunnelingText } from '$lib/chapters/types';
+	import { theme } from '$lib/theme.svelte';
+	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 
 	let {
 		text,
@@ -14,6 +16,8 @@
 		onstate?: (s: string) => void;
 	} = $props();
 	const tx = $derived(text as TunnelingText);
+
+	let dark = $derived($theme === 'dark');
 
 	// the play: dial out, get a borrowed address, a friend walks in, then the lid closes
 	let tunnelOn = $state(false);
@@ -102,7 +106,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
 	<div class="scene">
 		<!-- rails: laptop dials OUT to the relay; the friend enters through the relay -->
 		<svg class="rails" viewBox="0 0 {G.w} {G.h}" aria-hidden="true">
@@ -160,14 +164,14 @@
 
 	<div class="acts">
 		{#if !tunnelOn && !closed}
-			<button type="button" class="cta" onclick={start}>{tx.startTunnel}</button>
+			<CallToActionButton onclick={start}>{tx.startTunnel}</CallToActionButton>
 		{:else if tunnelOn}
-			<button type="button" class="cta" onclick={visit} disabled={visiting}>{tx.visit}</button>
+			<CallToActionButton onclick={visit} disabled={visiting}>{tx.visit}</CallToActionButton>
 			{#if visitedOnce}
 				<button type="button" class="line" onclick={close}>{tx.closeLaptop}</button>
 			{/if}
 		{:else}
-			<button type="button" class="cta" onclick={reset}>{tx.reset}</button>
+			<CallToActionButton onclick={reset}>{tx.reset}</CallToActionButton>
 		{/if}
 	</div>
 </div>
@@ -410,40 +414,6 @@
 		align-items: center;
 		gap: 10px;
 	}
-	.cta {
-		border-radius: 12px;
-		background: #16212b;
-		padding: 12px 24px;
-		font-size: 14px;
-		font-weight: 600;
-		color: #fff;
-		box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		animation: invite 2s ease-in-out infinite;
-		transition:
-			filter 0.2s ease,
-			transform 0.15s ease;
-	}
-	.cta:enabled:hover {
-		filter: brightness(1.18);
-	}
-	.cta:active {
-		transform: translateY(1px);
-	}
-	.cta:disabled {
-		opacity: 0.6;
-		animation: none;
-	}
-	@keyframes invite {
-		0%,
-		100% {
-			box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		}
-		50% {
-			box-shadow:
-				0 8px 20px rgba(22, 40, 60, 0.16),
-				0 0 0 6px rgba(22, 40, 60, 0.08);
-		}
-	}
 	.line {
 		border-radius: 12px;
 		border: 1px solid #e8e2d8;
@@ -459,7 +429,6 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.cta,
 		.seg.on,
 		.pkt {
 			animation-duration: 0.01s;
@@ -500,9 +469,59 @@
 			font-size: 14px;
 			max-width: 460px;
 		}
-		.cta {
-			font-size: 15px;
-			padding: 13px 28px;
-		}
+	}
+	.dark .seg {
+		stroke: #2c3746;
+	}
+	.dark .seg.dead {
+		stroke: #3a4a5c;
+	}
+	.dark .pkt {
+		border-color: #1b2533;
+	}
+	.dark .relay {
+		border-color: #2c3746;
+		background: #1b2533;
+		color: #6b7885;
+	}
+	.dark .relay.on {
+		border-color: #2c4a6e;
+		background: #1a2d4a;
+		color: #7daae0;
+	}
+	.dark .url {
+		background: #2a3748;
+		color: #e0dcd4;
+	}
+	.dark .url.dead {
+		background: #4a5560;
+	}
+	.dark .alabel {
+		color: #97a3ae;
+	}
+	.dark .chip {
+		border-color: #2c3746;
+		background: #1b2533;
+		color: #97a3ae;
+	}
+	.dark .status {
+		color: #6b7885;
+	}
+	.dark .status i {
+		background: #6b7885;
+	}
+	.dark .status.up {
+		color: #5bb87e;
+	}
+	.dark .note {
+		color: #97a3ae;
+	}
+	.dark .line {
+		border-color: #2c3746;
+		background: #1b2533;
+		color: #e0dcd4;
+	}
+	.dark .line:hover {
+		border-color: #e0dcd4;
 	}
 </style>

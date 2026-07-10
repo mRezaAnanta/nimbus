@@ -1,7 +1,10 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
-	import type { LessonText } from '$lib/chapters/types';
-	import type { LoadBalancerText } from '$lib/chapters/traffic/types';
+import { onDestroy } from 'svelte';
+import type { LessonText } from '$lib/chapters/types';
+import type { LoadBalancerText } from '$lib/chapters/traffic/types';
+import CallToActionButton from '$lib/components/CallToActionButton.svelte';
+import ServerRack from '$lib/components/Server.svelte';
+import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -13,6 +16,7 @@
 		onstate?: (s: string) => void;
 	} = $props();
 	const tx = $derived(text as LoadBalancerText);
+	let dark = $derived($theme === 'dark');
 
 	type Server = { id: number; alive: boolean };
 	let servers = $state<Server[]>([{ id: 1, alive: true }]);
@@ -155,7 +159,7 @@
 	</svg>
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
 	<!-- The live scene: visitors stream from the top, through the balancer, onto the servers -->
 	<div class="scene">
 		<div class="mech" class:wide={servers.length > 1}>
@@ -216,12 +220,9 @@
 							{/each}
 							{#if l > 9}<span class="more" style="color:{colorOf(st)}">+{l - 9}</span>{/if}
 						</div>
-						<div class="rack {st}" style="--c:{colorOf(st)}">
-							{#if s.alive}
-								<div class="slot"><span class="sdot"></span></div>
-								<div class="slot"><span class="sdot"></span></div>
-								<div class="slot"><span class="sdot"></span></div>
-							{:else}
+						<div class="srv-wrap {st}" style="--c:{colorOf(st)}">
+							<ServerRack slots={3} active={false} />
+							{#if !s.alive}
 								<span class="rx">×</span>
 							{/if}
 						</div>
@@ -250,7 +251,7 @@
 		<p class="prompt">{prompt}</p>
 		<div class="acts">
 			{#if action}
-				<button type="button" onclick={action.run} class="cta">{action.label}</button>
+				<CallToActionButton onclick={action.run}>{action.label}</CallToActionButton>
 			{/if}
 			{#if surge}
 				<button type="button" onclick={reset} class="reset">{tx.reset}</button>
@@ -415,30 +416,11 @@
 		font-weight: 800;
 		align-self: center;
 	}
-	.rack {
-		display: flex;
-		width: 56px;
-		flex-direction: column;
-		gap: 4px;
-		border-radius: 10px;
-		border: 1.5px solid #e8e2d8;
-		background: #fff;
-		padding: 7px;
-		box-shadow: 0 6px 14px rgba(22, 40, 60, 0.07);
+	.srv-wrap {
+		position: relative;
 		min-height: 46px;
-		justify-content: center;
-		transition:
-			border-color 0.3s ease,
-			box-shadow 0.3s ease,
-			opacity 0.3s ease;
 	}
-	.rack.calm,
-	.rack.busy,
-	.rack.full {
-		border-color: var(--c);
-		box-shadow: 0 6px 16px color-mix(in srgb, var(--c) 22%, transparent);
-	}
-	.rack.full {
+	.srv-wrap.full :global(.server) {
 		animation: shake 0.4s ease-in-out infinite;
 	}
 	@keyframes shake {
@@ -453,32 +435,57 @@
 			transform: translateX(2px);
 		}
 	}
-	.rack.dead {
+	.srv-wrap.dead :global(.slot) {
+		display: none;
+	}
+	.srv-wrap.dead :global(.server) {
 		opacity: 0.55;
-		background: #f4f1ea;
+		background: var(--color-paper);
 		align-items: center;
+		justify-content: center;
+		min-height: 46px;
 	}
-	.slot {
-		display: flex;
-		height: 9px;
-		align-items: center;
-		border-radius: 3px;
-		border: 1px solid #ece6dc;
-		background: #f4f1ea;
-		padding: 0 4px;
+	.srv-wrap .rx {
+		display: none;
 	}
-	.sdot {
-		width: 4px;
-		height: 4px;
-		border-radius: 50%;
-		background: var(--c);
-		transition: background 0.3s ease;
-	}
-	.rx {
+	.srv-wrap.dead .rx {
+		display: block;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
 		color: #b9c0c7;
 		font-size: 18px;
 		font-weight: 700;
 		line-height: 1;
+		z-index: 1;
+	}
+	.srv-wrap :global(.server) {
+		width: 56px;
+		gap: 4px;
+		border-radius: 10px;
+		padding: 7px;
+		box-shadow: 0 6px 14px rgba(22, 40, 60, 0.07);
+		border-width: 1.5px;
+		transition:
+			border-color 0.3s ease,
+			box-shadow 0.3s ease,
+			opacity 0.3s ease;
+	}
+	.srv-wrap :global(.slot) {
+		height: 9px;
+		padding: 0 4px;
+		border-radius: 3px;
+	}
+	.srv-wrap :global(.dot) {
+		width: 4px;
+		height: 4px;
+	}
+	.srv-wrap.calm :global(.server),
+	.srv-wrap.busy :global(.server),
+	.srv-wrap.full :global(.server) {
+		border-color: var(--c);
+		box-shadow: 0 6px 16px color-mix(in srgb, var(--c) 22%, transparent);
 	}
 	.slabel {
 		font-size: 10px;
@@ -599,36 +606,6 @@
 		align-items: center;
 		gap: 10px;
 	}
-	.cta {
-		border-radius: 12px;
-		background: #16212b;
-		padding: 12px 24px;
-		font-size: 14px;
-		font-weight: 600;
-		color: #fff;
-		box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		animation: invite 2s ease-in-out infinite;
-		transition:
-			filter 0.2s ease,
-			transform 0.15s ease;
-	}
-	.cta:hover {
-		filter: brightness(1.18);
-	}
-	.cta:active {
-		transform: translateY(1px);
-	}
-	@keyframes invite {
-		0%,
-		100% {
-			box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		}
-		50% {
-			box-shadow:
-				0 8px 20px rgba(22, 40, 60, 0.16),
-				0 0 0 6px rgba(22, 40, 60, 0.08);
-		}
-	}
 	.reset {
 		font-size: 13px;
 		font-weight: 600;
@@ -639,8 +616,62 @@
 		color: #16212b;
 	}
 
+	/* ---- Dark mode ---- */
+	.dark .rail {
+		stroke: var(--color-line);
+	}
+	.dark .rail.dead {
+		stroke: var(--color-line);
+	}
+	.dark .crowd-label {
+		color: var(--color-faint);
+	}
+	.dark .crowd-label.busy {
+		color: #c2491f;
+	}
+	.dark .balancer {
+		background: var(--color-card);
+		border-color: #3a5a80;
+		box-shadow: none;
+	}
+	.dark .bal-name {
+		color: var(--color-brand);
+	}
+	.dark .bal-note {
+		color: var(--color-muted);
+	}
+	.dark .srv-wrap :global(.server) {
+		box-shadow: none;
+	}
+	.dark .srv-wrap.dead .rx {
+		color: var(--color-faint);
+	}
+	.dark .srv-wrap :global(.slot) {
+		background: #222a36;
+	}
+	.dark .slabel {
+		color: var(--color-muted);
+	}
+	.dark .slabel.off {
+		color: var(--color-faint);
+	}
+	.dark .status {
+		color: var(--color-grass);
+	}
+	.dark .status.down {
+		color: var(--color-danger);
+	}
+	.dark .prompt {
+		color: var(--color-muted);
+	}
+	.dark .reset {
+		color: var(--color-muted);
+	}
+	.dark .reset:hover {
+		color: var(--color-ink);
+	}
+
 	@media (prefers-reduced-motion: reduce) {
-		.cta,
 		.visitor,
 		.rack.full,
 		.rail,
@@ -672,15 +703,15 @@
 			width: 74px;
 			min-height: 28px;
 		}
-		.rack {
+		.srv-wrap :global(.server) {
 			width: 74px;
 			min-height: 58px;
 			padding: 9px;
 		}
-		.slot {
+		.srv-wrap :global(.slot) {
 			height: 11px;
 		}
-		.sdot {
+		.srv-wrap :global(.dot) {
 			width: 5px;
 			height: 5px;
 		}
@@ -690,10 +721,6 @@
 		.prompt {
 			max-width: 460px;
 			font-size: 14px;
-		}
-		.cta {
-			font-size: 15px;
-			padding: 13px 28px;
 		}
 	}
 </style>

@@ -1,7 +1,12 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import Browser from '../Browser.svelte';
+	import Server from '$lib/components/Server.svelte';
+	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
+	import { theme } from '$lib/theme.svelte';
 	import type { LessonText } from '$lib/chapters/types';
+
+	let dark = $derived($theme === 'dark');
 	import type { ServerlessText } from '$lib/chapters/compute/types';
 
 	let {
@@ -106,16 +111,14 @@
 	{/if}
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-4" class:dark>
 	<div class="panel">
 		{#key view}
 			{#if view === 'always'}
 				<!-- the wasteful way, a server on around the clock -->
 				<div class="always">
-					<div class="srv">
-						<div class="slot"><span class="dot"></span></div>
-						<div class="slot"><span class="dot"></span></div>
-						<div class="slot"><span class="dot"></span></div>
+					<div class="srvwrap">
+						<Server />
 					</div>
 					<b>{tx.alwaysName}</b>
 					<span class="meter24"><i></i>{tx.alwaysTag}</span>
@@ -178,7 +181,9 @@
 	<p class="note">{note}</p>
 
 	{#if lastBeat}
-		<button type="button" class="cta" onclick={call} disabled={fnState !== 'sleep'}>{tx.send}</button>
+		<CallToActionButton onclick={call} disabled={fnState !== 'sleep'}>
+			{#snippet children()}{tx.send}{/snippet}
+		</CallToActionButton>
 	{/if}
 </div>
 
@@ -204,31 +209,16 @@
 		align-items: center;
 		gap: 6px;
 	}
-	.srv {
-		display: flex;
+	.srvwrap :global(.server) {
 		width: 72px;
-		flex-direction: column;
-		gap: 5px;
-		border-radius: 12px;
-		border: 1.5px solid #e8e2d8;
-		background: #fff;
 		padding: 9px;
-		box-shadow: 0 6px 16px rgba(22, 40, 60, 0.08);
+		border-radius: 12px;
+		gap: 5px;
+		border-width: 1.5px;
 	}
-	.slot {
-		display: flex;
+	.srvwrap :global(.server .slot) {
 		height: 10px;
-		align-items: center;
 		border-radius: 3px;
-		border: 1px solid #ece6dc;
-		background: #f4f1ea;
-		padding: 0 4px;
-	}
-	.dot {
-		width: 4px;
-		height: 4px;
-		border-radius: 50%;
-		background: #3a9c64;
 	}
 	.always b {
 		font-size: 11.5px;
@@ -518,37 +508,75 @@
 		font-weight: 600;
 		color: #6a7681;
 	}
-	.cta {
-		border-radius: 12px;
-		background: #16212b;
-		color: #fff;
-		padding: 11px 22px;
-		font-size: 13px;
-		font-weight: 600;
-		box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		animation: invite 2s ease-in-out infinite;
-		transition: filter 0.2s ease;
+	.dark .panel {
+		border-color: var(--color-line);
+		background: var(--color-card);
+		box-shadow: none;
 	}
-	.cta:enabled:hover {
-		filter: brightness(1.18);
+	.dark .always b {
+		color: var(--color-ink);
 	}
-	.cta:disabled {
-		opacity: 0.6;
-		animation: none;
+	.dark .meter24 {
+		border-color: color-mix(in srgb, var(--color-danger) 40%, transparent);
+		background: var(--color-danger-soft);
+		color: var(--color-danger);
 	}
-	@keyframes invite {
-		0%,
-		100% {
-			box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		}
-		50% {
-			box-shadow:
-				0 8px 20px rgba(22, 40, 60, 0.16),
-				0 0 0 6px rgba(22, 40, 60, 0.08);
-		}
+	.dark .frail {
+		border-color: var(--color-line);
+	}
+	.dark .fpkt {
+		border-color: var(--color-card);
+		box-shadow: none;
+	}
+	.dark .sic {
+		border-color: var(--color-line);
+		background: var(--color-card);
+		color: var(--color-faint);
+	}
+	.dark .stxt {
+		color: var(--color-faint);
+	}
+	.dark .step.on .stxt {
+		color: var(--color-ink);
+	}
+	.dark .vchip {
+		border-color: color-mix(in srgb, var(--color-amber) 40%, transparent);
+		background: var(--color-amber-soft);
+		color: var(--color-amber);
+	}
+	.dark .alabel {
+		color: var(--color-muted);
+	}
+	.dark .svcrail {
+		background: var(--color-line);
+	}
+	.dark .fn {
+		border-color: var(--color-line);
+		background: var(--color-paper);
+		color: var(--color-faint);
+	}
+	.dark .fn.awake {
+		border-color: var(--color-amber);
+		background: var(--color-amber-soft);
+		color: var(--color-amber);
+		box-shadow: none;
+	}
+	.dark .fn.working {
+		border-color: var(--color-grass);
+		background: var(--color-grass-soft);
+		color: var(--color-grass);
+		box-shadow: none;
+	}
+	.dark .zzz {
+		color: var(--color-faint);
+	}
+	.dark .mnum {
+		color: var(--color-muted);
+	}
+	.dark .note {
+		color: var(--color-muted);
 	}
 	@media (prefers-reduced-motion: reduce) {
-		.cta,
 		.zzz,
 		.spark,
 		.vchip,
@@ -607,10 +635,6 @@
 		}
 		.note {
 			font-size: 14px;
-		}
-		.cta {
-			font-size: 14.5px;
-			padding: 12px 26px;
 		}
 		.always b {
 			font-size: 14px;

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ProviderLogo from '../ProviderLogo.svelte';
 	import type { LessonText, CloudServicesText } from '$lib/chapters/types';
+	import { theme } from '$lib/theme.svelte';
 
 	let {
 		text,
@@ -18,6 +19,8 @@
 		onlock?: (v: boolean) => void;
 	} = $props();
 	const tx = $derived(text as CloudServicesText);
+
+	let dark = $derived($theme === 'dark');
 	// The "turn on" beat is second to last; the final beat is an FYI aside that keeps the
 	// catalog on screen. Show the monitor from the turn on beat, and lock Next until it is on.
 	const turnOn = $derived(Math.max(0, tx.intro.length - 2));
@@ -104,7 +107,7 @@
 	}
 </script>
 
-<div class="wrap">
+<div class="wrap" class:dark>
 	<div class="monitor">
 		<div class="bezel" class:on>
 			<div class="screen">
@@ -393,5 +396,52 @@
 		.power {
 			font-size: 14px;
 		}
+	}
+
+	/* ---- Dark mode ---- */
+	.dark .bezel {
+		background: #0f1720;
+		box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+	}
+	.dark .screen {
+		background: #0a0f16;
+	}
+	.dark .bezel.on .screen {
+		background: #1b2533;
+	}
+	.dark .neck {
+		background: linear-gradient(#141c28, #0f1720);
+	}
+	.dark .base {
+		background: #0f1720;
+	}
+	.dark .power {
+		color: #6b7885;
+	}
+	.dark .pring {
+		border-color: #2c3746;
+		background: #121a24;
+	}
+	.dark .power:hover .pring {
+		border-color: #6fd39a;
+	}
+	.dark .shead {
+		background: #141c2a;
+		border-bottom-color: #2c3746;
+	}
+	.dark .stitle {
+		color: #e0dcd4;
+	}
+	.dark .ssub {
+		color: #6b7885;
+	}
+	.dark .rlabel {
+		color: #97a3ae;
+	}
+	.dark .chip {
+		background: #1b2533;
+		border-color: #2c3746;
+		color: #e0dcd4;
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 	}
 </style>

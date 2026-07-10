@@ -8,6 +8,7 @@
 	import Globe from '../Globe.svelte';
 	import type { GlobeView } from '../Globe.svelte';
 	import ProviderLogo from '../ProviderLogo.svelte';
+	import LocationComparisonCard from '../LocationComparisonCard.svelte';
 	import type { LessonText, RegionText } from '$lib/chapters/types';
 
 	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
@@ -470,11 +471,7 @@
 		<!-- Phone + readout (desktop only; small screens read the latency off the line) -->
 		<div class="hidden shrink-0 md:flex md:w-[200px] md:flex-col md:items-center md:justify-center md:gap-4">
 			<Browser phase={browser} />
-			<div class="border-line bg-card w-full rounded-2xl border p-4 text-center">
-				{#if !compareDone}
-					{@render compareChips()}
-					<p class="text-faint mt-1.5 text-[11px] leading-snug {selected ? 'mb-3' : ''}">{tx.compare.hint}</p>
-				{/if}
+			<LocationComparisonCard {tx} {compareDone} {nearTested} {farTested} hintCompact={!!selected}>
 				{#if selected}
 					{@const vk = verdictKey(selected.ms)}
 					<p class="text-ink text-sm font-semibold">{selected.city}</p>
@@ -488,7 +485,7 @@
 				{:else if compareDone}
 					<p class="text-faint text-sm">{provider ? tx.readoutPrompt : tx.pickProvider}</p>
 				{/if}
-			</div>
+			</LocationComparisonCard>
 		</div>
 	</div>
 </div>

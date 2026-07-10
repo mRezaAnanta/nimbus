@@ -2,6 +2,8 @@
 	import { onDestroy, untrack } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
 	import type { LessonText, ApiText } from '$lib/chapters/types';
+	import { theme } from '$lib/theme.svelte';
+	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 
 	let {
 		text,
@@ -17,6 +19,8 @@
 		onshow?: (v: boolean) => void;
 	} = $props();
 	const tx = $derived(text as ApiText);
+
+	let dark = $derived($theme === 'dark');
 
 	type Product = { id: number; name: string; price: number };
 	// The backend owns the data; the phone shows nothing until it asks the API for it.
@@ -42,9 +46,9 @@
 		if (phase !== 'idle') return;
 		loaded = false;
 		phase = 'req';
-		at(620, () => (phase = 'work'));
-		at(1240, () => (phase = 'resp'));
-		at(1860, () => {
+		at(930, () => (phase = 'work'));
+		at(1860, () => (phase = 'resp'));
+		at(2790, () => {
 			phase = 'idle';
 			loaded = true;
 			onstate?.('fetch');
@@ -58,7 +62,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="api">
+<div class="api" class:dark>
 	<div class="cols">
 		<!-- frontend: the phone the person sees, empty until it asks -->
 		<div class="side">
@@ -70,7 +74,7 @@
 					{#if loaded}
 						<div class="applist">
 							{#each data as p (p.id)}
-								<div class="arow" transition:slide={{ duration: 240 }}>
+								<div class="arow" transition:slide={{ duration: 360 }}>
 									<span class="an">{p.name}</span>
 									<span class="ap">{rupiah(p.price)}</span>
 								</div>
@@ -80,7 +84,7 @@
 						<div class="empty">{tx.emptyHint}</div>
 					{/if}
 					{#if phase !== 'idle'}
-						<div class="wait" transition:fade={{ duration: 120 }}>
+						<div class="wait" transition:fade={{ duration: 180 }}>
 							<span class="dot"></span><span class="dot"></span><span class="dot"></span>
 						</div>
 					{/if}
@@ -120,7 +124,7 @@
 	</div>
 
 	{#if isPlay}
-		<button class="fetch" disabled={phase !== 'idle'} onclick={fetchData}>{tx.fetchBtn}</button>
+		<CallToActionButton disabled={phase !== 'idle'} onclick={fetchData}>{tx.fetchBtn}</CallToActionButton>
 	{/if}
 </div>
 
@@ -301,13 +305,13 @@
 	.chip.out {
 		background: #2e6fe0;
 		color: #fff;
-		animation: flyR 0.62s ease-in forwards;
+		animation: flyR 0.93s ease-in forwards;
 	}
 	.chip.back {
 		background: #fff;
 		color: #2f8a57;
 		border: 1px solid #b9e0c8;
-		animation: flyL 0.62s ease-out forwards;
+		animation: flyL 0.93s ease-out forwards;
 	}
 	@keyframes flyR {
 		0% {
@@ -427,31 +431,6 @@
 		background: rgba(46, 111, 224, 0.07);
 	}
 
-	.fetch {
-		border-radius: 12px;
-		background: #2e6fe0;
-		padding: 11px 22px;
-		font-size: 13px;
-		font-weight: 800;
-		color: #fff;
-		box-shadow: 0 4px 0 rgba(28, 74, 160, 0.5);
-		transition:
-			filter 0.15s,
-			transform 0.08s,
-			box-shadow 0.08s,
-			opacity 0.15s;
-	}
-	.fetch:enabled:hover {
-		filter: brightness(1.08);
-	}
-	.fetch:enabled:active {
-		transform: translateY(2px);
-		box-shadow: 0 1px 0 rgba(28, 74, 160, 0.5);
-	}
-	.fetch:disabled {
-		opacity: 0.5;
-	}
-
 	@keyframes bob {
 		0%,
 		100% {
@@ -480,5 +459,83 @@
 		.ap {
 			font-size: 10px;
 		}
+	}
+	.dark .slabel {
+		color: #e0dcd4;
+	}
+	.dark .slabel span {
+		color: #6b7885;
+	}
+	.dark .phone {
+		border-color: #2c3746;
+		background: #1b2533;
+	}
+	.dark .notch {
+		background: #2c3746;
+	}
+	.dark .screen {
+		background: linear-gradient(#141c2a, #121a24);
+	}
+	.dark .apphead {
+		color: #7daae0;
+	}
+	.dark .arow {
+		border-color: #2c3746;
+		background: #1b2533;
+	}
+	.dark .an {
+		color: #e0dcd4;
+	}
+	.dark .empty {
+		color: #6b7885;
+	}
+	.dark .wait {
+		background: rgba(18, 26, 36, 0.55);
+	}
+	.dark .wait .dot {
+		background: #5a8fd4;
+	}
+	.dark .apitag {
+		background: #e0dcd4;
+		color: #1b2533;
+	}
+	.dark .wireline {
+		background: repeating-linear-gradient(90deg, #3a4a5c 0 6px, transparent 6px 11px);
+	}
+	.dark .chip.back {
+		background: #1b2533;
+		color: #5bb87e;
+		border-color: #2a4a38;
+	}
+	.dark .server {
+		border-color: #2c3746;
+		background: #1b2533;
+	}
+	.dark .dbhead {
+		border-bottom-color: #2c3746;
+		background: #141c2a;
+		color: #97a3ae;
+	}
+	.dark .disc {
+		border-color: #3a4a5c;
+		background: radial-gradient(circle at 50% 50%, #1b2533 30%, #3a4a5c 32%);
+	}
+	.dark .dbrow {
+		background: #141c2a;
+	}
+	.dark .did {
+		background: #1a2d4a;
+		color: #7daae0;
+	}
+	.dark .dn {
+		color: #e0dcd4;
+	}
+	.dark .hl.phone,
+	.dark .hl.server {
+		border-color: #2a4a6e;
+		box-shadow: 0 0 0 3px rgba(46, 111, 224, 0.25);
+	}
+	.dark .lane.hl {
+		background: rgba(46, 111, 224, 0.12);
 	}
 </style>

@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
+	import { theme } from '$lib/theme.svelte';
+	import CallToActionButton from '$lib/components/CallToActionButton.svelte';
 	import type { LessonText } from '$lib/chapters/types';
+
+	let dark = $derived($theme === 'dark');
 	import type { MonitoringText } from '$lib/chapters/compute/types';
 
 	let { text, oncomplete, onstate }: { text: LessonText; oncomplete?: () => void; onstate?: (s: string) => void } =
@@ -49,7 +53,7 @@
 	onDestroy(() => timers.forEach(clearTimeout));
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-3">
+<div class="flex h-full w-full flex-col items-center justify-center gap-3" class:dark>
 	<!-- the dashboard, three live health numbers -->
 	<div class="dash" class:ringing={alarm}>
 		<div class="metric">
@@ -89,7 +93,9 @@
 
 	<div class="acts">
 		{#if !surging}
-			<button type="button" class="cta" onclick={surge}>{tx.surge}</button>
+			<CallToActionButton onclick={surge}>
+				{#snippet children()}{tx.surge}{/snippet}
+			</CallToActionButton>
 		{:else}
 			<button type="button" class="line" onclick={calm}>{tx.again}</button>
 		{/if}
@@ -243,20 +249,6 @@
 	.acts {
 		display: flex;
 	}
-	.cta {
-		border-radius: 12px;
-		background: #16212b;
-		color: #fff;
-		padding: 12px 24px;
-		font-size: 14px;
-		font-weight: 600;
-		box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		animation: invite 2s ease-in-out infinite;
-		transition: filter 0.2s ease;
-	}
-	.cta:hover {
-		filter: brightness(1.18);
-	}
 	.line {
 		border-radius: 12px;
 		border: 1px solid #e8e2d8;
@@ -270,19 +262,50 @@
 	.line:hover {
 		border-color: #16212b;
 	}
-	@keyframes invite {
-		0%,
-		100% {
-			box-shadow: 0 8px 20px rgba(22, 40, 60, 0.16);
-		}
-		50% {
-			box-shadow:
-				0 8px 20px rgba(22, 40, 60, 0.16),
-				0 0 0 6px rgba(22, 40, 60, 0.08);
-		}
+	.dark .dash {
+		border-color: var(--color-line);
+		background: var(--color-card);
+		box-shadow: none;
 	}
+	.dark .mname {
+		color: var(--color-muted);
+	}
+	.dark .track {
+		background: var(--color-line);
+	}
+	.dark .track em {
+		background: rgba(255, 255, 255, 0.3);
+	}
+	.dark .rule {
+		border-color: var(--color-line);
+		background: var(--color-paper);
+		color: var(--color-muted);
+	}
+	.dark .rule.hot {
+		border-color: color-mix(in srgb, var(--color-danger) 30%, transparent);
+		background: var(--color-danger-soft);
+		color: var(--color-danger);
+	}
+	.dark .notif {
+		background: var(--color-brand);
+		box-shadow: none;
+	}
+	.dark .okpill {
+		color: var(--color-grass);
+	}
+	.dark .note {
+		color: var(--color-muted);
+	}
+	.dark .line {
+		border-color: var(--color-line);
+		background: var(--color-card);
+		color: var(--color-ink);
+	}
+	.dark .line:hover {
+		border-color: var(--color-ink);
+	}
+
 	@media (prefers-reduced-motion: reduce) {
-		.cta,
 		.notif,
 		.ntag,
 		.dash.ringing {

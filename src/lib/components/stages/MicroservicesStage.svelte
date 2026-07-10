@@ -1,6 +1,9 @@
 <script lang="ts">
+	import { theme } from '$lib/theme.svelte';
 	import type { LessonText } from '$lib/chapters/types';
 	import type { MicroservicesText } from '$lib/chapters/compute/types';
+
+	let dark = $derived($theme === 'dark');
 
 	let {
 		text,
@@ -37,7 +40,7 @@
 	});
 </script>
 
-<div class="ms">
+<div class="ms" class:dark>
 	{#if recap}
 		<div class="recap">
 			<div class="rcard">
@@ -441,6 +444,93 @@
 			transform: translateX(4px);
 		}
 	}
+	.dark .heads {
+		color: var(--color-muted);
+	}
+	.dark .user {
+		border-color: var(--color-line);
+		background: var(--color-card);
+		box-shadow: none;
+	}
+	.dark .user svg circle,
+	.dark .user svg path {
+		fill: var(--color-faint);
+	}
+	.dark .ulab {
+		color: var(--color-ink);
+	}
+	.dark .badge.ok {
+		background: var(--color-grass-soft);
+		color: var(--color-grass);
+	}
+	.dark .badge.fail {
+		background: var(--color-danger-soft);
+		color: var(--color-danger);
+	}
+	.dark .wire {
+		background: repeating-linear-gradient(90deg, var(--color-line) 0 6px, transparent 6px 11px);
+	}
+	.dark .mono {
+		border-color: var(--color-line);
+		background: var(--color-card);
+		box-shadow: none;
+	}
+	.dark .mono.broken {
+		border-color: color-mix(in srgb, var(--color-danger) 50%, transparent);
+	}
+	.dark .mbar {
+		background: var(--color-paper);
+		border-bottom-color: var(--color-line);
+	}
+	.dark .mono.broken .mbar {
+		background: var(--color-danger-soft);
+		border-color: color-mix(in srgb, var(--color-danger) 25%, transparent);
+	}
+	.dark .mname {
+		color: var(--color-ink);
+	}
+	.dark .msub,
+	.dark .ssub {
+		color: var(--color-faint);
+	}
+	.dark .mrow {
+		border-color: var(--color-line);
+		background: var(--color-paper);
+		color: var(--color-ink);
+	}
+	.dark .svc {
+		border-color: color-mix(in srgb, var(--color-grass) 25%, transparent);
+		background: color-mix(in srgb, var(--color-grass) 8%, transparent);
+		box-shadow: none;
+	}
+	.dark .sname {
+		color: var(--color-ink);
+	}
+	.dark .svc.bad {
+		border-color: color-mix(in srgb, var(--color-danger) 30%, transparent);
+		background: var(--color-danger-soft);
+	}
+	.dark .svc.bad .sname {
+		color: var(--color-danger);
+	}
+	.dark .rcard {
+		border-color: var(--color-line);
+		background: var(--color-card);
+		box-shadow: none;
+	}
+	.dark .rname {
+		color: var(--color-ink);
+	}
+	.dark .rcard p {
+		color: var(--color-muted);
+	}
+	.dark .rblock {
+		background: linear-gradient(135deg, color-mix(in srgb, var(--color-grass) 50%, transparent), color-mix(in srgb, var(--color-grass) 30%, transparent));
+	}
+	.dark .rblock.big {
+		background: linear-gradient(135deg, color-mix(in srgb, var(--color-brand) 50%, transparent), color-mix(in srgb, var(--color-brand) 30%, transparent));
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.pkt {
 			animation: none;
