@@ -112,13 +112,26 @@ export interface FailoverText extends LessonText {
 export interface RequestJourneyText extends LessonText {
 	openSite: string;
 	again: string;
-	/** Station labels along the path. */
-	stations: { phone: string; router: string; isp: string; net: string; server: string };
+	/** How the phone reaches the first hop, home WiFi or mobile data. */
+	modes: { wifi: string; cell: string };
+	/** Station labels along the path. 'tower' takes the router's place on mobile data. */
+	stations: {
+		phone: string;
+		router: string;
+		tower: string;
+		isp: string;
+		net: string;
+		server: string;
+	};
 	/** What is happening at each step. Keys match stations plus 'back' for the return leg. */
 	notes: Record<string, string>;
 	requestTag: string;
 	responseTag: string;
 	idleNote: string;
+	/** The first hop is radio, everything after it is cable. */
+	radioLabel: string;
+	radioRange: { wifi: string; cell: string };
+	cableLabel: string;
 }
 
 export interface LaptopServerText extends LessonText {

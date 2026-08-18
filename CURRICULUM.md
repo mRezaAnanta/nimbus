@@ -39,7 +39,10 @@ The physical reality under the word "cloud".
 - [x] **Server**. A website is served by a computer somewhere; the client asks, the server
       answers. Stage: open a site and watch the request and response travel between phone and server.
 - [x] **Request journey**. A request hops through phone, router, ISP, and the global network, and
-      all the way back. Stage: follow the packet station by station.
+      all the way back. Also answers the question everyone asks, if data runs on cables, what are
+      the cell towers for. Only the first hop is radio (a few metres of WiFi, a few kilometres to a
+      tower), and the tower itself is wired into fibre. Stage: pick WiFi or mobile data, then follow
+      the packet station by station along a road marked radio for one hop and cable for the rest.
 - [x] **API**. Besides a page for people, a server has an API that returns plain data (JSON) for
       programs, so apps can ask each other for data. Stage: call nimbus.com for the web page (HTML
       for humans) versus its API (real JSON for programs) and see how different the two answers look.

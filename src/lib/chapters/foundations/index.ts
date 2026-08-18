@@ -39,6 +39,7 @@ export const foundations: Chapter = {
 			items: [
 				'<b>Server</b> adalah komputer yang melayani permintaan dari <b>client</b> seperti HP-mu',
 				'Tiap permintaan menempuh perjalanan <b>HP, router, ISP, jaringan dunia</b>, lalu balik lagi',
+				'Yang tanpa kabel cuma lompatan pertama, WiFi beberapa meter atau <b>tiang BTS</b> beberapa kilometer, dan tiangnya sendiri disambung serat optik, sisanya kabel semua',
 				'Selain halaman buat orang, server punya <b>API</b> yang mengembalikan data polos (<b>JSON</b>) buat program, jadi aplikasi bisa saling minta data',
 				'Satu server punya satu alamat tapi banyak <b>port</b> (pintu bernomor), tiap layanan punya sendiri, misalnya web di 80 dan 443, SSH di 22, RDP di 3389',
 				'Satu server fisik bisa dibelah jadi beberapa <b>virtual machine</b> yang terasa seperti komputer utuh',
@@ -56,6 +57,7 @@ export const foundations: Chapter = {
 			items: [
 				'A <b>server</b> is a computer that answers requests from a <b>client</b> like your phone',
 				'Every request travels <b>phone, router, ISP, global network</b>, and all the way back',
+				'Only the first hop is wireless, a few metres of WiFi or a few kilometres to a <b>cell tower</b>, and the tower itself is wired into fibre, so the rest is cable',
 				'Besides a page for people, a server has an <b>API</b> that returns plain data (<b>JSON</b>) for programs, so apps can ask each other for data',
 				'A server has one address but many <b>ports</b> (numbered doors), one per service, like web on 80 and 443, SSH on 22, RDP on 3389',
 				'One physical server can be sliced into several <b>virtual machines</b> that each feel like a whole computer',

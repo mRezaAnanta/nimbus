@@ -18,23 +18,31 @@
 	} = $props();
 	const tx = $derived(text as RequestJourneyText);
 
-	const KEYS = ['phone', 'router', 'isp', 'net', 'server'] as const;
+	type Mode = 'wifi' | 'cell';
+
+	// Only the first hop changes with how you are online (a router at home, a cell tower on
+	// mobile data). Everything past it is the same cable, which is the point of this lesson.
+	let mode = $state<Mode>('wifi');
+	let picked = $state(false);
+	type Station = keyof RequestJourneyText['stations'];
+	const path = $derived([
+		'phone',
+		mode === 'cell' ? 'tower' : 'router',
+		'isp',
+		'net',
+		'server'
+	] as Station[]);
 
 	// while Nim narrates, the stations being talked about light up along with her
-	const FOCUS: string[][] = [
-		['phone'],
-		['phone', 'router'],
-		['router', 'isp', 'net'],
-		['server'],
-		['phone', 'router', 'isp', 'net', 'server']
-	];
+	const FOCUS: number[][] = [[0], [0, 1], [0, 1], [1, 2, 3], [4], [0, 1, 2, 3, 4]];
 	const lastBeat = $derived(beat >= tx.intro.length - 1);
 	const focused = $derived(FOCUS[Math.min(beat, FOCUS.length - 1)]);
 	// the stage narrates visually from the very first beat, so never dim it.
 	// The page resets `shown` on every beat change, so re-ask each time.
+	// Nim spends one beat on the tower, so the stage shows the tower while she talks about it.
 	$effect(() => {
-		void beat;
 		onshow?.(true);
+		if (!picked) mode = beat === 2 ? 'cell' : 'wifi';
 	});
 
 	// seq counts steps: 0..4 is the request going out, 5..8 is the answer coming home
@@ -46,10 +54,20 @@
 
 	const returning = $derived(seq > 4);
 	const pos = $derived(seq < 0 ? 0 : seq <= 4 ? seq : 8 - seq);
-	const activeKey = $derived(seq < 0 ? null : KEYS[pos]);
+	const activeIdx = $derived(seq < 0 ? -1 : pos);
 	const note = $derived(
-		seq < 0 ? (lastBeat ? tx.idleNote : ' ') : returning ? tx.notes.back : tx.notes[KEYS[pos]]
+		seq < 0 ? (lastBeat ? tx.idleNote : ' ') : returning ? tx.notes.back : tx.notes[path[pos]]
 	);
+
+	function pick(m: Mode) {
+		if (running || m === mode) return;
+		mode = m;
+		picked = true;
+		seq = -1;
+		// a reaction replaces the beat Nim is still reading out, so only speak up once the
+		// learner is the one driving
+		if (lastBeat) onstate?.(m);
+	}
 
 	function run() {
 		if (running) return;
@@ -105,14 +123,32 @@
 				stroke-linejoin="round"
 			/>
 		</svg>
-	{:else if key === 'isp'}
+	{:else if key === 'tower'}
 		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 			<path
-				d="M12 21V9m0 0 -5 12m5-12 5 12M8 6.5a6 6 0 0 1 8 0M5.8 4a9.4 9.4 0 0 1 12.4 0"
+				d="M12 21V9m0 0 -5 12m5-12 5 12M9.4 16h5.2M8 6.5a6 6 0 0 1 8 0M5.8 4a9.4 9.4 0 0 1 12.4 0"
 				stroke="currentColor"
 				stroke-width="1.7"
 				stroke-linecap="round"
 				stroke-linejoin="round"
+			/>
+		</svg>
+	{:else if key === 'isp'}
+		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+			<rect
+				x="3.5"
+				y="8.5"
+				width="17"
+				height="11"
+				rx="2.5"
+				stroke="currentColor"
+				stroke-width="1.8"
+			/>
+			<path
+				d="M8 12.5h8M8 16h5M12 8.5V4.5"
+				stroke="currentColor"
+				stroke-width="1.6"
+				stroke-linecap="round"
 			/>
 		</svg>
 	{:else if key === 'net'}
@@ -142,7 +178,22 @@
 	{/if}
 {/snippet}
 
-<div class="flex h-full w-full flex-col items-center justify-center gap-6">
+<div class="flex h-full w-full flex-col items-center justify-center gap-5">
+	<!-- how you are online right now, which is the only thing that changes the first hop -->
+	<div class="modes">
+		{#each [{ k: 'wifi', label: tx.modes.wifi }, { k: 'cell', label: tx.modes.cell }] as m (m.k)}
+			<button
+				type="button"
+				class="mode"
+				class:active={mode === m.k}
+				disabled={running}
+				onclick={() => pick(m.k as Mode)}
+			>
+				{m.label}
+			</button>
+		{/each}
+	</div>
+
 	<!-- the road, five stations and one traveling packet -->
 	<div class="road">
 		<div class="rail"></div>
@@ -157,8 +208,8 @@
 			</div>
 		{/if}
 		<div class="stations">
-			{#each KEYS as k, i (k)}
-				{@const on = activeKey === k || (seq < 0 && !lastBeat && focused.includes(k))}
+			{#each path as k, i (k)}
+				{@const on = activeIdx === i || (seq < 0 && !lastBeat && focused.includes(i))}
 				<div
 					class="station"
 					class:on
@@ -170,6 +221,16 @@
 					<span class="slabel">{tx.stations[k]}</span>
 				</div>
 			{/each}
+		</div>
+
+		<!-- where the waves stop and the cable starts -->
+		<div class="segs">
+			<span class="seg radio"></span>
+			<span class="seg cable"></span>
+		</div>
+		<div class="legend">
+			<span class="lg radio">{tx.radioLabel}, {tx.radioRange[mode]}</span>
+			<span class="lg cable">{tx.cableLabel}</span>
 		</div>
 	</div>
 
@@ -286,6 +347,81 @@
 		color: var(--color-ink);
 		font-weight: 700;
 	}
+	.modes {
+		display: flex;
+		gap: 8px;
+	}
+	.mode {
+		border-radius: 999px;
+		border: 1px solid var(--color-line);
+		background: var(--color-card);
+		padding: 6px 15px;
+		font-size: 12px;
+		font-weight: 700;
+		color: var(--color-muted);
+		transition:
+			border-color 0.2s ease,
+			color 0.2s ease,
+			transform 0.12s ease;
+	}
+	.mode:hover:not(:disabled) {
+		transform: translateY(-1px);
+	}
+	.mode.active {
+		border-color: #2e6fe0;
+		color: #2e6fe0;
+	}
+	.mode:disabled {
+		opacity: 0.55;
+	}
+	.segs {
+		position: relative;
+		height: 4px;
+		margin-top: 12px;
+	}
+	.seg {
+		position: absolute;
+		height: 4px;
+		border-radius: 2px;
+		opacity: 0.75;
+	}
+	.seg.radio {
+		left: 7%;
+		width: 21.5%;
+		background: var(--color-amber);
+	}
+	.seg.cable {
+		left: 28.5%;
+		width: 64.5%;
+		background: #2e6fe0;
+	}
+	.legend {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 6px 14px;
+		margin-top: 7px;
+	}
+	.lg {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		font-size: 10.5px;
+		font-weight: 700;
+	}
+	.lg::before {
+		content: '';
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: currentColor;
+	}
+	.lg.radio {
+		color: var(--color-amber);
+	}
+	.lg.cable {
+		color: #2e6fe0;
+	}
 	.note {
 		min-height: 1.5em;
 		max-width: 320px;
@@ -320,6 +456,13 @@
 		.ptag {
 			font-size: 11.5px;
 			padding: 3px 11px;
+		}
+		.mode {
+			font-size: 13px;
+			padding: 7px 18px;
+		}
+		.lg {
+			font-size: 12px;
 		}
 		.rail,
 		.packet {
