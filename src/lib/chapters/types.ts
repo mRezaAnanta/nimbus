@@ -110,11 +110,23 @@ export interface FailoverText extends LessonText {
 }
 
 export interface RequestJourneyText extends LessonText {
-	openSite: string;
+	/** The button that plays the journey, and the one that plays it again. */
+	watch: string;
 	again: string;
+	/** What the phone itself shows, drawn onto its screen inside the 3D scene. */
+	screen: {
+		site: string;
+		button: string;
+		sending: string;
+		/** The page that arrives at the end, drawn as a real page on the phone. */
+		page: { title: string; body: string; cta: string; cardA: string; cardB: string };
+	};
 	/** How the phone reaches the first hop, home WiFi or mobile data. */
 	modes: { wifi: string; cell: string };
-	/** Station labels along the path. 'tower' takes the router's place on mobile data. */
+	/**
+	 * Station names, used only by the plain list shown where WebGL is unavailable.
+	 * 'tower' takes the router's place on mobile data.
+	 */
 	stations: {
 		phone: string;
 		router: string;
@@ -123,15 +135,6 @@ export interface RequestJourneyText extends LessonText {
 		net: string;
 		server: string;
 	};
-	/** What is happening at each step. Keys match stations plus 'back' for the return leg. */
-	notes: Record<string, string>;
-	requestTag: string;
-	responseTag: string;
-	idleNote: string;
-	/** The first hop is radio, everything after it is cable. */
-	radioLabel: string;
-	radioRange: { wifi: string; cell: string };
-	cableLabel: string;
 }
 
 export interface LaptopServerText extends LessonText {

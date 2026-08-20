@@ -41,8 +41,13 @@ The physical reality under the word "cloud".
 - [x] **Request journey**. A request hops through phone, router, ISP, and the global network, and
       all the way back. Also answers the question everyone asks, if data runs on cables, what are
       the cell towers for. Only the first hop is radio (a few metres of WiFi, a few kilometres to a
-      tower), and the tower itself is wired into fibre. Stage: pick WiFi or mobile data, then follow
-      the packet station by station along a road marked radio for one hop and cable for the rest.
+      tower), and the tower itself is wired into fibre. Stage: a first person three.js animation
+      (`scene/journey`) that Nim narrates. You hold the phone, the thumb comes down, and the camera
+      follows the request to the router in your room or the tower down the street, into your own
+      line, through the junction chamber where the ISP's cable takes over, across a seabed, and up
+      to one machine in a server room, then home again. It stops at each of those for Nim to explain
+      it, a board beside the picture tracks which station the request is at, and the WiFi and mobile
+      data buttons swap only the first hop.
 - [x] **API**. Besides a page for people, a server has an API that returns plain data (JSON) for
       programs, so apps can ask each other for data. Stage: call nimbus.com for the web page (HTML
       for humans) versus its API (real JSON for programs) and see how different the two answers look.

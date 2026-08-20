@@ -7,7 +7,15 @@ export const requestJourney: Lesson = {
 	id: 'request-journey',
 	mood: 'thinking',
 	moods: ['thinking', 'calm', 'idea', 'calm', 'calm', 'happy'],
-	reactionMood: { arrived: 'excited', back: 'happy', wifi: 'calm', cell: 'excited' },
+	reactionMood: {
+		atPhone: 'calm',
+		atHopWifi: 'calm',
+		atHopCell: 'excited',
+		inCable: 'idea',
+		underSea: 'surprised',
+		atServer: 'excited',
+		back: 'happy'
+	},
 	stage: RequestJourneyStage,
 	text: { id, en }
 };
