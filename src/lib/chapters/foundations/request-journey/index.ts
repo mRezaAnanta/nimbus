@@ -6,8 +6,16 @@ import { en } from './en';
 export const requestJourney: Lesson = {
 	id: 'request-journey',
 	mood: 'thinking',
-	moods: ['thinking', 'calm', 'idea', 'calm', 'happy'],
-	reactionMood: { arrived: 'excited', back: 'happy' },
+	moods: ['thinking', 'calm', 'idea', 'calm', 'calm', 'happy'],
+	reactionMood: {
+		atPhone: 'calm',
+		atHopWifi: 'calm',
+		atHopCell: 'excited',
+		inCable: 'idea',
+		underSea: 'surprised',
+		atServer: 'excited',
+		back: 'happy'
+	},
 	stage: RequestJourneyStage,
 	text: { id, en }
 };
